@@ -6,15 +6,31 @@ package services
 
 import (
 	"errors"
+	"math/rand"
 	"net/http"
 	"net/mail"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/kurt-stolle/esc/api/models"
-	dbmdl "github.com/kurt-stolle/go-dbmdl"
+	"github.com/kurt-stolle/go-dbmdl"
+	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
 	"github.com/pborman/uuid" // For UUID generation in the registration process
 )
+
+// randomString is a helper function that generates a random string of specified length
+func randomString(strlen int) string {
+	seed := time.Now().UTC().UnixNano()
+	rand.Seed(seed + rand.Int63n(seed))
+
+	const chars = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789@#$%&"
+
+	result := make([]byte, strlen)
+	for i := 0; i < strlen; i++ {
+		result[i] = chars[rand.Intn(len(chars))]
+	}
+	return string(result)
+}
 
 // CreateUser creates a new user in the database
 // Returns a http status code and possibly an error
@@ -37,7 +53,7 @@ func CreateUser(u *models.User, password string) (int, error) {
 	u.Salt = randomString(32)
 
 	// Then the password is set
-	passwd, _ = bcrypt.GenerateFromPassword([]byte(password+u.Salt), 10)
+	passwd, _ := bcrypt.GenerateFromPassword([]byte(password+u.Salt), 10)
 	u.Password = string(passwd) // Cast array of bytes to string, no need to check for errors, as there aren't any available
 
 	// Now use dbmdl to save this user to the database
