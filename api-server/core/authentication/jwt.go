@@ -12,7 +12,6 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
-	"github.com/turfd/settings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -83,9 +82,9 @@ func getPrivateKey() *rsa.PrivateKey {
 	if err != nil {
 		log.Panic(err)
 	}
-	privateKeyFile, err := os.Open(pwd + settings.Get()["private_key_path"].(string))
+	privateKeyFile, err := os.Open(pwd + "/keys/private.key")
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	pemfileinfo, _ := privateKeyFile.Stat()
@@ -94,6 +93,9 @@ func getPrivateKey() *rsa.PrivateKey {
 
 	buffer := bufio.NewReader(privateKeyFile)
 	_, err = buffer.Read(pembytes)
+	if err != nil {
+		log.Panic(err)
+	}
 
 	data, _ := pem.Decode([]byte(pembytes))
 
@@ -102,7 +104,7 @@ func getPrivateKey() *rsa.PrivateKey {
 	privateKeyImported, err := x509.ParsePKCS1PrivateKey(data.Bytes)
 
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	return privateKeyImported
@@ -113,9 +115,9 @@ func getPublicKey() *rsa.PublicKey {
 	if err != nil {
 		log.Panic(err)
 	}
-	publicKeyFile, err := os.Open(pwd + settings.Get()["public_key_path"].(string))
+	publicKeyFile, err := os.Open(pwd + "/keys/public.key")
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	pemfileinfo, _ := publicKeyFile.Stat()
@@ -124,6 +126,9 @@ func getPublicKey() *rsa.PublicKey {
 
 	buffer := bufio.NewReader(publicKeyFile)
 	_, err = buffer.Read(pembytes)
+	if err != nil {
+		log.Panic(err)
+	}
 
 	data, _ := pem.Decode([]byte(pembytes))
 
@@ -132,13 +137,13 @@ func getPublicKey() *rsa.PublicKey {
 	publicKeyImported, err := x509.ParsePKIXPublicKey(data.Bytes)
 
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	rsaPub, ok := publicKeyImported.(*rsa.PublicKey)
 
 	if !ok {
-		panic(err)
+		log.Panic(err)
 	}
 
 	return rsaPub

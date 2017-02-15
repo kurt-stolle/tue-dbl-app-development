@@ -1,9 +1,5 @@
 package controllers
 
-// File: controllers/index.go
-// Date: 2017-02-10
-// Desc: The index route - just for testing whether we're online
-
 import "net/http"
 
 // Index [GET] /: The route at the server's root

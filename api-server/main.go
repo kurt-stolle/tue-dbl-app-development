@@ -2,7 +2,6 @@ package main
 
 // File: main.go
 // Date: 2017-02-08
-// Desc: ...
 //
 // TUE GO API SERVER PROJECT
 //
@@ -19,11 +18,12 @@ import (
 
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
-	"github.com/kurt-stolle/esc/api/controllers"
-	"github.com/kurt-stolle/esc/api/core/postgres"
-	"github.com/kurt-stolle/esc/api/models"
 	"github.com/kurt-stolle/go-dbmdl"
 	_ "github.com/kurt-stolle/go-dbmdl/postgres"
+	"github.com/kurt-stolle/tue-dbl-app-development/api-server/controllers"
+	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/authentication"
+	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
+	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
 	"github.com/rs/cors"
 )
 
@@ -55,6 +55,10 @@ func registerStruct(t string, s interface{}) {
 // Main function
 func main() {
 	var err error
+	var port = os.Getenv("PORT")
+	if port == "" {
+		port = "9058"
+	}
 
 	// Setting this manually often helps speed up the application
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -98,9 +102,16 @@ func main() {
 	r := mux.NewRouter()
 
 	// Setup routes using the helper function setupRoute(...) function we created at the top of this file
-	setupRoute(r, "/", controllers.Index).Methods("GET")
-	setupRoute(r, "/register", controllers.Register).Methods("POST").Headers("Content-Type", "application/json") // application/json is the MIME type for JSON, encoding is always UTF-8
-	setupRoute(r, "/login", controllers.Login).Methods("POST").Headers("Content-Type", "application/json")
+	setupRoute(r, "/", controllers.Index).Methods(http.MethodGet)
+	setupRoute(r, "/register", controllers.Register).Methods(http.MethodPost).Headers("Content-Type", "application/json") // application/json is the MIME type for JSON, encoding is always UTF-8
+	setupRoute(r, "/login", controllers.Login).Methods(http.MethodPost).Headers("Content-Type", "application/json")
+
+	setupRoute(r, "/images", authentication.Verify, controllers.Images).Methods(http.MethodPost, http.MethodGet)
+	setupRoute(r, "/images/{image}", authentication.Verify, controllers.Image).Methods(http.MethodPatch, http.MethodGet)
+
+	setupRoute(r, "/leaderboard", authentication.Verify, controllers.Leaderboard).Methods(http.MethodGet)
+
+	setupRoute(r, "/users/{uuid}", authentication.Verify, controllers.User).Methods(http.MethodGet, http.MethodPatch)
 
 	// Server setup - using the negroni library
 	n := negroni.New()
@@ -110,10 +121,10 @@ func main() {
 		AllowCredentials: true,
 		AllowedOrigins:   []string{"*"}, // We don't care about this being less-secure, as we're not running in production currently.
 		AllowedHeaders:   []string{"Authorization", "Accept", "Content-Type"},
-		AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPatch, http.MethodDelete},
 	}))
 	n.UseHandler(r) // Implement routes
 
-	log.Println("Web server listening on :8058")
-	log.Fatal(http.ListenAndServe(":8058", n))
+	log.Println("Web server listening on :" + port)
+	log.Fatal(http.ListenAndServe(":"+port, n))
 }

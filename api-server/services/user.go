@@ -1,11 +1,8 @@
 package services
 
-// File: services/user.go
-// Date: 2017-02-10
-// Desc: This file includes all user-related services.
-
 import (
 	"errors"
+	"log"
 	"math/rand"
 	"net/http"
 	"net/mail"
@@ -51,6 +48,7 @@ func CreateUser(u *models.User, password string) (int, error) {
 	// Secondly, we generate a UUID and Salt
 	u.UUID = uuid.New()
 	u.Salt = randomString(32)
+	u.Points = 0
 
 	// Then the password is set
 	passwd, _ := bcrypt.GenerateFromPassword([]byte(password+u.Salt), 10)
@@ -64,4 +62,21 @@ func CreateUser(u *models.User, password string) (int, error) {
 	// TODO: Possibly send an e-mail to the address
 
 	return http.StatusOK, nil
+}
+
+// GetUser returns a user form the database
+func GetUser(uuid string) *models.User {
+	u := new(models.User) // Setup a new user struct
+
+	where := dbmdl.NewWhereClause("postgres") // Initialize a where clause
+	where.AddValuedClause("UUID", uuid)       // Add the UUID to said where clause
+
+	if err := dbmdl.Load("tuego_users", u, where); err != nil {
+		if err == dbmdl.ErrNotFound {
+			return nil
+		}
+		log.Panic(err) // If the error is not a NotFound error, then something went terribly wrong!
+	}
+
+	return u
 }

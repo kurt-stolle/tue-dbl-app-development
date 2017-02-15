@@ -1,9 +1,5 @@
 package controllers
 
-// File: controllers/authentication.go
-// Date: 2017-02-08
-// Desc: This file includes all user-related controllers.
-
 import (
 	"encoding/json"
 	"net/http"
@@ -21,16 +17,13 @@ func Register(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	// Decode the JSON that was sent to us
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		writeError(w, http.StatusBadRequest, "Not a JSON request")
+		return
 	}
 
-	// Fetch the wanted password from the request, and set the Password and Salt fields to the null value (because this stuff is supposed to be a hash in the database, the plaintext password shouldn't be a property of user)
-	var passwd = user.Password
-	user.Password = ""
-	user.Salt = ""
-
 	// Register the user
-	if status, err := services.CreateUser(user, passwd); err != nil {
+	if status, err := services.CreateUser(user, user.Password); err != nil {
 		writeError(w, status, err.Error())
+		return
 	}
 
 	writeSuccess(w)
@@ -47,15 +40,23 @@ func Login(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	// Decode the JSON that was sent to us
 	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
 		writeError(w, http.StatusBadRequest, "Not a JSON request")
+		return
 	}
 
 	// Attempt to login
-	if canLogin, uuid := authentication.Authenticate(login.Email, login.Password); canLogin {
-		token := authentication.GenerateToken(uuid)
+	jwt := authentication.GetJWTInstance()
+	if canLogin, uuid := jwt.Authenticate(login.Email, login.Password); canLogin {
+		token, err := jwt.GenerateToken(uuid)
 
-		return writeJSON(w, struct {
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "Internal server error")
+			return
+		}
+
+		writeJSON(w, &struct {
 			Token string
 		}{token})
+		return
 	}
 
 	// No login. Send an error
