@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TU/e GO</string>
+    <string name="login">Log in</string>
 </resources>
