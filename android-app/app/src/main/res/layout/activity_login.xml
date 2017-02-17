@@ -19,11 +19,11 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="Account registration"
+            android:text="Account login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:id="@+id/textViewReg"
+            android:id="@+id/textViewLogin"
             android:textColor="@color/colorBlack"/>
     </LinearLayout>
 
@@ -36,23 +36,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:hint="Username"
+            android:hint="Username / Email address"
             android:ems="10"
-            android:id="@+id/textFieldName" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:ems="10"
-            android:id="@+id/textFieldEmail"
-            android:hint="Email address" />
+            android:id="@+id/textFieldUsernameLogin" />
     </LinearLayout>
 
     <LinearLayout
@@ -65,23 +51,10 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:id="@+id/textFieldPassword"
+            android:id="@+id/textFieldPasswordLogin"
             android:hint="password" />
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/textFieldPassword2"
-            android:hint="confirm password" />
-    </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
@@ -89,11 +62,11 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:text="Register"
+            android:text="Login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/buttonRegister"
-            android:onClick="register"/>
+            android:id="@+id/buttonLogin"
+            android:onClick="login"/>
     </LinearLayout>
 
     <LinearLayout
@@ -103,11 +76,11 @@
 
 
         <TextView
-            android:text="Already have an account?"
+            android:text="Forgot password?"
             android:textColor="@color/colorBlue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textViewtoLogin"/>
+            android:id="@+id/textViewForgotPassword"/>
     </LinearLayout>
 
 </LinearLayout>
