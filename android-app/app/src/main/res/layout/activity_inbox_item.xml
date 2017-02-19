@@ -3,4 +3,95 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:gravity="center_vertical"
+            android:layout_weight="0.1"
+            android:weightSum="1">
+
+            <TextView
+                android:text="Author: [insert name here]"
+                android:textColor="@color/colorBlack"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:id="@+id/textView4"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="0.6"
+            android:gravity="center">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:background="@drawable/my_popup_bg">
+
+                <TextView
+                    android:text="This is a picture"
+                    android:textColor="@color/colorWhite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="0px"
+            android:layout_weight="0.2"
+            android:weightSum="2">
+
+            <TextView
+                android:text="Available points: 10"
+                android:textColor="@color/colorBlack"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:text="Remaining time: 3:48:30"
+                android:textColor="@color/colorBlack"
+                android:textSize="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:weightSum="1"
+            android:layout_weight="0.1">
+
+            <Button
+                android:text="Guess location"
+                android:textColor="@color/colorWhite"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/my_button_bg"
+                android:layout_margin="5dp"/>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
