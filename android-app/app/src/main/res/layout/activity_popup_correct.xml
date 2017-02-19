@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        android:background="@drawable/my_popup_bg"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_gravity="left"
+            android:layout_marginTop="10px"
+            android:layout_marginLeft="10px"
+            android:layout_weight="0.2">
+
+            <ImageButton
+                android:layout_gravity="left"
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:scaleType="centerCrop"
+                android:background="@color/colorTransparent"
+                app:srcCompat="@drawable/arrow_back"
+                android:id="@+id/imageButton"></ImageButton>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="0.6"
+            android:gravity="center">
+
+            <TextView
+                android:text="@string/guess_correct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:textColor="@color/colorWhite"
+                android:id="@+id/textView2" />
+
+            <TextView
+                android:text="@string/guess_correct_points"
+                android:layout_marginTop="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:textColor="@color/colorWhite"
+                android:id="@+id/textView3" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

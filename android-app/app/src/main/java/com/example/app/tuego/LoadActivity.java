@@ -24,7 +24,7 @@ public class LoadActivity extends AppCompatActivity {
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoadActivity.this, InitActivity.class);
+                Intent intent = new Intent(LoadActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
         });
