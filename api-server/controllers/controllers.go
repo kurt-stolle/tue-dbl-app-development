@@ -4,12 +4,38 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	dbmdl "github.com/kurt-stolle/go-dbmdl"
 )
 
 // writeJSON is a helper function for writing a struct as a JSON response
 func writeJSON(w http.ResponseWriter, d interface{}) {
 	// Marshal JSON
 	j, err := json.Marshal(d)
+	if err != nil {
+		log.Panic(err)
+		return
+	}
+
+	// Setup header
+	w.Header().Set("Content-Type", "application/json")
+
+	// Send reply
+	w.Write(j)
+}
+
+// writeJSONPaginated is a helper function for writing a struct as a JSON response, but including a pagination object
+func writeJSONPaginated(w http.ResponseWriter, d interface{}, p *dbmdl.Pagination) {
+	var r struct {
+		Data       interface{}
+		Pagination *dbmdl.Pagination
+	}
+
+	r.Data = d
+	r.Pagination = p
+
+	// Marshal JSON
+	j, err := json.Marshal(r)
 	if err != nil {
 		log.Panic(err)
 		return

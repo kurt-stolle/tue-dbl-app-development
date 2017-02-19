@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/authentication"
@@ -12,16 +13,27 @@ import (
 // Register [POST] /register: controls registration of new users
 func Register(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	// This creates a new instance of user, later to be filled out by parsing the request's JSON
-	var user = new(models.User)
+	var regdata = new(struct {
+		Name     string
+		Email    string
+		Password string
+	})
 
 	// Decode the JSON that was sent to us
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(regdata); err != nil {
+		fmt.Println(err)
 		writeError(w, http.StatusBadRequest, "Not a JSON request")
 		return
 	}
 
+	// Populate new user
+	var user = new(models.User)
+	user.Email = regdata.Email
+	user.Name = regdata.Name
+	user.Points = 0
+
 	// Register the user
-	if status, err := services.CreateUser(user, user.Password); err != nil {
+	if status, err := services.CreateUser(user, regdata.Password); err != nil {
 		writeError(w, status, err.Error())
 		return
 	}

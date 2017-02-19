@@ -1,6 +1,7 @@
 package controllers
 
 import "net/http"
+import "github.com/kurt-stolle/tue-dbl-app-development/api-server/services"
 
 // Images is a controller for receiving an image sent by a user and storing it in the filesystem
 func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
@@ -8,7 +9,11 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	case http.MethodPost: // Upload an image (JPEG)
 		// TODO
 	case http.MethodGet: // Fetch an manifest of images
-		// TODO
+		status, images, pag := services.GetActiveImages(1, 250)
+		if status != http.StatusOK {
+			writeError(w, status)
+		}
+		writeJSONPaginated(w, images, pag)
 	default: // Return a friendly error
 		writeError(w, http.StatusNotImplemented, "Method not implemented: "+r.Method)
 	}
@@ -21,7 +26,7 @@ func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		// TODO
 	case http.MethodGet: // Get a picture (JPEG)
 		// TODO
-	default: // The method isn't implemented, error!
+	default: // The method isn't implemented
 		writeError(w, http.StatusNotImplemented, "Method not implemented: "+r.Method)
 	}
 }

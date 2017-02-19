@@ -73,6 +73,7 @@ func main() {
 	// Define data models to be added to the database
 	// If you're not familiar with the language: (*x)(nil) allows us to pass type x without actually having to waste memory on an empty type (the function only needs to know the type - not utilise and sort of values)
 	registerStruct("tuego_users", (*models.User)(nil))
+	registerStruct("tuego_images", (*models.Image)(nil))
 
 	// Initialize the router, we use the Gorilla Mux library for this as it makes header and method matching easier
 	r := mux.NewRouter()
