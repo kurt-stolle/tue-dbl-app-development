@@ -9,8 +9,8 @@
 		},
 		{
 			"ImportPath": "github.com/dgrijalva/jwt-go",
-			"Comment": "v2.4.0-12-g9a4b9f2",
-			"Rev": "9a4b9f2ac1f7685147a5c01544e3b922dbc1f4a0"
+			"Comment": "v2.4.0-11-gf219341",
+			"Rev": "f2193411bd642f7db03249fd79d5292c9b34916a"
 		},
 		{
 			"ImportPath": "github.com/gorilla/context",
@@ -18,16 +18,16 @@
 		},
 		{
 			"ImportPath": "github.com/gorilla/mux",
-			"Rev": "26a6070f849969ba72b72256e9f14cf519751690"
+			"Rev": "9c068cf16d982f8bd444b8c352acbeec34c4fe5b"
 		},
 		{
 			"ImportPath": "github.com/kurt-stolle/go-dbmdl",
-			"Rev": "f19d2d7663695e0804244250357d51abda973c7c"
+			"Rev": "e8ca58cfb0ed1b91f5632aedd017a0776ed72172"
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
-			"Comment": "go1.0-cutoff-81-g69552e5",
-			"Rev": "69552e54d2a9d4c6a2438926a774930f7bc398ec"
+			"Comment": "go1.0-cutoff-60-gffe986a",
+			"Rev": "ffe986aba3e6cfcded8b06615965941408891ef0"
 		},
 		{
 			"ImportPath": "github.com/pborman/uuid",
@@ -44,15 +44,15 @@
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/bcrypt",
-			"Rev": "c197bcf24cde29d3f73c7b4ac6fd41f4384e8af6"
+			"Rev": "1f22c0103821b9390939b6776727195525381532"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/blowfish",
-			"Rev": "c197bcf24cde29d3f73c7b4ac6fd41f4384e8af6"
+			"Rev": "1f22c0103821b9390939b6776727195525381532"
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
-			"Rev": "4876518f9e71663000c348837735820161a42df7"
+			"Rev": "3e8a7b0329d536af18e227bb21b6da4d1dbbe180"
 		}
 	]
 }

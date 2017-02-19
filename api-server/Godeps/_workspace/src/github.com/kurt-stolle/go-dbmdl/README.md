@@ -1,14 +1,14 @@
 # DBMDL
 
-A library for modelling databases according to a Go `struct`. Intentionally made very lightweight, for this library is not meant to replace SQL languages.
+A library for modelling databases according to a Go `struct`. Intentionally made lightweight, for this library is not meant to replace SQL languages in your project.
 
 ## Usage
 
-### 1\. Registering a dialect that queries will be constructed in
+### 1 Registering a dialect that queries will be constructed in
 
 You can choose the dialect for your queries by importing a package that defines one, or calling `dbmdl.RegisterDialect(name string, d *dbmdl.Dialect)`. In the following example, we register the Postgres dialect.
 
-```
+```go
 import (
   ...
   _ "github.com/kurt-stolle/go-dbmdl/postgres" //
@@ -17,50 +17,23 @@ import (
 
 The "\_" character indicates that we only import this package for the side effects, i.e. the `init()` function which registers the dialect.
 
-### 2\. Setting up a channel for receiving queries built by dbmdl
-
-A channel needs to be created in order to receive the queries constructed by dbmdl.
-
-```
-go func() {                        // Create a new goroutine for DBMDL queries
-    ch := dbmdl.QueryChannel()       // Initialize the channel
-    for {                            // Keep waiting for queries
-        q := <-ch                      // Receive a query
-
-    conn, err := postgres.Connect()   // Open a connection
-        if err != nil {                // Check for errors
-            log.Fatal(err)
-        }
-        defer conn.Close()             // Defer connection close (required)
-
-        rows, err := conn.Query(q.String, q.Arguments...) // Execute the query
-        if err != nil {                                   // Check for errors
-            log.Fatal("Failed to execute DBMDL query! \nQuery: ", q.String, "\nError: ", err)
-        }
-    defer rows.Close()     // Defer rows close (required)
-
-        if q.Result != nil {   // If a result return is requested by dbmdl, grant it.
-            q.Result <- rows     // Send rows to the result channel
-        }
-    }
-}()
-```
-
-### 3\. Registering the structs that can be used by dbmdl.
+### 2 Registering the structs that can be used by dbmdl
 
 To use a struct in dbmdl, it must be registered first.
 
-```
+```go
 type MyModel struct {
   Key      int    `dbmdl:"serial, primary key"`
   Value    string `dbmdl:"varchar(100)"`
 }
-if err := dbmdl.RegisterStruct("postgres", "project_models", &MyModel{}); err != nil {
+
+var conn *sql.DB = postgres.Connect()
+if err := dbmdl.RegisterStruct(conn, "postgres", "project_models", (*MyModel)(nil)); err != nil { // (*MyModel)(nil) allows us to pass the type only so that we can use it in reflection
   panic(err);
 }
 ```
 
-Evident from the example above, fields must have a `dbmdl` tag in order for them to be saved to the database. The struct must also have at least one `primary key`.
+Evident from the example above, fields must have a `dbmdl` tag to save them in the database. The struct must also have at least one `primary key`.
 
 ## The `dbmdl` tag
 
@@ -77,7 +50,7 @@ Optional fields are separated from the primary field and other optional field by
 
 The following is an example of an elaborate `dbmdl` tag:
 
-```
+```go
 type Model struct {
   Index     int     `dbmdl:"serial, primary key, not null"`
   ValueOne  string  `dbmdl:"varchar(50), primary key, not null"`
@@ -85,10 +58,34 @@ type Model struct {
 }
 ```
 
+## RegisterDialect
+
+TODO: Document me
+
+## CreateTable
+
+TODO: Document me
+
+## Save
+
+TODO: Document me
+
+## Patch
+
+TODO: Document me
+
+## Load
+
+TODO: Document me
+
+## Fetch
+
+TODO: Document me
+
 ## Pagination
 
-...
+TODO: Document me
 
-## WhereClauses
+## WhereClause
 
-...
+TODO: Document me

@@ -47,14 +47,13 @@ func setupRoute(r *mux.Router, uri string, functions ...negroni.HandlerFunc) *mu
 
 // Quick utility for registering DBMDLs and catching the possible errors
 func registerStruct(t string, s interface{}) {
-	if err := dbmdl.RegisterStruct("postgres", t, s); err != nil {
+	if err := dbmdl.RegisterStruct(postgres.Connect(), "postgres", t, s); err != nil {
 		log.Panic("Failed to register struct: ", err)
 	}
 }
 
 // Main function
 func main() {
-	var err error
 	var port = os.Getenv("PORT")
 	if port == "" {
 		port = "9058"
@@ -69,7 +68,7 @@ func main() {
 
 	// Define data models to be added to the database
 	// If you're not familiar with the language: (*x)(nil) allows us to pass type x without actually having to waste memory on an empty type (the function only needs to know the type - not utilise and sort of values)
-	registerStruct(conn, "tuego_users", (*models.User)(nil))
+	registerStruct("tuego_users", (*models.User)(nil))
 
 	// Initialize the router, we use the Gorilla Mux library for this as it makes header and method matching easier
 	r := mux.NewRouter()

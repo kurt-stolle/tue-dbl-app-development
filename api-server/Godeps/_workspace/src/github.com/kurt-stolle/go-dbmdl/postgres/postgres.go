@@ -12,13 +12,12 @@ func init() {
 	// Set-up the dialeect
 	d := new(dbmdl.Dialect)
 
-	d.CreateTable = func(n string, f []string) []interface{} {
+	d.CreateTable = func(n string, f []string) string {
 		var query bytes.Buffer
 		query.WriteString(`CREATE TABLE IF NOT EXISTS ` + n + ` ();`)
 
 		for _, dt := range f {
-			query.WriteString(`
-DO $$
+			query.WriteString(`DO $$
 	BEGIN
 		BEGIN
 			ALTER TABLE ` + n + ` ADD COLUMN ` + dt + `;
@@ -29,12 +28,11 @@ DO $$
 $$;`)
 		}
 
-		return []interface{}{query.String()}
+		return query.String()
 	}
 
-	d.SetPrimaryKey = func(n string, f []string) []interface{} {
-		return []interface{}{`
-DO $$
+	d.SetPrimaryKey = func(n string, f []string) string {
+		return `DO $$
 	BEGIN
 		if not exists (select constraint_name
 	  	from information_schema.constraint_column_usage
@@ -42,47 +40,46 @@ DO $$
 	    	execute 'ALTER TABLE ` + n + ` ADD PRIMARY KEY (` + strings.Join(f, ",") + `)';
 	  end if;
 	END;
-$$;`}
+$$;`
 	}
 
-	d.SetDefaultValues = func(n string, v map[string]string) []interface{} {
+	d.SetDefaultValues = func(n string, v map[string]string) string {
 		var q []string
 		for c, d := range v {
-			q = append(q, `
-				UPDATE `+n+` SET `+c+`=`+d+` WHERE `+c+`=NULL;
+			q = append(q, `UPDATE `+n+` SET `+c+`=`+d+` WHERE `+c+`=NULL;
 				ALTER TABLE ONLY `+n+` ALTER COLUMN `+c+` SET DEFAULT `+d+`;`)
 		}
 
-		return []interface{}{strings.Join(q, "\n")}
+		return strings.Join(q, "\n")
 	}
 
-	d.FetchFields = func(tableName string, fields []string, p *dbmdl.Pagination, w *dbmdl.WhereClause) []interface{} {
+	d.FetchFields = func(tableName string, fields []string, p *dbmdl.Pagination, w *dbmdl.WhereClause) (string, []interface{}) {
 		var query bytes.Buffer
+		var args []interface{}
 
+		// Basic query
 		query.WriteString(`SELECT `)
 		query.WriteString(strings.Join(fields, ", "))
 		query.WriteString(` FROM `)
 		query.WriteString(tableName)
 
+		// Where clauses
 		if w != nil {
 			query.WriteString(` ` + w.String() + ` `)
+			args = w.Values
 		}
+
+		// Pagination
 		if p != nil {
 			query.WriteString(` ` + p.String() + ` `)
 		}
 
-		var args []interface{}
-		args = append(args, query.String()) // Replace at index 0
-
-		if w != nil {
-			args = append(args, w.Values...)
-		}
-
-		return args
+		// Result
+		return query.String(), args
 	}
 
-	d.Insert = func(tableName string, fieldsValues map[string]interface{}) []interface{} {
-		var args = []interface{}{";//"}
+	d.Insert = func(tableName string, fieldsValues map[string]interface{}) (string, []interface{}) {
+		var args = []interface{}{}
 		var query bytes.Buffer
 
 		query.WriteString(`INSERT INTO `)
@@ -114,13 +111,11 @@ $$;`}
 		query.WriteString(bufValues)
 		query.WriteString(`)`)
 
-		args[0] = query.String() // Replace at index 0
-
-		return args
+		return query.String(), args
 	}
 
-	d.Update = func(tableName string, fieldsValues map[string]interface{}, w *dbmdl.WhereClause) []interface{} {
-		var args = []interface{}{";//"}
+	d.Update = func(tableName string, fieldsValues map[string]interface{}, w *dbmdl.WhereClause) (string, []interface{}) {
+		var args = []interface{}{}
 		var query bytes.Buffer
 
 		args = append(args, w.Values...)
@@ -142,13 +137,11 @@ $$;`}
 
 		query.WriteString(w.String())
 
-		args[0] = query.String()
-
-		return args
+		return query.String(), args
 	}
 
-	d.GetPlaceholder = func(i int) string {
-		return "$" + strconv.Itoa(i)
+	d.GetPlaceholder = func(offset int) string {
+		return "$" + strconv.Itoa(offset)
 	}
 
 	// Register for later use in other appliances
