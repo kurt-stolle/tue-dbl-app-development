@@ -8,20 +8,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class InitActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
     TextView login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_init);
+        setContentView(R.layout.activity_register);
         login = (TextView) findViewById(R.id.textViewtoLogin);
 
         assert login != null;
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(InitActivity.this, LoginActivity.class);
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">TU/e GO</string>
     <string name="login">Log in</string>
+    <string name="guess_correct">Congratulations, you guessed the location!</string>
+    <string name="guess_correct_points">You earned 10 studypoints.</string>
+    <string name="guess_incorrect">Too bad, you did not guess the location.</string>
+    <string name="error_message">An error has occurred, please try again later.</string>
 </resources>
