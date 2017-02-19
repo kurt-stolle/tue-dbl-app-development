@@ -112,6 +112,6 @@ func indexRouteController(w http.ResponseWriter, r *http.Request, next http.Hand
 		io.WriteString(w, " "+rt+"\n")
 	}
 
-	io.WriteString(w, "\nUse REST-compliant methods for manipulating datasets.\nAll routes other than the index and image upload accept a JSON object and will always write a JSON object")
-	io.WriteString(w, "\n\nCreated by K.H.W. Stolle (k.h.w.stolle@student.tue.nl)\nCopyright 2017 Eindhoven University of Technology")
+	io.WriteString(w, "\nUse REST-compliant methods for manipulating datasets\nAll routes other than the index and image upload accept \na JSON object and will always write a JSON object")
+	io.WriteString(w, "\n\nCreated by K.H.W. Stolle (k.h.w.stolle@student.tue.nl)\n\nCopyright 2017 Eindhoven University of Technology")
 }
