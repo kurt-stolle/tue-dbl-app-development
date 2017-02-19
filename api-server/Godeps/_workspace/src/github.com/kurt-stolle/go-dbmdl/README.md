@@ -27,7 +27,7 @@ go func() {                        // Create a new goroutine for DBMDL queries
     for {                            // Keep waiting for queries
         q := <-ch                      // Receive a query
 
-    conn, err := postgres.Open()   // Open a connection
+    conn, err := postgres.Connect()   // Open a connection
         if err != nil {                // Check for errors
             log.Fatal(err)
         }

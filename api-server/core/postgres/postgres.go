@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"log"
 	"os"
 
 	_ "github.com/lib/pq" // pq extends the database/sql package, will allow us to use postgres
@@ -11,15 +12,14 @@ import (
 var db *sql.DB
 
 // Open will open a connection to the database
-func Open() (conn *sql.DB, err error) {
+func Connect() (conn *sql.DB) {
 	if db == nil {
 		if connection, err := sql.Open("postgres", os.Getenv("DATABASE_URL")); err == nil {
 			db = connection
 		} else {
-			db = nil
-			return nil, err
+			log.Fatal("Database connection failed!\n", err)
 		}
 	}
 
-	return db, nil
+	return db
 }

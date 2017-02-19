@@ -22,12 +22,7 @@ func GetLeaderboard(a int) []*models.LeaderboardEntry {
 	var res []*models.LeaderboardEntry
 
 	// Perform a query
-	conn, err := postgres.Open()
-	if err != nil {
-		log.Panic(err)
-	}
-
-	rows, err := conn.Query("SELECT Name,Points FROM tuego_users ORDER BY Points DESC LIMIT " + strconv.Itoa(a))
+	rows, err := postgres.Connect().Query("SELECT Name,Points FROM tuego_users ORDER BY Points DESC LIMIT " + strconv.Itoa(a))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return res

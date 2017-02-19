@@ -59,10 +59,7 @@ func (backend *JWTData) GenerateToken(userUUID string) (string, error) {
 // Authenticate attempts to sign an authentication request
 func (backend *JWTData) Authenticate(email, password string) (bool, string) {
 	// Open database connection
-	conn, err := postgres.Open()
-	if err != nil {
-		log.Panic(err)
-	}
+	conn := postgres.Connect()
 
 	// Select salt and password from database
 	var uuid, salt, passwordHash string
