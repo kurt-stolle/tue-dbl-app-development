@@ -10,8 +10,8 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/kurt-stolle/esc/api/core/postgres"
 	"github.com/kurt-stolle/go-dbmdl"
+	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
 	"github.com/pborman/uuid" // For UUID generation in the registration process
 )
