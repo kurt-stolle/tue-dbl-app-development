@@ -9,5 +9,5 @@ go get ./...
 echo Building GO application
 go build
 echo Starting application
+api-server.exe
 cd ..
-api-server\api-server.exe

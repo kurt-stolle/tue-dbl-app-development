@@ -8,6 +8,7 @@ import (
 	"encoding/pem"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -79,7 +80,7 @@ func getPrivateKey() *rsa.PrivateKey {
 	if err != nil {
 		log.Panic(err)
 	}
-	privateKeyFile, err := os.Open(pwd + "/keys/private.key")
+	privateKeyFile, err := os.Open(filepath.Join(pwd, "keys", "private.key"))
 	if err != nil {
 		log.Panic(err)
 	}
@@ -112,7 +113,7 @@ func getPublicKey() *rsa.PublicKey {
 	if err != nil {
 		log.Panic(err)
 	}
-	publicKeyFile, err := os.Open(pwd + "/keys/public.key")
+	publicKeyFile, err := os.Open(filepath.Join(pwd, "keys", "public.key"))
 	if err != nil {
 		log.Panic(err)
 	}
