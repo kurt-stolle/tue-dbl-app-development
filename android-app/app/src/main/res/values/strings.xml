@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">TU/e GO</string>
     <string name="login">Log in</string>
+    <string name="registration_info">To register a new account, please fill in the boxes below.</string>
     <string name="registration_warning">By clicking the Register button below, you accept to agree to the Terms and Conditions.</string>
+    <string name="code_info">A code has been sent to your email adress. Please fill in the sent code in the box below.</string>
+    <string name="change_password_info">To change your password, please fill in a new password in the boxes below.</string>
+    <string name="password_changed">Your password has been changed.</string>
     <string name="guess_correct">Congratulations, you guessed the location!</string>
     <string name="guess_correct_points">You earned 10 studypoints.</string>
     <string name="guess_incorrect">Too bad, you did not guess the location.</string>
