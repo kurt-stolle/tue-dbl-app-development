@@ -11,6 +11,7 @@ package main
 // See: https://golang.org/
 
 import (
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -41,6 +42,9 @@ func setupRoute(r *mux.Router, uri string, functions ...negroni.HandlerFunc) *mu
 	for _, f := range functions {
 		handlers = append(handlers, negroni.HandlerFunc(f))
 	}
+
+	// Add the URI to the routes slice so that we can display it on the index page
+	routes = append(routes, uri)
 
 	return r.Handle(uri, negroni.New(handlers...))
 }
@@ -74,7 +78,7 @@ func main() {
 	r := mux.NewRouter()
 
 	// Setup routes using the helper function setupRoute(...) function we created at the top of this file
-	setupRoute(r, "/", controllers.Index).Methods(http.MethodGet)
+	setupRoute(r, "/", indexRouteController).Methods(http.MethodGet)
 	setupRoute(r, "/register", controllers.Register).Methods(http.MethodPost).Headers("Content-Type", "application/json") // application/json is the MIME type for JSON, encoding is always UTF-8
 	setupRoute(r, "/login", controllers.Login).Methods(http.MethodPost).Headers("Content-Type", "application/json")
 
@@ -99,4 +103,15 @@ func main() {
 
 	log.Println("Web server listening on :" + port)
 	log.Fatal(http.ListenAndServe(":"+port, n))
+}
+
+// The index should list the routes that we have available
+func indexRouteController(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	io.WriteString(w, "Welcome to the TU/e GO API.\nCreated for bachelor course DBL App Development.\n\nAvailable routes:")
+	for _, rt := range routes {
+		io.WriteString(w, "- "+rt)
+	}
+
+	io.WriteString(w, "\n\nUse REST-compliant methods for manipulating datasets.\nAll routes other than the index and image upload accept a JSON object and will always write a JSON object")
+	io.WriteString(w, "\n\nCopyright &copy; 2017 Eindhoven University of Technology - Web API maintained by Kurt Stolle - k.h.w.stolle@student.tue.nl")
 }
