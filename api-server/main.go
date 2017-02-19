@@ -107,11 +107,11 @@ func main() {
 
 // The index should list the routes that we have available
 func indexRouteController(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	io.WriteString(w, "Welcome to the TU/e GO API.\nCreated for bachelor course DBL App Development.\n\nAvailable routes:")
+	io.WriteString(w, "Welcome to the TU/e GO API.\nCreated for bachelor course DBL App Development.\n\nAvailable routes:\n")
 	for _, rt := range routes {
-		io.WriteString(w, "- "+rt)
+		io.WriteString(w, "- "+rt+"\n")
 	}
 
 	io.WriteString(w, "\n\nUse REST-compliant methods for manipulating datasets.\nAll routes other than the index and image upload accept a JSON object and will always write a JSON object")
-	io.WriteString(w, "\n\nCopyright &copy; 2017 Eindhoven University of Technology - Web API maintained by Kurt Stolle - k.h.w.stolle@student.tue.nl")
+	io.WriteString(w, "\n\nCopyright 2017 Eindhoven University of Technology")
 }
