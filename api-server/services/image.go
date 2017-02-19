@@ -12,7 +12,7 @@ import (
 func GetActiveImages(page, amount int) (int, []*models.Image, *dbmdl.Pagination) {
 	// Where clause for making sure we select only active images
 	where := dbmdl.NewWhereClause("postgres")
-	where.AddClause("Finder=''")
+	where.AddClause("Finder=NULL")
 
 	// Pagination
 	pag := dbmdl.NewPagination(uint(page), uint(amount))
