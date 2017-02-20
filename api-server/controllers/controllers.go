@@ -53,8 +53,8 @@ func writeSuccess(w http.ResponseWriter) {
 	// Setup header
 	w.Header().Set("Content-Type", "application/json")
 
-	// Send reply - empty array
-	w.Write([]byte("[]"))
+	// Send reply - empty object
+	w.Write([]byte("{}"))
 }
 
 // writeError is a helper function that assures all errors are delivered in the same way

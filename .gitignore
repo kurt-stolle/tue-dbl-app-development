@@ -41,4 +41,4 @@ captures/
 
 # Uploads folder and its contents
 api-server/uploads/*
-android-app/.idea/misc.xml
+android-app/.idea/*
