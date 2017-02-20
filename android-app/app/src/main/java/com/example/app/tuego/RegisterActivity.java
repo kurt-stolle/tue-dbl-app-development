@@ -27,11 +27,12 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    public void register(View view) {
-        // Add code to enable registration of account and also include error messages
+    public void register(View v) {
+        // TODO: Add code to enable registration of account and also include error messages
 
-        Intent intent = new Intent(this, LoginActivity.class); // should register
+        Intent intent = new Intent(this, InboxActivity.class); // should register
         startActivity(intent);
+        finish();
     }
 }
 

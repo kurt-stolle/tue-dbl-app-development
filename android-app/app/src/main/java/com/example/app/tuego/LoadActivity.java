@@ -17,15 +17,16 @@ public class LoadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_load);
 
         logo = (ImageView) findViewById(R.id.Logo);
-        /* Add load stuff here
-        * For now make the logo clickable to continue to next slide */
+        // TODO: make stuff load
+        // For now make the logo clickable to continue to next slide
 
         assert logo != null;
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 Intent intent = new Intent(LoadActivity.this, RegisterActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
