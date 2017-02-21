@@ -37,38 +37,39 @@ public class RegisterActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Perform the registration
-                RegistrationModel reg = new RegistrationModel();
-                reg.Email = inputEmail.getText().toString();
-                reg.Email = inputName.getText().toString();
-                reg.Password = inputPassword.getText().toString();
 
-                if (reg.Password != inputPasswordVerify.getText().toString()) {
-                    // TODO: Display an error message
-
-                    return;
-                }
-
-                // Initialize api
-                WebAPI api = new WebAPI(); // Use Object for expected return; we aren't expecting a return value
-                String res;
-                try {
-                    res = api.Call("POST", "/register", reg);
-                } catch (APIError e){
-                    // TODO: Notify the user that they made some mistake
-                }
-
-                // Registration is done - move to next view
-                // TODO: Auto login
                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
 
+    // method called when the REGISTER button is pressed
     public void register(View v) {
-        // TODO: Add code to enable registration of account and also include error messages
+        // Perform the registration
+        RegistrationModel reg = new RegistrationModel();
+        reg.Email = inputEmail.getText().toString();
+        reg.Name = inputName.getText().toString();
+        reg.Password = inputPassword.getText().toString();
 
+        if (reg.Password != inputPasswordVerify.getText().toString()) {
+            // TODO: Display an error message
+
+            return;
+        }
+
+        // Initialize api
+        WebAPI api = new WebAPI(); // Use Object for expected return; we aren't expecting a return value
+        String res;
+        try {
+            res = api.Call("POST", "/register", reg);
+        } catch (APIError e){
+            // TODO: Notify the user that they made some mistake
+        }
+
+        // Registration is done - move to next view
+        // TODO: Auto login
         Intent intent = new Intent(this, InboxActivity.class); // should register
         startActivity(intent);
         finish();
