@@ -56,7 +56,7 @@ func CreateUser(u *models.User, password string) (int, error) {
 	u.Password = string(passwd) // Cast array of bytes to string, no need to check for errors, as there aren't any available
 
 	// Now use dbmdl to save this user to the database
-	if err := dbmdl.Save(postgres.Connect(), "tuego_users", u, dbmdl.NewWhereClause("postgres")); err != nil {
+	if err := dbmdl.Save(postgres.Connect(), u, nil); err != nil {
 		return http.StatusInternalServerError, err
 	}
 
@@ -72,7 +72,7 @@ func GetUser(uuid string) *models.User {
 	where := dbmdl.NewWhereClause("postgres") // Initialize a where clause
 	where.AddValuedClause("UUID", uuid)       // Add the UUID to said where clause
 
-	if err := dbmdl.Load(postgres.Connect(), "tuego_users", u, where); err != nil {
+	if err := dbmdl.Load(postgres.Connect(), u, where); err != nil {
 		if err == dbmdl.ErrNotFound {
 			return nil
 		}
