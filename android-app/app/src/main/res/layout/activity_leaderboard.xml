@@ -6,7 +6,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/leaderboard list" />
+        android:id="@+id/leaderboardList" />
 
     <EditText
         android:layout_width="260dp"
@@ -14,7 +14,7 @@
         android:inputType="textPersonName"
         android:text="1. User name"
         android:ems="10"
-        android:id="@+id/userLead"
+        android:id="@+id/userLead1"
         android:layout_marginLeft="80dp"
         android:layout_marginTop="30dp" />
 
@@ -24,7 +24,7 @@
         android:inputType="textPersonName"
         android:text="2. User name"
         android:ems="10"
-        android:id="@+id/userLead"
+        android:id="@+id/userLead2"
         android:layout_marginLeft="80dp" />
     <EditText
         android:layout_width="260dp"
@@ -32,7 +32,7 @@
         android:inputType="textPersonName"
         android:text="3. User name"
         android:ems="10"
-        android:id="@+id/userLead"
+        android:id="@+id/userLead3"
         android:layout_marginLeft="80dp" />
     <EditText
         android:layout_width="260dp"
@@ -40,8 +40,6 @@
         android:inputType="textPersonName"
         android:text="4. User name"
         android:ems="10"
-        android:id="@+id/userLead"
+        android:id="@+id/userLead4"
         android:layout_marginLeft="80dp" />
-
-
 </LinearLayout>

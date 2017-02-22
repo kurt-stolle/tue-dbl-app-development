@@ -2,7 +2,11 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#d6004a</color>
+    <color name="colorCancel">#DD0000</color>
+    <color name="colorCancelDark">#AA0000</color>
+    <color name="colorConfirm">#00DD00</color>
+    <color name="colorConfirmDark">#00AA00</color>
+    <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
     <color name="colorBlue">#0000ff</color>
