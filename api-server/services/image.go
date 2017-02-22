@@ -2,6 +2,7 @@ package services
 
 import (
 	"net/http"
+	"reflect"
 
 	dbmdl "github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
@@ -10,23 +11,26 @@ import (
 
 // GetActiveImages returns a manifest of images
 func GetActiveImages(page, amount int) (int, []*models.Image, *dbmdl.Pagination) {
+	// Fetch the type
+	imageType := reflect.TypeOf((*models.Image)(nil)).Elem()
+
 	// Where clause for making sure we select only active images
-	where := dbmdl.NewWhereClause("postgres")
+	where := dbmdl.NewWhereClause(imageType)
 	where.AddClause("Finder=NULL")
 
 	// Pagination
-	pag := dbmdl.NewPagination(uint(page), uint(amount))
+	dbp := dbmdl.NewPagination(page, amount)
 
 	// DBMDL fetch
-	res, err := dbmdl.Fetch(postgres.Connect(), "tuego_images", (*models.Image)(nil), where, pag)
+	data, pag, err := dbmdl.Fetch(postgres.Connect(), imageType, where, dbp)
 	if err != nil {
 		return http.StatusNotFound, nil, nil
 	}
 
 	// Cast the result set
-	var images []*models.Image
-	for _, img := range res.Data {
-		images = append(images, img.(*models.Image)) // We needn't error check because the cast type is guaranteed by dbmdl
+	images := make([]*models.Image, len(data))
+	for i, img := range data {
+		images[i] = img.(*models.Image) // We needn't error check because the cast type is guaranteed by dbmdl
 	}
 
 	// Return our findings
@@ -35,23 +39,26 @@ func GetActiveImages(page, amount int) (int, []*models.Image, *dbmdl.Pagination)
 
 // GetUserImages returns a manifest of images uploaded by a single user, active or not
 func GetUserImages(uuid string, page, amount int) (int, []*models.Image, *dbmdl.Pagination) {
+	// Store the type
+	imageType := reflect.TypeOf((*models.Image)(nil)).Elem()
+
 	// Where clause for selecting the proper uploader
-	where := dbmdl.NewWhereClause("postgres")
+	where := dbmdl.NewWhereClause(imageType)
 	where.AddValuedClause("Uploader="+where.GetPlaceholder(0), uuid)
 
 	// Pagination
-	pag := dbmdl.NewPagination(uint(page), uint(amount))
+	dpb := dbmdl.NewPagination(page, amount)
 
 	// DBMDL fetch
-	res, err := dbmdl.Fetch(postgres.Connect(), "tuego_images", (*models.Image)(nil), where, pag)
+	data, pag, err := dbmdl.Fetch(postgres.Connect(), imageType, where, dpb)
 	if err != nil {
 		return http.StatusNotFound, nil, nil
 	}
 
 	// Cast the result set
-	var images []*models.Image
-	for _, img := range res.Data {
-		images = append(images, img.(*models.Image))
+	images := make([]*models.Image, len(data))
+	for i, img := range data {
+		images[i] = img.(*models.Image)
 	}
 
 	// Return our findings
