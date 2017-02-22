@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -33,6 +34,14 @@
         android:layout_height="0px"
         android:layout_weight="1">
 
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:progressTint="#d6004a"
+            android:paddingBottom="10dp" />
+
         <TextView
             android:text="Loading..."
             android:textSize="30dp"
@@ -41,11 +50,5 @@
             android:layout_height="wrap_content"
             android:id="@+id/textView"
             android:layout_gravity="center"/>
-
-        <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/progressBar" />
     </LinearLayout>
 </LinearLayout>

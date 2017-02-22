@@ -49,8 +49,8 @@ class WebAPI {
                client.addRequestProperty("Content-Type","application/json");
                client.addRequestProperty("Accept","application/json");
                //client.addRequestProperty("Authorization","Bearer " + <JWT TOKEN FROM LOGIN GOES HERE> );
-               client.setChunkedStreamingMode(0);
                client.setFixedLengthStreamingMode(json.length);
+               //client.setChunkedStreamingMode(0);
 
                // Write json to output stream
                OutputStream out = new BufferedOutputStream(client.getOutputStream());
