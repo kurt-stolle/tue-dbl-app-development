@@ -18,7 +18,7 @@
             android:layout_gravity="left"
             android:layout_marginTop="10px"
             android:layout_marginLeft="10px"
-            android:layout_weight="0.2">
+            android:layout_weight="0.15">
 
             <ImageButton
                 android:layout_gravity="left"
@@ -34,17 +34,44 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="0.6"
+            android:layout_weight="0.7"
             android:gravity="center">
 
             <TextView
-                android:text="@string/error_message"
+                android:text="@string/gps_warning"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textSize="30dp"
                 android:textColor="@color/colorWhite"
                 android:id="@+id/textView2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="0.15"
+            android:gravity="center"
+            android:weightSum="1">
+
+            <Button
+                android:text="Cancel"
+                android:textColor="@color/colorWhite"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/my_cancel_button_bg"
+                android:layout_margin="5dp"
+                android:layout_weight="0.5"/>
+
+            <Button
+                android:text="Enable"
+                android:textColor="@color/colorWhite"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/my_confirm_button_bg"
+                android:layout_margin="5dp"
+                android:layout_weight="0.5"/>
         </LinearLayout>
 
     </LinearLayout>
