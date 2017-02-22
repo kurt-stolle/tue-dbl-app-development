@@ -1,8 +1,14 @@
 package services
 
 import (
+	"bytes"
+	"image"
+	"image/jpeg"
+	"image/png"
+	"io"
 	"net/http"
 	"reflect"
+	"strconv"
 
 	dbmdl "github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
@@ -63,4 +69,73 @@ func GetUserImages(uuid string, page, amount int) (int, []*models.Image, *dbmdl.
 
 	// Return our findings
 	return http.StatusOK, images, pag
+}
+
+// Define some macro constants
+const (
+	JPEG = "image/jpeg"
+	PNG  = "image/png"
+)
+
+// WriteImage will create a buffer that can be written as a reply
+func WriteImage(w io.Writer, img *image.Image, encoding string) (string, error) {
+	var buffer = new(bytes.Buffer)
+	var err error
+
+	// Parse depending on encoding
+	switch encoding {
+	case JPEG:
+		err = jpeg.Encode(buffer, *img, nil)
+	case PNG:
+		err = png.Encode(buffer, *img)
+	}
+
+	if err != nil {
+		return "", err
+	}
+
+	// Get the length
+	l := strconv.Itoa(len(buffer.Bytes()))
+
+	// Check if is HTTP
+	if wHTTP, ok := w.(http.ResponseWriter); ok {
+		wHTTP.Header().Set("Content-Type", encoding)
+		wHTTP.Header().Set("Content-Length", l)
+	}
+
+	// Write
+	w.Write(buffer.Bytes())
+
+	// Return bytes, length and no error
+	return l, nil
+}
+
+// ParseImage treats a file as an image
+func ParseImage(file []byte) (*image.Image, error) {
+	// Decode image
+	img, _, err := image.Decode(bytes.NewReader(file))
+	if err != nil {
+		return nil, err
+	}
+
+	return &img, nil
+}
+
+// VerifyImageSize verified whether an image is of proper size (px)
+func VerifyImageSize(img *image.Image, width int, height int) bool {
+	b := (*img).Bounds()
+	return (b.Max.X == width && b.Max.Y == height)
+}
+
+// VerifyFileType checks whether a file type is what we expect
+func VerifyFileType(f []byte, types ...string) bool {
+	// Check if the detected type equals one of the provided types
+	t := http.DetectContentType(f)
+	for _, x := range types {
+		if t == x {
+			return true
+		}
+	}
+
+	return false
 }
