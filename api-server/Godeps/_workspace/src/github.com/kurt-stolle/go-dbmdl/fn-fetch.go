@@ -8,35 +8,31 @@ import (
 	"sync"
 )
 
-// Result holds an array of structs and a pagination object
-type Result struct {
-	Data       []interface{}
-	Pagination *Pagination
-}
-
 // Fetch loads data from a database a populates the struct
 // sRef is a pointer to the struct, only used for getting the reflection type
-func Fetch(db *sql.DB, t string, sRef interface{}, where *WhereClause, pag *Pagination, fields ...string) (*Result, error) {
-	// Check whether the dialect exists
-	if where.Dialect == nil {
-		return nil, ErrNoDialect
-	}
+func Fetch(db *sql.DB, sRef interface{}, where *WhereClause, pag *Pagination, fields ...string) ([]interface{}, *Pagination, error) {
 
 	// Set the reference, but check whether it's a pointer first
-	targetType := reflect.TypeOf(sRef)
-	if targetType.Kind() != reflect.Ptr {
-		return nil, ErrNoPointer
+	targetType := getReflectType(sRef)
+
+	// Get the dialect and table name
+	d, t, err := getDT(targetType)
+	if err != nil {
+		return nil, nil, err
 	}
-	targetType = targetType.Elem()
 
 	// Check whether we know of this type's existance
 	if _, exists := tables[targetType]; !exists {
-		return nil, ErrUnknownType
+		return nil, nil, ErrUnknownType
 	}
 
 	// Fallbacks
 	if pag == nil {
-		pag = &Pagination{1, 1}
+		pag = NewPagination(1, 1)
+	}
+
+	if where == nil {
+		where = NewWhereClause(d)
 	}
 
 	// If we did not supply and fields to be selected, select all fields
@@ -58,7 +54,7 @@ func Fetch(db *sql.DB, t string, sRef interface{}, where *WhereClause, pag *Pagi
 	}
 
 	if len(fields) < 1 {
-		return nil, errors.New("We have nothing to select because all fields are ommited by dbmdl")
+		return nil, nil, errors.New("Nothing to select, all fields flagged omit")
 	}
 
 	// Do the following tasks concurrently
@@ -66,13 +62,12 @@ func Fetch(db *sql.DB, t string, sRef interface{}, where *WhereClause, pag *Pagi
 	var r *sql.Rows
 	var dummyVariables []reflect.Value // Slice to hold the values scanned from the *sql.Rows result
 	var dummyVariablesAddresses []interface{}
-	var res = &Result{}
-	res.Pagination = pag
+	var data []interface{}
 
 	// Build and execute the Query
 	wg.Add(1)
 	go func() {
-		q, a := where.Dialect.FetchFields(t, fields, pag, where)
+		q, a := d.FetchFields(t, fields, pag, where)
 
 		rows, err := db.Query(q, a...)
 		if err != nil && err != sql.ErrNoRows {
@@ -102,6 +97,13 @@ func Fetch(db *sql.DB, t string, sRef interface{}, where *WhereClause, pag *Pagi
 		wg.Done()
 	}()
 
+	// Pagination
+	wg.Add(1)
+	go func() {
+		pag.Load(db, t, where)
+		wg.Done()
+	}()
+
 	// Wait
 	wg.Wait()
 
@@ -117,8 +119,8 @@ func Fetch(db *sql.DB, t string, sRef interface{}, where *WhereClause, pag *Pagi
 			s.Elem().FieldByName(fields[i]).Set(v) // Set values in our new struct
 		}
 
-		res.Data = append(res.Data, s.Interface()) // Append the interface value of the pointer to the previously created targetType type.
+		data = append(data, s.Interface()) // Append the interface value of the pointer to the previously created targetType type.
 	}
 
-	return res, nil
+	return data, pag, nil
 }

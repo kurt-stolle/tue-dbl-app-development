@@ -2,14 +2,13 @@ package dbmdl
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"reflect"
 )
 
 // Load will load a single struct from the database based on a where clause
 // Target is a pointer to a struct
-func Load(db *sql.DB, table string, target interface{}, where *WhereClause) error {
+func Load(db *sql.DB, target interface{}, where *WhereClause) error {
 	// Check whether the dialect exists
 	if where.Dialect == nil {
 		return ErrNoDialect
@@ -18,12 +17,18 @@ func Load(db *sql.DB, table string, target interface{}, where *WhereClause) erro
 	// First, verify whether the supplied target is actually a pointer
 	var targetType = reflect.TypeOf(target)
 	if targetType.Kind() != reflect.Ptr {
-		return ErrNoPointer
+		panic(ErrNoPointer)
 	}
 
 	// Set references for later use
 	targetType = targetType.Elem()
 	targetValue := reflect.ValueOf(target).Elem()
+
+	// Get the dialect and table name
+	d, t, err := getDT(targetType)
+	if err != nil {
+		return err
+	}
 
 	// Check whether we know of this type's existance
 	if _, exists := tables[targetType]; !exists {
@@ -48,11 +53,9 @@ func Load(db *sql.DB, table string, target interface{}, where *WhereClause) erro
 	}
 
 	// Query using the same shit as Fetch Fields
-	q, a := where.Dialect.FetchFields(table, fields, &Pagination{1, 1}, where)
+	q, a := d.FetchFields(t, fields, NewPagination(1, 1), where)
 
 	r := db.QueryRow(q, a...)
-
-	fmt.Println(r)
 
 	// Create dummy variables that we can scan the results of the query into
 	var addresses []interface{}
@@ -72,8 +75,6 @@ func Load(db *sql.DB, table string, target interface{}, where *WhereClause) erro
 		}
 		log.Panic("dbmdl: ", err)
 	}
-
-	fmt.Println(target)
 
 	return nil
 }
