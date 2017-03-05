@@ -10,4 +10,6 @@
     <string name="guess_correct_points">You earned 10 studypoints.</string>
     <string name="guess_incorrect">Too bad, you did not guess the location.</string>
     <string name="error_message">An error has occurred, please try again later.</string>
+    <string name="gps_warning"> GPS connectivity error </string>
+    <string name="internet_warning"> Internet connectivity error </string>
 </resources>
