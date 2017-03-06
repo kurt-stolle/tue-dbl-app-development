@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.app.tuego.R;
@@ -11,16 +12,17 @@ import com.example.app.tuego.R;
 import static com.example.app.tuego.R.string.login;
 
 public class LoginActivity extends AppCompatActivity {
-    TextView forgotPassword;
+    TextView TVForgotPassword;
+    EditText ETName, ETPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        forgotPassword = (TextView) findViewById(R.id.textViewForgotPassword);
+        TVForgotPassword = (TextView) findViewById(R.id.textViewForgotPassword);
 
-        assert forgotPassword != null;
-        forgotPassword.setOnClickListener(new View.OnClickListener() {
+        assert TVForgotPassword != null;
+        TVForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);

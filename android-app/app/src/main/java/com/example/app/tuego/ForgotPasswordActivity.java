@@ -12,8 +12,8 @@ import com.example.app.tuego.R;
 import static com.example.app.tuego.R.string.login;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
-    EditText ETCode;
     TextView TVResendCode;
+    EditText ETCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

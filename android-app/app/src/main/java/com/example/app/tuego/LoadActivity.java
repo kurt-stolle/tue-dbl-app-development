@@ -8,22 +8,21 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class LoadActivity extends AppCompatActivity {
-
-    ImageView logo;
+    ImageView IVLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load);
 
-        logo = (ImageView) findViewById(R.id.Logo);
+        IVLogo = (ImageView) findViewById(R.id.Logo);
 
         // TODO: make stuff load
         // For now make the logo clickable to continue to next slide
 
-        assert logo != null;
+        assert IVLogo != null;
 
-        logo.setOnClickListener(new View.OnClickListener() {
+        IVLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoadActivity.this, RegisterActivity.class);

@@ -12,11 +12,8 @@ import com.google.gson.Gson;
 
 
 public class RegisterActivity extends AppCompatActivity {
-    TextView login;
-    EditText inputName;
-    EditText inputEmail;
-    EditText inputPassword;
-    EditText inputPasswordVerify;
+    TextView TVLogin;
+    EditText ETName, ETEmail, ETPassword, ETPasswordVerify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,17 +21,17 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         // Fetch elements from view
-        login = (TextView) findViewById(R.id.textViewtoLogin);
-        inputName = (EditText) findViewById(R.id.textFieldName);
-        inputEmail = (EditText) findViewById(R.id.textFieldEmail);
-        inputPassword = (EditText) findViewById(R.id.editTextPasswordLogin);
-        inputPasswordVerify = (EditText) findViewById(R.id.editTextPasswordVerifyLogin);
+        TVLogin = (TextView) findViewById(R.id.textViewtoLogin);
+        ETName = (EditText) findViewById(R.id.textFieldName);
+        ETEmail = (EditText) findViewById(R.id.textFieldEmail);
+        ETPassword = (EditText) findViewById(R.id.editTextPasswordLogin);
+        ETPasswordVerify = (EditText) findViewById(R.id.editTextPasswordVerifyLogin);
 
         // Verify results
-        assert login != null;
+        assert TVLogin != null;
 
         // Events
-        login.setOnClickListener(new View.OnClickListener() {
+        TVLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -48,10 +45,10 @@ public class RegisterActivity extends AppCompatActivity {
     // method called when the REGISTER button is pressed
     public void register(View v) {
         // Perform the registration
-        String nameText = inputName.getText().toString();
-        String emailText = inputEmail.getText().toString();
-        String passwordText = inputPassword.getText().toString();
-        String passwordVerifyText = inputPasswordVerify.getText().toString();
+        String nameText = ETName.getText().toString();
+        String emailText = ETEmail.getText().toString();
+        String passwordText = ETPassword.getText().toString();
+        String passwordVerifyText = ETPasswordVerify.getText().toString();
 
         if (!passwordText.equals(passwordVerifyText)) {
             System.err.println("Password not the same!");

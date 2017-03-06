@@ -35,7 +35,7 @@
         android:layout_margin="5dp">
 
         <TextView
-            android:text="@string/registration_info"
+            android:text="@string/registrationInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewChangePasswordInfo"
