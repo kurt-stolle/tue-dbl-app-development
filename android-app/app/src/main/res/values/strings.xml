@@ -3,7 +3,7 @@
     <string name="login">Log in</string>
     <string name="registrationInfo">To register a new account, please fill in the boxes below.</string>
     <string name="registrationWarning">By clicking the Register button below, you accept to agree to the Terms and Conditions.</string>
-    <string name="codeInfo">A code has been sent to your email adress. Please fill in the sent code in the box below.</string>
+    <string name="codeInfo">A code has been sent to your email address. Please fill in the sent code in the box below.</string>
     <string name="changePasswordInfo">To change your password, please fill in a new password in the boxes below.</string>
     <string name="passwordChanged">Your password has been changed.</string>
     <string name="guessCorrect">Congratulations, you guessed the location!</string>

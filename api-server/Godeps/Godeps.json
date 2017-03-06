@@ -22,7 +22,7 @@
 		},
 		{
 			"ImportPath": "github.com/kurt-stolle/go-dbmdl",
-			"Rev": "e8ca58cfb0ed1b91f5632aedd017a0776ed72172"
+			"Rev": "87a48d3ad7b4a0822ce15642dcb08ed7433cad8a"
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
