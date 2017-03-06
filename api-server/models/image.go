@@ -5,5 +5,7 @@ type Image struct {
 	UUID       string `dbmdl:"uuid, primary key"`
 	UploadTime string `dbmdl:"char(16), not null, default '1958-01-01 00:00'"` // Format: 2017-02-19 12:47
 	Uploader   string `dbmdl:"uuid, not null"`
-	Finder     string `dbmdl:"uuid"`
+	Finder     string `dbmdl:"uuid not null, default ''"`
+	Latitude   string `dbmdl:"double precision not null, default 0.0"`
+	Longitude  string `dbmdl:"double precision not null, default 0.0"`
 }
