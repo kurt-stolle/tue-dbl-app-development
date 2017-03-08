@@ -60,14 +60,16 @@ public class RegisterActivity extends AppCompatActivity {
         RegistrationModel reg = new RegistrationModel(nameText, emailText, passwordText);
 
         // Initialize api
-        WebAPI api = new WebAPI(); // Use Object for expected return; we aren't expecting a return value
-        String res;
-        try {
-            res = api.Call("POST", "/register", reg);
-        } catch (APIError e){
-            System.err.println("Can not register, error: " + e);
-            // TODO: Notify the user that they made some mistake
-        }
+//        WebAPI api = new WebAPI(); // Use Object for expected return; we aren't expecting a return value
+//        String res;
+//        try {
+//            res = api.Call("POST", "/register", reg);
+            new CallAPI("POST", "/register", reg).execute();
+
+//        } catch (APIError e){
+//            System.err.println("Can not register, error: " + e);
+//            // TODO: Notify the user that they made some mistake
+//        }
 
         // Registration is done - move to next view
         // TODO: Auto login
