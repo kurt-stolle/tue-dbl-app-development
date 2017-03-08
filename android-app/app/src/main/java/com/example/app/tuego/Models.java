@@ -29,7 +29,6 @@ class UserModel {
     int Points;
 }
 
-// an item in the inbox
 class ImageModel {
     String UUID;
     String Uploader; // UUID of the Uploader

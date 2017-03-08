@@ -14,7 +14,7 @@ public class InboxActivity extends AppCompatActivity {
     }
 
     // method that is called when the camera button is pressed
-    public void makePicture() {
+    public void displayCamera() {
         // TODO: go to a screen to create a picture
     }
 
@@ -29,12 +29,17 @@ public class InboxActivity extends AppCompatActivity {
     }
 
     // method that is called when an item is clicked, also gives an item as argument
-    public void itemClick(ImageModel model) {
+    public void onItemClick(ImageModel model) {
         // TODO: view the item that is pressed
     }
 
     // method that will be called several times to add items to the feed
     public void addItem() {
         // TODO: add a single item to the layout
+    }
+
+    // method that is called when the logout button is pressed
+    public void logout() {
+        // TODO: make the user logout
     }
 }
