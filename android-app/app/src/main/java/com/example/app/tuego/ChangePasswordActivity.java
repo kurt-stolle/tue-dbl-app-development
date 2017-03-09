@@ -12,36 +12,43 @@ import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.TextView;
-
-import com.example.app.tuego.R;
-
-import static com.example.app.tuego.R.string.login;
-import static java.security.AccessController.getContext;
 
 public class ChangePasswordActivity extends AppCompatActivity {
     EditText ETPassword, ETConfirmPassword;
+    Button BNext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        ETPassword = (EditText) findViewById(R.id.editTextPassword);
-        ETConfirmPassword = (EditText) findViewById(R.id.editTextConfirmPassword);
+
+        // look up all needed views
+        ETPassword = (EditText) findViewById(R.id.editTextChangePasswordPassword);
+        ETConfirmPassword = (EditText) findViewById(R.id.editTextChangePasswordVerifyPassword);
+        BNext = (Button) findViewById(R.id.buttonForgotPasswordNext);
+
+        // set event listeners
+        BNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changePassword(v);
+            }
+        });
     }
 
-    // method which is called when the NEXT button is pressed
-    public void next(View view) {
-        // TODO: write code to change password
-
+    // method which is called when BNext is pressed
+    public void changePassword(View view) {
+        // TODO: write code to check password and change password
         showPopup(ChangePasswordActivity.this);
     }
 
     // the method that displays the popup.
+    // TODO: popup is ugly, should be replaced
     private void showPopup(final Activity context) {
         Point p = new Point();
 

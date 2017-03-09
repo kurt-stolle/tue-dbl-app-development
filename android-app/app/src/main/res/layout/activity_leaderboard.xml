@@ -1,45 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <!-- TODO: update this xml file -->
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/leaderboardList" />
-
-    <EditText
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="1. User name"
-        android:ems="10"
-        android:id="@+id/userLead1"
-        android:layout_marginLeft="80dp"
-        android:layout_marginTop="30dp" />
-
-    <EditText
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="2. User name"
-        android:ems="10"
-        android:id="@+id/userLead2"
-        android:layout_marginLeft="80dp" />
-    <EditText
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="3. User name"
-        android:ems="10"
-        android:id="@+id/userLead3"
-        android:layout_marginLeft="80dp" />
-    <EditText
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="4. User name"
-        android:ems="10"
-        android:id="@+id/userLead4"
-        android:layout_marginLeft="80dp" />
+        android:id="@+id/leaderboardList">
+    </ListView>
 </LinearLayout>

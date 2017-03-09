@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <!-- TODO: create a new pop-up and/or delete this -->
 
     <LinearLayout
         android:orientation="vertical"
@@ -62,7 +65,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/my_cancel_button_bg"
                 android:layout_margin="5dp"
-                android:layout_weight="0.5"/>
+                android:layout_weight="0.5" />
 
             <Button
                 android:text="Enable"
@@ -71,7 +74,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/my_confirm_button_bg"
                 android:layout_margin="5dp"
-                android:layout_weight="0.5"/>
+                android:layout_weight="0.5" />
         </LinearLayout>
 
     </LinearLayout>

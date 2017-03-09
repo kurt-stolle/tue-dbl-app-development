@@ -2,6 +2,7 @@ package com.example.app.tuego;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 public class PostPictureActivity extends AppCompatActivity {
 
@@ -11,8 +12,13 @@ public class PostPictureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_picture_post);
     }
 
-    // TODO: describe method
-    public void exampleMethod() {
-        // TODO: describe what the method should do
+    // method that is called when DISCARD button is pressed
+    public void discardPic(View v) {
+        // TODO: discard the picture
+    }
+
+    // method that is called when POST button is pressed
+    public void postPic(View v) {
+        // TODO: post the picture
     }
 }

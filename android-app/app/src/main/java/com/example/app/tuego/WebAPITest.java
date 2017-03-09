@@ -19,14 +19,14 @@ import java.net.URL;
 
 class CallAPI extends AsyncTask<String, Void, Void> {
 
-    String methodAPI;
-    String routeAPI;
-    Object dataClassAPI;
+    private String methodAPI;
+    private String routeAPI;
+    private Object dataClassAPI;
 
     CallAPI (String method, String route, Object dataClass) {
-        methodAPI = method;
-        routeAPI = route;
-        dataClassAPI = dataClass;
+        this.methodAPI = method;
+        this.routeAPI = route;
+        this.dataClassAPI = dataClass;
     }
 
     @Override

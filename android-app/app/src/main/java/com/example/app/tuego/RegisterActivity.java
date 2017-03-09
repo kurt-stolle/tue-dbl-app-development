@@ -4,46 +4,50 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.example.app.tuego.R;
 import com.google.gson.Gson;
 
-
 public class RegisterActivity extends AppCompatActivity {
-    TextView TVLogin;
-    EditText ETName, ETEmail, ETPassword, ETPasswordVerify;
+    private TextView TVToLogin;
+    private EditText ETName, ETEmail, ETPassword, ETPasswordVerify;
+    private Button BRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Fetch elements from view
-        TVLogin = (TextView) findViewById(R.id.textViewtoLogin);
-        ETName = (EditText) findViewById(R.id.textFieldName);
-        ETEmail = (EditText) findViewById(R.id.textFieldEmail);
-        ETPassword = (EditText) findViewById(R.id.editTextPasswordLogin);
-        ETPasswordVerify = (EditText) findViewById(R.id.editTextPasswordVerifyLogin);
+        // look up all needed views
+        TVToLogin = (TextView) findViewById(R.id.textViewRegisterToLogin);
+        ETName = (EditText) findViewById(R.id.editTextRegisterUsername);
+        ETEmail = (EditText) findViewById(R.id.editTextRegisterEmail);
+        ETPassword = (EditText) findViewById(R.id.editTextRegisterPassword);
+        ETPasswordVerify = (EditText) findViewById(R.id.editTextRegisterPasswordVerify);
+        BRegister = (Button) findViewById(R.id.buttonRegister);
 
-        // Verify results
-        assert TVLogin != null;
-
-        // Events
-        TVLogin.setOnClickListener(new View.OnClickListener() {
+        // set event listeners
+        TVToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                toLogin(v);
+            }
+        });
 
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+        BRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                register(v);
             }
         });
     }
 
-    // method called when the REGISTER button is pressed
-    public void register(View v) {
+    // method called when bRegister is pressed
+    private void register(View v) {
         // Perform the registration
         String nameText = ETName.getText().toString();
         String emailText = ETEmail.getText().toString();
@@ -64,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
 //        String res;
 //        try {
 //            res = api.Call("POST", "/register", reg);
-            new CallAPI("POST", "/register", reg).execute();
+        new CallAPI("POST", "/register", reg).execute();
 
 //        } catch (APIError e){
 //            System.err.println("Can not register, error: " + e);
@@ -72,10 +76,15 @@ public class RegisterActivity extends AppCompatActivity {
 //        }
 
         // Registration is done - move to next view
-        // TODO: Auto login
         Intent intent = new Intent(this, InboxActivity.class); // should register
         startActivity(intent);
         finish();
+    }
+
+    // called when TVToLogin is clicked
+    private void toLogin(View v) {
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
 }
 

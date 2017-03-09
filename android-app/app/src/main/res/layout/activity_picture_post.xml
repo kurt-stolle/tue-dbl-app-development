@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:weightSum="1">
 
         <LinearLayout
@@ -16,73 +17,75 @@
             android:gravity="center">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="350dp"
                 android:layout_height="350dp"
                 android:layout_margin="5dp"
+                android:background="@drawable/my_popup_bg"
                 android:gravity="center"
-                android:background="@drawable/my_popup_bg">
+                android:orientation="vertical">
 
                 <TextView
-                    android:text="This is a picture"
-                    android:textColor="@color/colorWhite"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="This is a picture"
+                    android:textColor="@color/colorWhite" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="0px"
             android:layout_weight="0.15"
+            android:orientation="vertical"
             android:weightSum="2">
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="Picture taken at time: 6:00"
                 android:textColor="@color/colorBlack"
-                android:textSize="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:layout_margin="5dp"
-                android:layout_weight="1"/>
+                android:textSize="20dp" />
 
             <TextView
-                android:text="Points worth: 10"
-                android:textColor="@color/colorBlack"
-                android:textSize="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_margin="5dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Points worth: 10"
+                android:textColor="@color/colorBlack"
+                android:textSize="20dp" />
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:weightSum="1"
-            android:layout_weight="0.1">
+            android:layout_weight="0.1"
+            android:orientation="horizontal"
+            android:weightSum="1">
 
             <Button
-                android:text="Cancel"
-                android:textColor="@color/colorWhite"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="0.5"
                 android:background="@drawable/my_cancel_button_bg"
-                android:layout_margin="5dp"
-                android:layout_weight="0.5"/>
+                android:onClick="discardPic"
+                android:text="Discard"
+                android:textColor="@color/colorWhite" />
 
             <Button
-                android:text="post"
-                android:textColor="@color/colorWhite"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/my_confirm_button_bg"
                 android:layout_margin="5dp"
-                android:layout_weight="0.5"/>
+                android:layout_weight="0.5"
+                android:background="@drawable/my_confirm_button_bg"
+                android:onClick="postPic"
+                android:text="Post"
+                android:textColor="@color/colorWhite" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
