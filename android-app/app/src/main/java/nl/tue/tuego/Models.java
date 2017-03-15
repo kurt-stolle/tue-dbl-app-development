@@ -1,4 +1,4 @@
-package com.example.app.tuego;
+package nl.tue.tuego;
 
 class RegistrationModel {
     String Name;

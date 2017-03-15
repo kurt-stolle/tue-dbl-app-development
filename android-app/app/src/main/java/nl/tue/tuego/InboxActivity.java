@@ -1,4 +1,4 @@
-package com.example.app.tuego;
+package nl.tue.tuego;
 
 import android.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -7,15 +7,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.app.tuego.R;
-
 public class InboxActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox);
+
+
 
         // setActionBar();
         // or

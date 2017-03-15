@@ -1,4 +1,4 @@
-package com.example.app.tuego;
+package nl.tue.tuego;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

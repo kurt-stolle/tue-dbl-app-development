@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.s151789.tuego"
+        applicationId "nl.tue.tuego"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1

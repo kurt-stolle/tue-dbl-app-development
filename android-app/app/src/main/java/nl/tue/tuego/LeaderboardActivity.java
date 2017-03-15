@@ -1,13 +1,8 @@
-package com.example.app.tuego;
+package nl.tue.tuego;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
 
 public class LeaderboardActivity extends AppCompatActivity {
     private final int AMOUNT_BEST_USERS = 4; // set amount of users in the leaderboard

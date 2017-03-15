@@ -1,4 +1,4 @@
-package com.example.app.tuego;
+package nl.tue.tuego;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,11 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.example.app.tuego.R;
-import com.google.gson.Gson;
 
 public class RegisterActivity extends AppCompatActivity {
     private TextView TVToLogin;

@@ -1,4 +1,4 @@
-package com.example.app.tuego;
+package nl.tue.tuego;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,20 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.example.app.tuego.R;
+public class LeaderboardAdapter extends ArrayAdapter<UserModel> {
 
-import java.util.ArrayList;
-
-public class InboxAdapter extends ArrayAdapter<ImageModel> {
-
-    public InboxAdapter(Context context, ArrayList<ImageModel> items) {
+    public LeaderboardAdapter(Context context, UserModel[] items) {
         super(context, 0, items);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        ImageModel item = getItem(position);
+        UserModel item = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.inbox_item, parent, false);

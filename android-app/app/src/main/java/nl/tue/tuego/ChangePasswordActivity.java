@@ -1,11 +1,10 @@
-package com.example.app.tuego;
+package nl.tue.tuego;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Display;
@@ -18,7 +17,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
-public class ChangePasswordActivity extends AppCompatActivity {
+public class ChangePasswordActivity extends Activity {
     EditText ETPassword, ETConfirmPassword;
     Button BNext;
 
