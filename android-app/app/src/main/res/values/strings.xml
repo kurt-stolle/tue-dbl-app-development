@@ -1,14 +1,64 @@
 <resources>
+    <!-- General strings -->
     <string name="appName">TU/e GO</string>
-    <string name="login">Log in</string>
-    <string name="registrationInfo">To register a new account, please fill in the boxes below.</string>
-    <string name="registrationWarning">By clicking the Register button below, you accept to agree to the Terms and Conditions.</string>
+    <string name="next">Next</string>
+
+    <!-- Account details -->
+    <string name="username">Username</string>
+    <string name="emailAddress">Email Address</string>
+    <string name="usernameEmailAddress">Username / Email Address</string>
+    <string name="password">Password</string>
+    <string name="verifyPassword">Verify Password</string>
+
+    <!-- Register activity -->
+    <string name="registerTitle">Register</string>
+    <string name="registerInfo">To register a new account, please fill in the boxes below.</string>
+    <string name="registerButton">Register</string>
+    <string name="registerToLogin">Already have an account?</string>
+    <string name="registerWarning">By clicking the Register button below, you accept to agree to the Terms and Conditions.</string>
+
+    <!-- Login activity -->
+    <string name="loginTitle">Log in</string>
+    <string name="loginButton">Log in</string>
+    <string name="loginToForgotPassword">Forgot password?</string>
+
+    <!-- Forgot password activity -->
+    <string name="forgotPasswordTitle">Recover password</string>
     <string name="codeInfo">A code has been sent to your email address. Please fill in the sent code in the box below.</string>
+    <string name="forgotPasswordCode">Fill in code</string>
+    <string name="forgotPasswordNoCode">Did not receive a code?</string>
+
+    <!-- Change password activity -->
+    <string name="changePasswordTitle">Change password</string>
     <string name="changePasswordInfo">To change your password, please fill in a new password in the boxes below.</string>
     <string name="passwordChanged">Your password has been changed.</string>
+
+    <!-- Inbox activity -->
+    <string name="inboxTitle">Images</string>
+
+    <!-- Inbox item activity -->
+    <string name="inboxItemTitle">Challenge information</string>
+    <string name="inboxItemButton">Guess location</string>
+
+    <!-- Post picture activity -->
+    <string name="postPictureTitle">Post a picture</string>
+
+    <!-- Leaderboard activity -->
+    <string name="leaderboardTitle">Leaderboard</string>
+
+    <!-- Correct guess pop-up -->
     <string name="guessCorrect">Congratulations, you guessed the location!</string>
     <string name="guessCorrectPoints">You earned 10 studypoints.</string>
+
+    <!-- Incorrect guess pop-up -->
     <string name="guessIncorrect">Too bad, you did not guess the location.</string>
+
+    <!-- Warning pop-ups -->
     <string name="gpsWarning">GPS is currently disabled, do you want to enable it?</string>
     <string name="internetWarning">Internet is currently disabled, do you want to enable it?</string>
+
+    <!-- Toolbar -->
+    <string name="actionLeaderboard">Leaderboard</string>
+    <string name="actionLogout">Log out</string>
+    <string name="actionSettings">Settings</string>
 </resources>

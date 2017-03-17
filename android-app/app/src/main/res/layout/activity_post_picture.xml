@@ -4,22 +4,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/action_bar_layout" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/activity_margin"
         android:orientation="vertical"
         android:weightSum="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
+            android:layout_margin="@dimen/view_margin"
             android:layout_weight="0.75"
             android:gravity="center">
 
             <LinearLayout
                 android:layout_width="350dp"
                 android:layout_height="350dp"
-                android:layout_margin="5dp"
                 android:background="@drawable/my_popup_bg"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -42,7 +47,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/view_margin"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="Picture taken at time: 6:00"
@@ -52,7 +57,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/view_margin"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="Points worth: 10"
@@ -68,22 +73,22 @@
             android:weightSum="1">
 
             <Button
+                android:id="@+id/buttonDiscard"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/view_margin"
                 android:layout_weight="0.5"
                 android:background="@drawable/my_cancel_button_bg"
-                android:onClick="discardPic"
                 android:text="Discard"
                 android:textColor="@color/colorWhite" />
 
             <Button
+                android:id="@+id/buttonPost"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/view_margin"
                 android:layout_weight="0.5"
                 android:background="@drawable/my_confirm_button_bg"
-                android:onClick="postPic"
                 android:text="Post"
                 android:textColor="@color/colorWhite" />
         </LinearLayout>

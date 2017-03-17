@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +21,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
-public class ChangePasswordActivity extends Activity {
+public class ChangePasswordActivity extends AppCompatActivity {
     EditText ETPassword, ETConfirmPassword;
     Button BNext;
 
@@ -29,7 +33,13 @@ public class ChangePasswordActivity extends Activity {
         // look up all needed views
         ETPassword = (EditText) findViewById(R.id.editTextChangePasswordPassword);
         ETConfirmPassword = (EditText) findViewById(R.id.editTextChangePasswordVerifyPassword);
-        BNext = (Button) findViewById(R.id.buttonForgotPasswordNext);
+        BNext = (Button) findViewById(R.id.buttonChangePasswordNext);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // adds the toolbar to the activity
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // set event listeners
         BNext.setOnClickListener(new View.OnClickListener() {
@@ -95,5 +105,20 @@ public class ChangePasswordActivity extends Activity {
                 finish();
             }
         });
+    }
+
+    // events that trigger when a certain button is pressed on the action bar
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // when the up button is pressed
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            // all other cases
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

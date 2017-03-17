@@ -5,27 +5,53 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/appName"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <activity
-            android:name="nl.tue.tuego.LoadActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".LoadActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="nl.tue.tuego.RegisterActivity"/>
-        <activity android:name="nl.tue.tuego.LoginActivity"/>
-        <activity android:name="nl.tue.tuego.ForgotPasswordActivity"/>
-        <activity android:name="nl.tue.tuego.ChangePasswordActivity"/>
-        <activity android:name="nl.tue.tuego.InboxActivity"/>
-        <activity android:name="nl.tue.tuego.InboxItemActivity"/>
-        <activity android:name="nl.tue.tuego.LeaderboardActivity"/>
-        <activity android:name="nl.tue.tuego.PostPictureActivity"/>
+
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/registerTitle" />
+
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/loginTitle" />
+
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:label="@string/forgotPasswordTitle" />
+
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:label="@string/changePasswordTitle" />
+
+        <activity
+            android:name=".InboxActivity"
+            android:label="@string/inboxTitle" />
+
+        <activity
+            android:name=".InboxItemActivity"
+            android:label="@string/inboxItemTitle" />
+
+        <activity
+            android:name=".LeaderboardActivity"
+            android:label="@string/leaderboardTitle" />
+
+        <activity
+            android:name=".PostPictureActivity"
+            android:label="@string/postPictureTitle" />
+
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

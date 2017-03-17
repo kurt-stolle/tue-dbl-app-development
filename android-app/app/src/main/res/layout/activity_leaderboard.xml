@@ -6,6 +6,10 @@
 
     <!-- TODO: update this xml file -->
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/action_bar_layout" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -2,7 +2,12 @@ package nl.tue.tuego;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +30,10 @@ public class RegisterActivity extends AppCompatActivity {
         ETPassword = (EditText) findViewById(R.id.editTextRegisterPassword);
         ETPasswordVerify = (EditText) findViewById(R.id.editTextRegisterPasswordVerify);
         BRegister = (Button) findViewById(R.id.buttonRegister);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // adds the toolbar to the activity
+        setSupportActionBar(toolbar);
 
         // set event listeners
         TVToLogin.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +82,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Registration is done - move to next view
         Intent intent = new Intent(this, InboxActivity.class); // should register
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

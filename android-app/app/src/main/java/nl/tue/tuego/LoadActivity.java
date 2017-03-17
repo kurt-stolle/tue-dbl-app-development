@@ -1,20 +1,20 @@
 package nl.tue.tuego;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
-public class LoadActivity extends AppCompatActivity {
-    ImageView IVLogo;
+public class LoadActivity extends Activity {
+    private ImageView IVLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load);
 
-        IVLogo = (ImageView) findViewById(R.id.Logo);
+        IVLogo = (ImageView) findViewById(R.id.logo);
 
         // For now make the logo clickable to continue to next slide
         assert IVLogo != null;

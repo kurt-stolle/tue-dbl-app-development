@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/actionLeaderboard"
+        android:icon="@drawable/leaderboard_icon_white"
+        android:title="@string/actionLeaderboard"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/actionLogout"
+        android:icon="@drawable/ic_power_settings_new_white_48dp"
+        android:title="@string/actionLogout"
+        app:showAsAction="always" />
+</menu>
