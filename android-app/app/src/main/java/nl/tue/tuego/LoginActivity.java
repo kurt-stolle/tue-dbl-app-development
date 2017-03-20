@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,9 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.concurrent.ExecutionException;
+
 public class LoginActivity extends AppCompatActivity {
     private TextView TVForgotPassword;
-    private EditText ETName, ETPassword;
+    private EditText ETEmail, ETPassword;
     private Button BLogin;
 
     @Override
@@ -25,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // look up all needed views
         TVForgotPassword = (TextView) findViewById(R.id.textViewLoginToForgotPassword);
-        ETName = (EditText) findViewById(R.id.editTextLoginUsername);
+        ETEmail = (EditText) findViewById(R.id.editTextLoginUsername);
         ETPassword = (EditText) findViewById(R.id.editTextLoginPassword);
         BLogin = (Button) findViewById(R.id.buttonLogin);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -54,6 +57,22 @@ public class LoginActivity extends AppCompatActivity {
     // method that is called when BLogin is pressed
     public void login(View v) {
         // TODO: make login check
+
+        String emailText = ETEmail.getText().toString();
+        String passwordText = ETPassword.getText().toString();
+
+        LoginModel log = new LoginModel(emailText, passwordText);
+
+        try {
+            String token = new CallAPI("POST", "/login", log).execute().get();
+
+            Log.d("test123" , token);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
         Intent intent = new Intent(this, InboxActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

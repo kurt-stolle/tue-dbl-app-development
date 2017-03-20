@@ -17,7 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-class CallAPI extends AsyncTask<String, Void, Void> {
+class CallAPI extends AsyncTask<String, Void, String> {
 
     private String methodAPI;
     private String routeAPI;
@@ -30,7 +30,7 @@ class CallAPI extends AsyncTask<String, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(String... strings) {
+    protected String doInBackground(String... params) {
 
         Gson gson = new Gson();
 
@@ -73,9 +73,11 @@ class CallAPI extends AsyncTask<String, Void, Void> {
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                reader.close();
+//                reader.close();
                 // Parse the response
-//                return reader.toString();
+
+
+                return result.toString();
             }
             finally {
                 client.disconnect();
@@ -100,11 +102,9 @@ class CallAPI extends AsyncTask<String, Void, Void> {
         return null;
     }
 
-    @Override
-    protected void onPostExecute(Void result) {
 
-        Log.d("END_API_TEST", "Done");
-    }
+
+
 
 
 }
