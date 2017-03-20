@@ -39,6 +39,6 @@ public class LoadActivity extends Activity {
 
     // method that displays a warning if needed
     private void showWarning() {
-        // TODO: display a warning if needed
+        new GPSDialogFragment().show(getFragmentManager(), "dialog");
     }
 }
