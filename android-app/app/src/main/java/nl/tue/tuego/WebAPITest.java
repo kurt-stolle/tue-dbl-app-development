@@ -76,8 +76,9 @@ class CallAPI extends AsyncTask<String, Void, String> {
 //                reader.close();
                 // Parse the response
 
-
-                return result.toString();
+                String temp = result.toString();
+                JhbGciOiJSUzUx
+                return temp.substring(10,474);
             }
             finally {
                 client.disconnect();
