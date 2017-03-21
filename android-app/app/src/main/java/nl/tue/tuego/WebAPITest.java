@@ -77,7 +77,7 @@ class CallAPI extends AsyncTask<String, Void, String> {
                 // Parse the response
 
                 String temp = result.toString();
-                JhbGciOiJSUzUx
+                
                 return temp.substring(10,474);
             }
             finally {
