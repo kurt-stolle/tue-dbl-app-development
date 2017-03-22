@@ -25,7 +25,7 @@ func User(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	}
 
 	switch r.Method {
-	case http.MethodPatch: // Update user's information
+	case http.MethodPost: // Update user's information
 		// TODO
 		writeError(w, http.StatusNotImplemented, "Method not implemented: "+r.Method)
 	case http.MethodGet: // Get user's information

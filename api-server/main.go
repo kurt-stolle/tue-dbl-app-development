@@ -84,12 +84,12 @@ func main() {
 	setupRoute(r, "/login", controllers.Login).Methods(http.MethodPost).Headers("Content-Type", "application/json")
 
 	setupRoute(r, "/images", authentication.Verify, controllers.Images).Methods(http.MethodPost, http.MethodGet)
-	setupRoute(r, "/images/{uuid}", authentication.Verify, controllers.Image).Methods(http.MethodPatch, http.MethodGet).Headers("Content-Type", "application/json")
+	setupRoute(r, "/images/{uuid}", authentication.Verify, controllers.Image).Methods(http.MethodPost, http.MethodGet).Headers("Content-Type", "application/json")
 	setupRoute(r, "/images/{uuid}/image.jpg", authentication.Verify, controllers.ImageFile).Methods(http.MethodGet)
 
 	setupRoute(r, "/leaderboard", authentication.Verify, controllers.Leaderboard).Methods(http.MethodGet).Headers("Content-Type", "application/json")
 
-	setupRoute(r, "/users/{uuid}", authentication.Verify, controllers.User).Methods(http.MethodGet, http.MethodPatch).Headers("Content-Type", "application/json")
+	setupRoute(r, "/users/{uuid}", authentication.Verify, controllers.User).Methods(http.MethodGet, http.MethodPost).Headers("Content-Type", "application/json")
 
 	// Server setup - using the negroni library
 	n := negroni.New()

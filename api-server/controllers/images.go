@@ -76,7 +76,7 @@ func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	}
 
 	switch r.Method {
-	case http.MethodPatch: // Guess the location of an image
+	case http.MethodPost: // Guess the location of an image
 		coords := new(models.Coordinates)
 
 		dec := json.NewDecoder(r.Body)
