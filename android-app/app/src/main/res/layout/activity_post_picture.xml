@@ -22,19 +22,20 @@
             android:layout_weight="0.75"
             android:gravity="center">
 
-            <LinearLayout
-                android:layout_width="350dp"
+            <ImageView
+                android:id="@+id/postPostPictureImage"
+                android:layout_width="match_parent"
                 android:layout_height="350dp"
-                android:background="@drawable/my_popup_bg"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:scaleType="centerCrop"
+                android:gravity="center" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="This is a picture"
-                    android:textColor="@color/colorWhite" />
-            </LinearLayout>
+            <!--
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="This is a picture"
+                android:textColor="@color/colorWhite" />
+            -->
         </LinearLayout>
 
         <LinearLayout

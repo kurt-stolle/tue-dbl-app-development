@@ -2,11 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nl.tue.tuego">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
     <application
         android:allowBackup="true"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:label="@string/appName"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:icon="@drawable/tuego">
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="nl.tue.tuego.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths">
+            </meta-data>
+        </provider>
 
         <activity android:name=".LoadActivity">
             <intent-filter>

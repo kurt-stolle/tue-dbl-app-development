@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.Toast;
 
 public class ChangePasswordActivity extends AppCompatActivity {
     EditText ETPassword, ETConfirmPassword;
@@ -53,58 +54,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
     // method which is called when BNext is pressed
     public void changePassword(View view) {
         // TODO: write code to check password and change password
-        showPopup(ChangePasswordActivity.this);
-    }
 
-    // the method that displays the popup.
-    // TODO: popup is ugly, should be replaced
-    private void showPopup(final Activity context) {
-        Point p = new Point();
+        String s = getResources().getText(R.string.passwordChanged).toString();
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
 
-        // Inflate the activity_popup_password_changed.xml
-        LinearLayout viewGroup = (LinearLayout) context.findViewById(R.id.popupLayout);
-        LayoutInflater layoutInflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = layoutInflater.inflate(R.layout.activity_popup_password_changed, viewGroup);
-
-        // getting screen size in px
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-
-        // changing the popup size in dp to px (is hard-coded, should not be hard-coded)
-        int popupWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
-        int popupHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
-
-        // calculating the location where the popup should be placed
-        p.x = size.x/2 - popupWidth/2;
-        p.y = size.y/2 - popupHeight/2;
-
-        // creating the PopupWindow
-        final PopupWindow popup = new PopupWindow(context);
-        popup.setContentView(layout);
-        popup.setWidth(popupWidth);
-        popup.setHeight(popupHeight);
-        popup.setFocusable(true);
-
-        // clear the default translucent background
-        popup.setBackgroundDrawable(new BitmapDrawable());
-
-        // displaying the popup at the specified location
-        popup.showAtLocation(layout, Gravity.NO_GRAVITY, p.x, p.y);
-
-        // getting a reference to Close button, and close the popup when clicked.
-        ImageButton back = (ImageButton) layout.findViewById(R.id.imageButtonClose);
-        back.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                popup.dismiss();
-                Intent intent = new Intent(ChangePasswordActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     // events that trigger when a certain button is pressed on the action bar

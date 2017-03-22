@@ -1,11 +1,19 @@
 package nl.tue.tuego;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.v7.app.ActionBar;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,10 +27,18 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class InboxActivity extends AppCompatActivity {
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_WRITE_EXTERNAL_STORAGE = 3;
+    private String mCurrentPhotoPath;
     private LinearLayout BCamera;
     private ListView LVFeed;
     private List<ImageModel> images;
@@ -66,12 +82,112 @@ public class InboxActivity extends AppCompatActivity {
 
     // method that is called when the camera button is pressed
     public void openCamera() {
-        // TODO: go to a screen to create a picture which uses the camera API
+        // if there is permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            makePicture();
+        } else {
+            // check if permissions denied earlier
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // TODO: add an explanation on different thread
+
+            } else {
+                // ask for permissions
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                        REQUEST_WRITE_EXTERNAL_STORAGE);
+            }
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
     }
 
-    // method that is called when the leaderboard button is pressed
-    public void openLeaderboard() {
-        // TODO: go to the leaderboard activity
+    // go to the camera
+    private void makePicture() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // create the file where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                // error occurred while creating the file
+                // TODO: handle error
+                Log.d("File", "Failed to create path. Error: " + e);
+            }
+
+            // continue only if the file was successfully created
+            if (photoFile != null) {
+                Log.d("File", "Path recognized");
+                Uri photoURI = FileProvider.getUriForFile(getApplicationContext(),
+                        "nl.tue.tuego.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
+    // returns a unique file name for a new picture
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        Log.d("File", "Creating unique file path");
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".png",        /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        Log.d("File", "Path created (" + mCurrentPhotoPath + ")");
+        return image;
+    }
+
+    // called when returning from permission pop-up
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_WRITE_EXTERNAL_STORAGE: {
+                Log.d("Permissions", Integer.toString(REQUEST_WRITE_EXTERNAL_STORAGE));
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! we now go to the camera
+                    makePicture();
+                } else {
+                    // permission denied, boo! TODO: handle this "error".
+                }
+                return;
+            }
+
+            default: {
+                Log.d("Permissions", "DEFAULT");
+                return;
+            }
+            // other 'case' lines should go here if used
+        }
+    }
+
+    // called when returning from the camera API
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("Camera", "RETURNED");
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Log.d("Camera", "PICTURE OK");
+            Intent intent = new Intent(this, PostPictureActivity.class);
+            intent.putExtra("Path", mCurrentPhotoPath);
+            startActivity(intent);
+        }
     }
 
     // method that is called when the screen is pulled down to refresh items
@@ -97,16 +213,6 @@ public class InboxActivity extends AppCompatActivity {
     // method that is called when an item is clicked, also gives an item as argument
     public void onItemClick(ImageModel model) {
         // TODO: view the item that is pressed
-    }
-
-    // method that will be called several times to add items to the feed
-    public void addItem() {
-        // TODO: add a single item to the layout
-    }
-
-    // method that is called when the logout button is pressed
-    public void logout() {
-        // TODO: make the user logout
     }
 
     // creates the options in the menu
