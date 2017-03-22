@@ -34,6 +34,12 @@ public class LeaderboardActivity extends AppCompatActivity {
     // method that will refresh the best users
     public void refresh() {
         // TODO: it will update the list of users
+        getBestUsers();
+        for (int i=0; i<4; i++) {
+            bestUsers[i] = new UserModel("a", "b", "c", 0);
+        }
+            adapter = new LeaderboardAdapter(this, bestUsers);
+            LVLeaderboard.setAdapter(adapter);
     }
 
     // method that will display the leaderboard
@@ -41,6 +47,12 @@ public class LeaderboardActivity extends AppCompatActivity {
         // TODO: delete existing leaderboard and create a new one to display
     }
 
+    // method that will place the four users with the most Points in bestUsers
+    public void getBestUsers() {
+        // TODO: sort all users by Points
+        // TODO: Place the four users with the most points in array
+
+    }
     // events that trigger when a certain button is pressed on the action bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

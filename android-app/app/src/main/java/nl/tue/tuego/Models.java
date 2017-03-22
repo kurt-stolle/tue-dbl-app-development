@@ -32,6 +32,13 @@ class UserModel {
     String Name;
     String Email;
     int Points;
+
+    public UserModel(String UUID, String Name, String Email, int Points){
+        this.UUID = UUID;
+        this.Name = Name;
+        this.Email = Email;
+        this.Points = Points;
+    }
 }
 
 class ImageModel {
