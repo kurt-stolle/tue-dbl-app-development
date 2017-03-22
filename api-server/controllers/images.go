@@ -18,7 +18,7 @@ import (
 	"github.com/pborman/uuid"
 )
 
-// Images is a controller for receiving an image sent by a user and storing it in the filesystem
+// Images /images is a controller for receiving an image sent by a user and storing it in the filesystem
 func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	switch r.Method {
 	case http.MethodPost: // Upload an image (JPEG)
@@ -68,7 +68,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	}
 }
 
-// Image is a controller for guessing the location of an image
+// Image /images/{uuid} is a controller for guessing the location of an image
 func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	uuid := mux.Vars(r)["uuid"]
 	if uuid == "" {
@@ -83,9 +83,28 @@ func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		if err := dec.Decode(&coords); err != nil {
 			writeError(w, http.StatusBadRequest)
 		}
+
+		// TODO set Uploader
+
+		// TODO delete file
+
+		// TODO award points
+
+		writeSuccess(w)
 	case http.MethodGet: // Get a picture (JPEG)
-		serveFile(w, r, "/uploads/"+uuid+".jpg")
+
+		// TODO return image model with UUID
 	default: // The method isn't implemented
 		writeError(w, http.StatusNotImplemented, "Method not implemented: "+r.Method)
 	}
+}
+
+// ImageFile returns the actual file as jpeg
+func ImageFile(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	uuid := mux.Vars(r)["uuid"]
+	if uuid == "" {
+		writeError(w, http.StatusBadRequest)
+	}
+
+	serveFile(w, r, "/uploads/"+uuid+".jpg")
 }
