@@ -84,13 +84,24 @@ func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 			writeError(w, http.StatusBadRequest)
 		}
 
-		// TODO set Uploader
+		// Find the uploading user
+		var uuidUser string
+		if token, ok := context.Get(r, "token").(*jwt.Token); !ok {
+			writeError(w, http.StatusUnauthorized)
+		} else {
+			uuidUser = token.Claims["sub"].(string)
 
-		// TODO delete file
+			if uuidUser == "" {
+				writeError(w, http.StatusForbidden)
+			}
+		}
 
-		// TODO award points
+		// Determine whether it is found or not
+		if services.GuessImage(uuidUser, uuid, coords) {
+			writeSuccess(w)
+		}
 
-		writeSuccess(w)
+		writeError(w, http.StatusNotFound, "Incorrect guess")
 	case http.MethodGet: // Get a picture (JPEG)
 
 		// TODO return image model with UUID

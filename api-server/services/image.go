@@ -6,6 +6,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"log"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -138,4 +139,49 @@ func VerifyFileType(f []byte, types ...string) bool {
 	}
 
 	return false
+}
+
+// How much may the guess location differ from the actual location?
+const maxRangeDiffernece float64 = 1.0
+
+// GuessImage checks whether the image was guessed correctrly
+func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
+	// First, load the image Coordinates
+	img := new(models.Image)
+	where := dbmdl.NewWhereClause("postgres")
+	where.AddValuedClause("UUID="+where.GetPlaceholder(0), uuidImage) // UUID of img model
+	where.AddClause("Finder=''")                                      // Not yet found
+
+	if err := dbmdl.Load(postgres.Connect(), img, where); err != nil {
+		if err == dbmdl.ErrNotFound {
+			return false
+		}
+
+		log.Panic("Failed to fetch image from database: ", err)
+	}
+
+	// Check Coordinates
+	if !((img.Latitude+maxRangeDiffernece) > coords.Latitude && (img.Latitude-maxRangeDiffernece) < coords.Latitude &&
+		(img.Longitude+maxRangeDiffernece) > coords.Longitude && (img.Longitude-maxRangeDiffernece) < coords.Longitude) {
+		return false
+	}
+
+	// Award points
+	if err := AwardPoints(uuidUser, 15); err != nil {
+		log.Panic("Could not award points to user: ", err)
+	}
+
+	// Delete file
+	// TODO
+
+	// Write back to database
+	where = dbmdl.NewWhereClause("postgres")
+	where.AddValuedClause("UUID="+where.GetPlaceholder(0), uuidImage)
+
+	img.Finder = uuidUser
+	if err := dbmdl.Save(postgres.Connect(), img, where); err != nil {
+		log.Panic(err)
+	}
+
+	return true
 }
