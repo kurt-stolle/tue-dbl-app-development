@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -76,9 +77,11 @@ class CallAPI extends AsyncTask<String, Void, String> {
 //                reader.close();
                 // Parse the response
 
+
+
                 String temp = result.toString();
-                
-                return temp.substring(10,474);
+
+                return temp.substring(10,474); // Return the response
             }
             finally {
                 client.disconnect();
@@ -102,10 +105,5 @@ class CallAPI extends AsyncTask<String, Void, String> {
 
         return null;
     }
-
-
-
-
-
 
 }
