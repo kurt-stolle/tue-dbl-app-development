@@ -3,37 +3,60 @@ package nl.tue.tuego;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class LoadActivity extends Activity {
-    private ImageView IVLogo;
+    private final String TOKEN_FILE_NAME = "token_file";
+    private final int TOKEN_LENGTH = 464;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load);
-
-        IVLogo = (ImageView) findViewById(R.id.logo);
-
-        // For now make the logo clickable to continue to next slide
-        assert IVLogo != null;
-
-        IVLogo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoadActivity.this, RegisterActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
         load();
     }
 
     // method which checks several things before continuing
     private void load() {
-        // TODO: make stuff load like autologin
+        // check if the user is already logged in by checking if there is a token stored
+        try {
+            FileInputStream fis = openFileInput(TOKEN_FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+            fis.close();
+            // check if the length of the token is correct
+            if (sb.length() != TOKEN_LENGTH) {
+                // go to the register activity
+                Log.d("LoadActivity", "Token has incorrect length");
+                Intent intent = new Intent(this, RegisterActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                // go to the inbox activity
+                Log.d("LoadActivity", "Token is of correct length");
+                Intent intent = new Intent(this, InboxActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        } catch (IOException e) {
+            // go to the register activity
+            Log.d("LoadActivity", "Token not found");
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
 //    // method that displays a warning if needed
