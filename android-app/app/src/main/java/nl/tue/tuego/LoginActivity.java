@@ -1,25 +1,29 @@
 package nl.tue.tuego;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.concurrent.ExecutionException;
+import com.google.gson.Gson;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
     private TextView TVForgotPassword;
     private EditText ETEmail, ETPassword;
     private Button BLogin;
+    private final String TOKEN_FILE_NAME = "token_file";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,28 +60,44 @@ public class LoginActivity extends AppCompatActivity {
 
     // method that is called when BLogin is pressed
     public void login(View v) {
-        // TODO: make login check
-
         String emailText = ETEmail.getText().toString();
         String passwordText = ETPassword.getText().toString();
 
+        // Debug print
+        Log.d("LoginActivity","Starting logging in");
+
+        // Fill out the model
         LoginModel log = new LoginModel(emailText, passwordText);
 
-        try {
-            String token = new CallAPI("POST", "/login", log).execute().get();
+        // Determine what happens when the call is done
+        APICallback callback = new APICallback() {
+            @Override
+            public void done(String res) {
+                Gson gson = new Gson();
+                TokenModel tokenModel = gson.fromJson(res, TokenModel.class);
+                String token = tokenModel.getToken();
+                try {
+                    FileOutputStream fos = openFileOutput(TOKEN_FILE_NAME, Context.MODE_PRIVATE);
+                    fos.write(token.getBytes());
+                    fos.close();
+                } catch (IOException e) {
+                    Log.d("LoginActivity", "Error saving token, " + e);
+                }
+                Intent intent = new Intent(LoginActivity.this, InboxActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
 
-            Log.d("test123" , token);
+            @Override
+            public void fail(String res) {
+                Toast.makeText(LoginActivity.this, "Account not recognized", Toast.LENGTH_SHORT).show();
+                Log.d("LoginActivity", "Logging in failed, check parameters");
+            }
+        };
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        Intent intent = new Intent(this, InboxActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+        // Perform the API call
+        new APICall("POST", "/login", log, callback).execute();
     }
 
     // method that is called when TVForgotPassword is clicked

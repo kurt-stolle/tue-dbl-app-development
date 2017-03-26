@@ -39,6 +39,7 @@ class APICall extends AsyncTask<String, Void, String> {
         this.route = route;
         this.model = model;
         this.callback = callback;
+        this.success = false;
 
         if (this.model == null && (this.method == "POST" || this.method == "PATCH" || this.method == "PUT")){
             // This means that we are doing a PUSH-type request, but without any data model. Something is wrong, so log an error!
@@ -74,7 +75,7 @@ class APICall extends AsyncTask<String, Void, String> {
             client.addRequestProperty("Accept", "application/json");
 
             // TODO: Load API token from local storage
-            //client.addRequestProperty("Authorization","Bearer " + <JWT TOKEN FROM LOGIN GOES HERE> );
+            // client.addRequestProperty("Authorization","Bearer " + <JWT TOKEN FROM LOGIN GOES HERE> );
 
             // Some stuff is different when doing a PUSH-type request
             // KURT: I have defined "Push request" as I don't know the proper term. Basically means that we're using a method like PATCH/PUT/POST to push data to the server
@@ -99,9 +100,8 @@ class APICall extends AsyncTask<String, Void, String> {
                 while ((line = reader.readLine()) != null) {
                     stringBuilder.append(line);
                 }
-//                reader.close();
-                // Parse the response
-                // To string
+
+                // Parse the response to string
                 String res = stringBuilder.toString();
 
                 // Debug print
@@ -117,19 +117,14 @@ class APICall extends AsyncTask<String, Void, String> {
 
                 // Return string, most likely JSON-encoded
                 return res;
-            }
-            finally {
+            } finally {
                 Log.d("API", "Async request finished");
                 client.disconnect();
             }
-
-
-        }
-        catch(MalformedURLException e) {
+        } catch(MalformedURLException e) {
             //Handles an incorrectly entered URL
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             //Handles input and output errors
             e.printStackTrace();
         } finally {
@@ -148,7 +143,7 @@ class APICall extends AsyncTask<String, Void, String> {
         // Callback
         // KURT: I've defined success as being a HTTP response code of 200. This means that success has to do with whether the API has deemed the request successful,
         // so NOT whether Android was ABLE to MAKE the call. If this is unclear, please contact me!
-        if (this.success == true) {
+        if (this.success) {
             this.callback.done(res);
         } else {
             this.callback.fail(res);

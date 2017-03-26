@@ -29,7 +29,6 @@ public class LoadActivity extends Activity {
         });
 
         load();
-        showWarning();
     }
 
     // method which checks several things before continuing
@@ -37,8 +36,8 @@ public class LoadActivity extends Activity {
         // TODO: make stuff load like autologin
     }
 
-    // method that displays a warning if needed
-    private void showWarning() {
-        new GPSDialogFragment().show(getFragmentManager(), "dialog");
-    }
+//    // method that displays a warning if needed
+//    private void showWarning() {
+//        new GPSDialogFragment().show(getFragmentManager(), "dialog");
+//    }
 }

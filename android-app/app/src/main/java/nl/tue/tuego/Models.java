@@ -25,6 +25,10 @@ class LoginModel {
 
 class TokenModel {
     String Token;
+
+    public String getToken() {
+        return this.Token;
+    }
 }
 
 class UserModel {
