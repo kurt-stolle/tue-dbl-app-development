@@ -3,7 +3,6 @@ package nl.tue.tuego;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -37,7 +36,7 @@ import java.util.List;
 public class InboxActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
-    static final int REQUEST_WRITE_EXTERNAL_STORAGE = 3;
+    static final int REQUEST_PERMISSIONS = 1;
     private String mCurrentPhotoPath;
     private LinearLayout BCamera;
     private ListView LVFeed;
@@ -69,7 +68,7 @@ public class InboxActivity extends AppCompatActivity {
         BCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCamera();
+                onCameraButtonClick();
             }
         });
 
@@ -81,32 +80,40 @@ public class InboxActivity extends AppCompatActivity {
     }
 
     // method that is called when the camera button is pressed
-    public void openCamera() {
-        // if there is permission
+    public void onCameraButtonClick() {
+        List<String> permissionsNeeded = new ArrayList<>();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.CAMERA);
+        }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            makePicture();
-        } else {
+                != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        for (int i = 0; i < permissionsNeeded.size(); i++) {
             // check if permissions denied earlier
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    permissionsNeeded.get(i))) {
                 // TODO: add an explanation on different thread
-
-            } else {
-                // ask for permissions
-//                ActivityCompat.requestPermissions(this,
-//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                        REQUEST_WRITE_EXTERNAL_STORAGE);
             }
+        }
 
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    REQUEST_WRITE_EXTERNAL_STORAGE);
+        if (permissionsNeeded.size() > 0) {
+        // ask for permissions
+        ActivityCompat.requestPermissions(this,
+                permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
+                REQUEST_PERMISSIONS);
+
+        } else {
+            // all permissions granted so go to camera
+            toCamera();
         }
     }
 
     // go to the camera
-    private void makePicture() {
+    private void toCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -114,6 +121,7 @@ public class InboxActivity extends AppCompatActivity {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
+                Log.d("File", "Path created (" + mCurrentPhotoPath + ")");
             } catch (IOException e) {
                 // error occurred while creating the file
                 // TODO: handle error
@@ -122,11 +130,11 @@ public class InboxActivity extends AppCompatActivity {
 
             // continue only if the file was successfully created
             if (photoFile != null) {
-                Log.d("File", "Path recognized");
                 Uri photoURI = FileProvider.getUriForFile(getApplicationContext(),
                         "nl.tue.tuego.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                Log.d("Camera", "Starting camera");
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
@@ -140,53 +148,67 @@ public class InboxActivity extends AppCompatActivity {
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".png",        /* suffix */
-                storageDir      /* directory */
+                imageFileName,  // prefix
+                ".png",        // suffix
+                storageDir      // directory
         );
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        Log.d("File", "Path created (" + mCurrentPhotoPath + ")");
         return image;
     }
 
     // called when returning from permission pop-up
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_WRITE_EXTERNAL_STORAGE: {
-                Log.d("Permissions", Integer.toString(REQUEST_WRITE_EXTERNAL_STORAGE));
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! we now go to the camera
-                    makePicture();
+            case REQUEST_PERMISSIONS:
+                // if request is canceled
+                if (grantResults.length == 0) {
+                    Log.d("Permissions", "Canceled");
                 } else {
-                    // permission denied, boo! TODO: handle this "error".
+                    boolean permissionsGranted = true;
+
+                    for (int i = 0; i < permissions.length; i++) {
+                        if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                            Log.d("Permissions", permissions[i] + " granted");
+                        } else {
+                            permissionsGranted = false;
+                            Log.d("Permissions", permissions[i] + " denied");
+                        }
+                    }
+
+                    if (permissionsGranted) {
+                        toCamera();
+                        Log.d("Permissions", "All permissions granted");
+                    } else {
+                        Toast.makeText(this, "Some permissions denied", Toast.LENGTH_SHORT).show();
+                        Log.d("Permissions", "Some permissions denied");
+                    }
                 }
-                return;
-            }
+                break;
+
+            // other permission cases should go here
 
             default: {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 Log.d("Permissions", "DEFAULT");
-                return;
             }
-            // other 'case' lines should go here if used
         }
     }
 
     // called when returning from the camera API
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("Camera", "RETURNED");
+        Log.d("Camera", "Finished");
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Log.d("Camera", "PICTURE OK");
+            Log.d("Camera", "Picture OK");
             Intent intent = new Intent(this, PostPictureActivity.class);
             intent.putExtra("Path", mCurrentPhotoPath);
             startActivity(intent);
+        } else {
+            Log.d("Camera", "Picture not OK");
         }
     }
 

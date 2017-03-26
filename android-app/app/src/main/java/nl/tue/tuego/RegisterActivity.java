@@ -87,11 +87,10 @@ public class RegisterActivity extends AppCompatActivity {
         RegistrationModel reg = new RegistrationModel(nameText, emailText, passwordText);
 
         // Determine what happens when the call is done
-        final RegisterActivity _this = this;
         APICallback callback = new APICallback() {
             @Override
             public void done(String res) {
-                Intent intent = new Intent(_this, InboxActivity.class); // should register
+                Intent intent = new Intent(RegisterActivity.this, InboxActivity.class); // should register
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
@@ -128,6 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Not sure who has created this, what is its purpose?
     @Override
     public void onStart() {
         super.onStart();
