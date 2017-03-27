@@ -46,7 +46,7 @@ func CreateUser(u *models.User, password string) (int, error) {
 	}
 
 	var alreadyExists bool
-	if err := postgres.Connect("SELECT TRUE FROM tuego_users WHERE Email=$1 LIMIT 1", u.Email).Scan(&alreadyExists); alreadyExists {
+	if err := postgres.Connect().QueryRow("SELECT TRUE FROM tuego_users WHERE Email=$1", u.Email).Scan(&alreadyExists); alreadyExists {
 		return http.StatusBadRequest, errors.New("The provided e-mail address already exists")
 	}
 
