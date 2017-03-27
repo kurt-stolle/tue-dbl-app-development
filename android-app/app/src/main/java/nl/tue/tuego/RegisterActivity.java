@@ -88,7 +88,8 @@ public class RegisterActivity extends AppCompatActivity {
         APICallback callback = new APICallback() {
             @Override
             public void done(String res) {
-                Intent intent = new Intent(RegisterActivity.this, InboxActivity.class);
+                Toast.makeText(RegisterActivity.this, "Account created", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
