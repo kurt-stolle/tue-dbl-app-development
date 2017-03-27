@@ -27,7 +27,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		if token, ok := context.Get(r, "token").(*jwt.Token); !ok {
 			writeError(w, http.StatusUnauthorized)
 		} else {
-			uuidUser = token.Claims["sub"].(string)
+			uuidUser = (token.Claims.(jwt.StandardClaims)).Subject
 
 			if uuidUser == "" {
 				writeError(w, http.StatusForbidden)
@@ -89,7 +89,7 @@ func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		if token, ok := context.Get(r, "token").(*jwt.Token); !ok {
 			writeError(w, http.StatusUnauthorized)
 		} else {
-			uuidUser = token.Claims["sub"].(string)
+			uuidUser = (token.Claims.(jwt.StandardClaims)).Subject
 
 			if uuidUser == "" {
 				writeError(w, http.StatusForbidden)

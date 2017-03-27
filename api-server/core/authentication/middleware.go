@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/context"
@@ -15,7 +16,10 @@ func Check(r *http.Request) bool {
 	authBackend := GetJWTInstance()
 
 	// Important security measure: if ALG is not valid or set to 'none', then authentication must fail!
-	token, err := jwt.ParseFromRequest(r, func(token *jwt.Token) (interface{}, error) {
+	tokenText := r.Header.Get("Authorization")
+	tokenText = strings.Replace(tokenText, "Bearer ", "", 1)
+
+	token, err := jwt.Parse(tokenText, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
