@@ -10,7 +10,6 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
 	"github.com/pborman/uuid" // For UUID generation in the registration process
@@ -44,6 +43,11 @@ func CreateUser(u *models.User, password string) (int, error) {
 
 	if _, err := mail.ParseAddress(u.Email); err != nil {
 		return http.StatusBadRequest, errors.New("The provided e-mail adress is not an e-mail address")
+	}
+
+	var alreadyExists bool
+	if err := postgres.Connect("SELECT TRUE FROM tuego_users WHERE Email=$1 LIMIT 1", u.Email).Scan(&alreadyExists); alreadyExists {
+		return http.StatusBadRequest, errors.New("The provided e-mail address already exists")
 	}
 
 	// Secondly, we generate a UUID and Salt
