@@ -11,7 +11,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
-	dbmdl "github.com/kurt-stolle/go-dbmdl"
+	"github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/services"
@@ -23,15 +23,24 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	switch r.Method {
 	case http.MethodPost: // Upload an image (JPEG)
 		// Find the user
-		var uuidUser string
-		if token, ok := context.Get(r, "token").(*jwt.Token); !ok {
+		token, ok := context.Get(r, "token").(*jwt.Token)
+		if !ok {
 			writeError(w, http.StatusUnauthorized)
-		} else {
-			uuidUser = (token.Claims.(jwt.StandardClaims)).Subject
+			return
+		}
 
-			if uuidUser == "" {
-				writeError(w, http.StatusForbidden)
-			}
+		var uuidUser = (token.Claims.(jwt.StandardClaims)).Subject
+
+		if uuidUser == "" {
+			writeError(w, http.StatusForbidden)
+			return
+		}
+
+		// Scan the maount
+		var amount int
+		if err := postgres.Connect().QueryRow("SELECT COUNT(*) FROM tuego_images WHERE Uploader=$1 LIMIT 5", uuidUser).Scan(&amount); amount >= 5 {
+			writeError(w, http.StatusConflict, "You already have 5 active pictures")
+			return
 		}
 
 		// Create a new image struct
