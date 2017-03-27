@@ -16,14 +16,16 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import static nl.tue.tuego.LoadActivity.TOKEN_FILE_NAME;
 
 public class LoginActivity extends AppCompatActivity {
     private TextView TVForgotPassword;
     private EditText ETEmail, ETPassword;
     private Button BLogin;
-    private final String TOKEN_FILE_NAME = "token_file";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,17 +78,23 @@ public class LoginActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 TokenModel tokenModel = gson.fromJson(res, TokenModel.class);
                 String token = tokenModel.getToken();
+                FileOutputStream fos = null;
+
                 try {
-                    FileOutputStream fos = openFileOutput(TOKEN_FILE_NAME, Context.MODE_PRIVATE);
+                    fos = openFileOutput(TOKEN_FILE_NAME, Context.MODE_PRIVATE);
                     fos.write(token.getBytes());
-                    fos.close();
+
+                    Log.d("LoginActivity", "Token saved");
+                    Intent intent = new Intent(LoginActivity.this, InboxActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
                 } catch (IOException e) {
-                    Log.d("LoginActivity", "Error saving token, " + e);
+                    Toast.makeText(LoginActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
+                    Log.d("LoginActivity", "Error saving token");
+                } finally {
+                    closeStream(fos);
                 }
-                Intent intent = new Intent(LoginActivity.this, InboxActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
             }
 
             @Override
@@ -118,6 +126,16 @@ public class LoginActivity extends AppCompatActivity {
             // all other cases
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void closeStream (Closeable stream) {
+        try {
+            if (stream != null) {
+                stream.close();
+            }
+        } catch (IOException e) {
+            Log.d("Stream", "Stream already closed");
         }
     }
 }

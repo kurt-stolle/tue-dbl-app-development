@@ -1,6 +1,7 @@
 package nl.tue.tuego;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -26,12 +27,16 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.Closeable;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static nl.tue.tuego.LoadActivity.TOKEN_FILE_NAME;
 
 public class InboxActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -250,13 +255,26 @@ public class InboxActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionLeaderboard:
-                Toast.makeText(getApplicationContext(), "Hello!", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(this, LeaderboardActivity.class);
-                startActivity(intent);
+                Intent intent1 = new Intent(this, LeaderboardActivity.class);
+                startActivity(intent1);
                 return true;
 
             case R.id.actionLogout:
-                // TODO: add code to make logout work
+                FileOutputStream fos = null;
+                try {
+                    String token = "";
+                    fos = openFileOutput(TOKEN_FILE_NAME, Context.MODE_PRIVATE);
+                    fos.write(token.getBytes());
+                    Log.d("Log out", "Token deleted");
+                } catch (IOException e) {
+                    Log.d("Log out", "No token found");
+                } finally {
+                    closeStream(fos);
+                }
+
+                Intent intent2 = new Intent(this, LoginActivity.class);
+                startActivity(intent2);
+                finish();
                 return true;
 
             case android.R.id.home:
@@ -265,6 +283,16 @@ public class InboxActivity extends AppCompatActivity {
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void closeStream (Closeable stream) {
+        try {
+            if (stream != null) {
+                stream.close();
+            }
+        } catch (IOException e) {
+            Log.d("Stream", "Stream already closed");
         }
     }
 
