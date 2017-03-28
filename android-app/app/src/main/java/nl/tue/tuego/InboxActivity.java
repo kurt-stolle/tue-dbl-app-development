@@ -154,7 +154,7 @@ public class InboxActivity extends AppCompatActivity {
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  // prefix
-                ".png",        // suffix
+                ".jpg",        // suffix
                 storageDir      // directory
         );
 

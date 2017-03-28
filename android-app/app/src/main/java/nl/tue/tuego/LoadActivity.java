@@ -29,40 +29,31 @@ public class LoadActivity extends Activity {
     private void load() {
         // check if the user is already logged in by checking if there is a token stored
         FileInputStream fis = null;
+        BufferedReader bufferedReader = null;
         try {
             fis = openFileInput(TOKEN_FILE_NAME);
             InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
+            bufferedReader = new BufferedReader(isr);
 
-            try {
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    sb.append(line);
-                }
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
 
-                // check if the length of the token is correct
-                if (sb.length() != TOKEN_LENGTH) {
-                    // go to the register activity
-                    Log.d("LoadActivity", "Token has incorrect length");
-                    Intent intent = new Intent(this, RegisterActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    // go to the inbox activity
-                    Log.d("LoadActivity", "Token is of correct length");
-                    Intent intent = new Intent(this, InboxActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            } catch (IOException e) {
+            // check if the length of the token is correct
+            if (sb.length() != TOKEN_LENGTH) {
                 // go to the register activity
-                Log.d("LoadActivity", "Reading token failed");
+                Log.d("LoadActivity", "Token has incorrect length");
                 Intent intent = new Intent(this, RegisterActivity.class);
                 startActivity(intent);
                 finish();
-            } finally {
-                closeStream(bufferedReader);
+            } else {
+                // go to the inbox activity
+                Log.d("LoadActivity", "Token is of correct length");
+                Intent intent = new Intent(this, InboxActivity.class);
+                startActivity(intent);
+                finish();
             }
         } catch (FileNotFoundException e) {
             // go to the register activity
@@ -70,12 +61,19 @@ public class LoadActivity extends Activity {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
             finish();
+        } catch (IOException e) {
+            // go to the register activity
+            Log.d("LoadActivity", "Reading token failed");
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
         } finally {
             closeStream(fis);
+            closeStream(bufferedReader);
         }
     }
 
-    private void closeStream (Closeable stream) {
+    private void closeStream(Closeable stream) {
         try {
             if (stream != null) {
                 stream.close();

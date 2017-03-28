@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +20,7 @@ import java.io.IOException;
 public class PostPictureActivity extends AppCompatActivity {
     Button BPost, BDiscard;
     ImageView IVImage;
+    Bitmap picture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +40,12 @@ public class PostPictureActivity extends AppCompatActivity {
 
         // getting the picture taken from the camera
         String filePath = getIntent().getExtras().getString("Path");
+        picture = null;
         try {
-            IVImage.setImageBitmap(rotateBitmapOrientation(filePath));
+            picture = rotateBitmapOrientation(filePath);
+            IVImage.setImageBitmap(picture);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d("PostPictureActivity", "Picture not found");
         }
 
         // set event listeners
@@ -92,6 +96,8 @@ public class PostPictureActivity extends AppCompatActivity {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
                 matrix, true);
     }
+
+
 
     // method that is called when DISCARD button is pressed
     public void discardPic(View v) {

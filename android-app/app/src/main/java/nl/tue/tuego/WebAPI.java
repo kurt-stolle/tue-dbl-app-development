@@ -8,17 +8,20 @@ import com.google.gson.Gson;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 // Interface for callback handling - also able to handle errors
-interface APICallback{
+interface APICallback {
     void done(String res);
+
     void fail(String res);
 }
 
@@ -33,7 +36,7 @@ class APICall extends AsyncTask<String, Void, String> {
     private boolean success;
 
     // Constructor
-    APICall (String method, String route, Object model, APICallback callback) {
+    APICall(String method, String route, Object model, APICallback callback) {
         // Set properties of request
         this.method = method;
         this.route = route;
@@ -41,11 +44,10 @@ class APICall extends AsyncTask<String, Void, String> {
         this.callback = callback;
         this.success = false;
 
-        if (this.model == null && (this.method == "POST" || this.method == "PATCH" || this.method == "PUT")){
+        if (this.model == null && (this.method.equals("POST") || this.method.equals("PATCH") || this.method.equals("PUT"))) {
             // This means that we are doing a PUSH-type request, but without any data model. Something is wrong, so log an error!
 
-            Log.e("API","Making push-type request, but without any data provided. Assuming GET request");
-
+            Log.e("API", "Making push-type request, but without any data provided. Assuming GET request");
             this.method = "GET";
         }
     }
@@ -55,22 +57,22 @@ class APICall extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         // Initialize GSON
         byte[] json = {};
-        boolean isPushRequest = (this.model != null && (this.method == "POST" || this.method == "PATCH" || this.method == "PUT"));
+        boolean isPushRequest = (this.model != null && (this.method.equals("POST") || this.method.equals("PATCH") || this.method.equals("PUT")));
 
-        if (isPushRequest){
+        if (isPushRequest) {
             Gson gson = new Gson();
             json = gson.toJson(this.model).getBytes();
         }
 
         // Perform the request
-        URL url;
         HttpURLConnection client = null;
-
         try {
-            url = new URL("http://tue-dbl-app-development.herokuapp.com" + this.route);
+            URL url = new URL("http://tue-dbl-app-development.herokupp.com" + this.route);
 
             // Initialize and setup client
             client = (HttpURLConnection) url.openConnection();
+            client.setConnectTimeout(3000);
+            client.setReadTimeout(3000);
             client.setRequestMethod(this.method);
             client.addRequestProperty("Accept", "application/json");
 
@@ -78,7 +80,6 @@ class APICall extends AsyncTask<String, Void, String> {
             // client.addRequestProperty("Authorization","Bearer " + <JWT TOKEN FROM LOGIN GOES HERE> );
 
             // Some stuff is different when doing a PUSH-type request
-            // KURT: I have defined "Push request" as I don't know the proper term. Basically means that we're using a method like PATCH/PUT/POST to push data to the server
             if (isPushRequest) {
                 client.setDoOutput(true);
                 client.addRequestProperty("Content-Type", "application/json");
@@ -90,45 +91,61 @@ class APICall extends AsyncTask<String, Void, String> {
                 out.close();
             }
 
-            // Input stream reading using buffer
-            // All responses have input - this is a rule defined by the WebAPI design
-            InputStream in = new BufferedInputStream(client.getInputStream());
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                StringBuilder stringBuilder = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line);
+            // Check response code of the client
+            int responseCode = client.getResponseCode();
+            if (responseCode == 200) {
+                // If OK continue
+                success = true;
+
+                InputStream in = null;
+                BufferedReader reader = null;
+
+                try {
+                    // Input stream reading using buffer
+                    // All responses have input - this is a rule defined by the WebAPI design
+                    in = new BufferedInputStream(client.getInputStream());
+                    reader = new BufferedReader(new InputStreamReader(in));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        stringBuilder.append(line);
+                    }
+
+                    // Parse the response to string
+                    String res = stringBuilder.toString();
+
+                    // Debug print
+                    Log.d("API", res);
+
+                    Log.d("API", "Request successful");
+
+                    // Return string, most likely JSON-encoded
+                    return res;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d("API", "Failed to create input stream");
+                } finally {
+                    closeStream(in);
+                    closeStream(reader);
                 }
-
-                // Parse the response to string
-                String res = stringBuilder.toString();
-
-                // Debug print
-                Log.d("API", res);
-
-                // Determine whether the call was successful
-                int status = client.getResponseCode();
-                if (status == 200){
-                    this.success = true;
-                } else { // Just to be explicit about it.
-                    this.success = false;
-                }
-
-                // Return string, most likely JSON-encoded
-                return res;
-            } finally {
-                Log.d("API", "Async request finished");
-                client.disconnect();
+            } else {
+                // Just to be explicit about it
+                success = false;
+                Log.d("API", "Request rejected, " + client.getResponseMessage());
             }
-        } catch(MalformedURLException e) {
-            //Handles an incorrectly entered URL
-            e.printStackTrace();
+
+        } catch (SocketTimeoutException e) {
+            // Handles connection timeout to the server
+            Log.d("API", "Could not connect to the web API");
+        } catch (MalformedURLException e) {
+            // Handles an incorrectly entered URL
+            Log.d("API", "Incorrect URL");
         } catch (IOException e) {
-            //Handles input and output errors
+            // Handles input and output errors
             e.printStackTrace();
+            Log.d("API", "Failed to create output stream");
         } finally {
-            // Disconnect if all went successfully
+            // Disconnect the client
             if (client != null) {
                 client.disconnect();
             }
@@ -147,6 +164,16 @@ class APICall extends AsyncTask<String, Void, String> {
             this.callback.done(res);
         } else {
             this.callback.fail(res);
+        }
+    }
+
+    private void closeStream(Closeable stream) {
+        try {
+            if (stream != null) {
+                stream.close();
+            }
+        } catch (IOException e) {
+            Log.d("Stream", "Stream already closed");
         }
     }
 }
