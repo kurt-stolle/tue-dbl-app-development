@@ -11,7 +11,7 @@ import (
 // GetUUID can be used to find a UUID from a request
 func GetUUID(r *http.Request) (string, error) {
 	if token, ok := context.Get(r, "token").(jwt.Token); ok {
-		return (token.Claims.(jwt.StandardClaims)).Subject, nil
+		return (token.Claims.(*jwt.StandardClaims)).Subject, nil
 	}
 
 	return "", errors.New("Token not found")
