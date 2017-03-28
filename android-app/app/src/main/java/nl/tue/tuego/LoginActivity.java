@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // look up all needed views
-        TVForgotPassword = (TextView) findViewById(R.id.textViewLoginToForgotPassword);
+        // TVForgotPassword = (TextView) findViewById(R.id.textViewLoginToForgotPassword);
         ETEmail = (EditText) findViewById(R.id.editTextLoginUsername);
         ETPassword = (EditText) findViewById(R.id.editTextLoginPassword);
         BLogin = (Button) findViewById(R.id.buttonLogin);
@@ -45,12 +45,12 @@ public class LoginActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         // set event listeners
-        TVForgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                forgotPassword(v);
-            }
-        });
+//        TVForgotPassword.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                forgotPassword(v);
+//            }
+//        });
 
         BLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,11 +108,11 @@ public class LoginActivity extends AppCompatActivity {
         new APICall("POST", "/login", log, callback).execute();
     }
 
-    // method that is called when TVForgotPassword is clicked
-    public void forgotPassword(View v) {
-        Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-        startActivity(intent);
-    }
+//    // method that is called when TVForgotPassword is clicked
+//    public void forgotPassword(View v) {
+//        Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+//        startActivity(intent);
+//    }
 
     // events that trigger when a certain button is pressed on the action bar
     @Override
