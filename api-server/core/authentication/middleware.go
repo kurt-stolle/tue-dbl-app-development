@@ -19,7 +19,7 @@ func Check(r *http.Request) bool {
 	tokenText := r.Header.Get("Authorization")
 	tokenText = strings.Replace(tokenText, "Bearer ", "", 1)
 
-	token, err := jwt.Parse(tokenText, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenText, new(jwt.StandardClaims), func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
