@@ -55,7 +55,7 @@ func registerStruct(t string, s interface{}) {
 		log.Panic(err)
 	}
 
-	if err := dbmdl.GenerateTable(postgres.Connect, s); err != nil {
+	if err := dbmdl.GenerateTable(postgres.Connect(), s); err != nil {
 		log.Panic(err)
 	}
 }
