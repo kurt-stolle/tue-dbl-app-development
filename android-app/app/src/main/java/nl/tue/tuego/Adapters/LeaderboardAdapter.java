@@ -1,13 +1,14 @@
-package nl.tue.tuego;
+package nl.tue.tuego.Adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import nl.tue.tuego.Models.UserModel;
+import nl.tue.tuego.R;
 
 public class LeaderboardAdapter extends ArrayAdapter<UserModel> {
 

@@ -1,5 +1,6 @@
-package nl.tue.tuego;
+package nl.tue.tuego.Activities;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -14,13 +15,26 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
+import nl.tue.tuego.Models.APICallback;
+import nl.tue.tuego.WebAPI.APIPostPicture;
+import nl.tue.tuego.R;
 
 public class PostPictureActivity extends AppCompatActivity {
     Button BPost, BDiscard;
     ImageView IVImage;
     Bitmap picture;
+    String filePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +53,7 @@ public class PostPictureActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         // getting the picture taken from the camera
-        String filePath = getIntent().getExtras().getString("Path");
+        filePath = getIntent().getExtras().getString("Path");
         picture = null;
         try {
             picture = rotateBitmapOrientation(filePath);
@@ -106,7 +120,75 @@ public class PostPictureActivity extends AppCompatActivity {
 
     // method that is called when POST button is pressed
     public void postPic(View v) {
-        // TODO: post the picture
+        // Determine what happens when the call is done
+        APICallback callback = new APICallback() {
+            @Override
+            public void done(String res) {
+                Toast.makeText(PostPictureActivity.this, "Picture posted", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(PostPictureActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void fail(String res) {
+                Toast.makeText(PostPictureActivity.this, "Picture failed to upload", Toast.LENGTH_SHORT).show();
+                Log.d("PostPictureActivity", "Picture failed to upload");
+            }
+        };
+
+        // Perform the API call
+        // Setup params
+        Map<String, String> params = new HashMap<>(1);
+        params.put("image", )
+
+        // load the token to give to the post call
+        FileInputStream fis = null;
+        BufferedReader bufferedReader = null;
+        try {
+            fis = openFileInput(LoginActivity.TOKEN_FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            bufferedReader = new BufferedReader(isr);
+
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+            String token = sb.toString();
+
+            new APIPostPicture(filePath, token, params, callback).execute();
+
+        } catch (FileNotFoundException e) {
+            // go to the register activity
+            Toast.makeText(this, "Session expired", Toast.LENGTH_SHORT).show();
+            Log.wtf("PostPictureActivity", "Token not found");
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
+        } catch (IOException e) {
+            // go to the register activity
+            Toast.makeText(this, "Session expired", Toast.LENGTH_SHORT).show();
+            Log.wtf("LoadActivity", "Reading token failed");
+            Intent intent = new Intent(this, RegisterActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        } finally {
+            closeStream(fis);
+            closeStream(bufferedReader);
+        }
+    }
+
+    private void closeStream(Closeable stream) {
+        try {
+            if (stream != null) {
+                stream.close();
+            }
+        } catch (IOException e) {
+            Log.d("Stream", "Stream already closed");
+        }
     }
 
     // events that trigger when a certain button is pressed on the action bar

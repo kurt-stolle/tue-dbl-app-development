@@ -27,7 +27,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".LoadActivity">
+        <activity android:name=".Activities.LoadActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -35,35 +35,35 @@
         </activity>
 
         <activity
-            android:name=".RegisterActivity"
+            android:name=".Activities.RegisterActivity"
             android:label="@string/registerTitle" />
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:label="@string/loginTitle" />
 
         <activity
-            android:name=".ForgotPasswordActivity"
+            android:name=".Activities.ForgotPasswordActivity"
             android:label="@string/forgotPasswordTitle" />
 
         <activity
-            android:name=".ChangePasswordActivity"
+            android:name=".Activities.ChangePasswordActivity"
             android:label="@string/changePasswordTitle" />
 
         <activity
-            android:name=".InboxActivity"
+            android:name=".Activities.InboxActivity"
             android:label="@string/inboxTitle" />
 
         <activity
-            android:name=".InboxItemActivity"
+            android:name=".Activities.InboxItemActivity"
             android:label="@string/inboxItemTitle" />
 
         <activity
-            android:name=".LeaderboardActivity"
+            android:name=".Activities.LeaderboardActivity"
             android:label="@string/leaderboardTitle" />
 
         <activity
-            android:name=".PostPictureActivity"
+            android:name=".Activities.PostPictureActivity"
             android:label="@string/postPictureTitle" />
 
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for

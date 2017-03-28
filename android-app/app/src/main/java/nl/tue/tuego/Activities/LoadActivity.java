@@ -1,11 +1,9 @@
-package nl.tue.tuego;
+package nl.tue.tuego.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -14,9 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import nl.tue.tuego.R;
+
 public class LoadActivity extends Activity {
-    public static final String TOKEN_FILE_NAME = "token_file";
-    public static final int TOKEN_LENGTH = 464;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +29,7 @@ public class LoadActivity extends Activity {
         FileInputStream fis = null;
         BufferedReader bufferedReader = null;
         try {
-            fis = openFileInput(TOKEN_FILE_NAME);
+            fis = openFileInput(LoginActivity.TOKEN_FILE_NAME);
             InputStreamReader isr = new InputStreamReader(fis);
             bufferedReader = new BufferedReader(isr);
 
@@ -42,7 +40,7 @@ public class LoadActivity extends Activity {
             }
 
             // check if the length of the token is correct
-            if (sb.length() != TOKEN_LENGTH) {
+            if (sb.length() != LoginActivity.TOKEN_LENGTH) {
                 // go to the register activity
                 Log.d("LoadActivity", "Token has incorrect length");
                 Intent intent = new Intent(this, RegisterActivity.class);

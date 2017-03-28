@@ -1,4 +1,4 @@
-package nl.tue.tuego;
+package nl.tue.tuego.Activities;
 
 import android.Manifest;
 import android.content.Context;
@@ -36,7 +36,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static nl.tue.tuego.LoadActivity.TOKEN_FILE_NAME;
+import nl.tue.tuego.Models.ImageModel;
+import nl.tue.tuego.Adapters.InboxAdapter;
+import nl.tue.tuego.R;
 
 public class InboxActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -263,7 +265,7 @@ public class InboxActivity extends AppCompatActivity {
                 FileOutputStream fos = null;
                 try {
                     String token = "";
-                    fos = openFileOutput(TOKEN_FILE_NAME, Context.MODE_PRIVATE);
+                    fos = openFileOutput(LoginActivity.TOKEN_FILE_NAME, Context.MODE_PRIVATE);
                     fos.write(token.getBytes());
                     Log.d("Log out", "Token deleted");
                 } catch (IOException e) {

@@ -1,5 +1,6 @@
-package nl.tue.tuego;
+package nl.tue.tuego.WebAPI;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -18,16 +19,12 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-// Interface for callback handling - also able to handle errors
-interface APICallback {
-    void done(String res);
-    void fail(String res);
-}
+import nl.tue.tuego.Models.APICallback;
 
 // APICall (was: WebAPI) handles calls to the Web API
-class APICall extends AsyncTask<String, Void, String> {
+public class APICall extends AsyncTask<String, Void, String> {
 
-    // Privates
+    // Private variables
     private String method;
     private String route;
     private Object model;
@@ -35,7 +32,7 @@ class APICall extends AsyncTask<String, Void, String> {
     private boolean success;
 
     // Constructor
-    APICall(String method, String route, Object model, APICallback callback) {
+    public APICall(String method, String route, Object model, APICallback callback) {
         // Set properties of request
         this.method = method;
         this.route = route;
@@ -55,16 +52,20 @@ class APICall extends AsyncTask<String, Void, String> {
     protected String doInBackground(String... params) {
         // Initialize GSON
         byte[] json = {};
+
+        // Initialization connection and streams
+        HttpURLConnection client = null;
+        OutputStream out = null;
+        InputStream in = null;
+        BufferedReader reader = null;
+
         boolean isPushRequest = (this.model != null && (this.method.equals("POST") || this.method.equals("PATCH") || this.method.equals("PUT")));
-        if (isPushRequest) {
+        if (isPushRequest && !(this.model instanceof Bitmap)) {
             Gson gson = new Gson();
             json = gson.toJson(this.model).getBytes();
         }
 
         // Perform the request
-        HttpURLConnection client = null;
-        OutputStream out = null;
-
         try {
             URL url = new URL("http://tue-dbl-app-development.herokuapp.com" + this.route);
 
@@ -91,8 +92,6 @@ class APICall extends AsyncTask<String, Void, String> {
 
             // Input stream reading using buffer
             // All responses have input - this is a rule defined by the WebAPI design
-            InputStream in = null;
-            BufferedReader reader = null;
 
             try {
                 in = new BufferedInputStream(client.getInputStream());
@@ -111,7 +110,7 @@ class APICall extends AsyncTask<String, Void, String> {
 
                 // Determine whether the call was successful
                 int status = client.getResponseCode();
-                if (status == 200) {
+                if (status == HttpURLConnection.HTTP_OK) {
                     Log.d("API", "Request successful");
                     this.success = true;
                 } else { // Just to be explicit about it.
