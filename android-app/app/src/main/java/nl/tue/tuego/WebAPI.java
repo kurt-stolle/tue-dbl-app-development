@@ -21,7 +21,6 @@ import java.net.URL;
 // Interface for callback handling - also able to handle errors
 interface APICallback {
     void done(String res);
-
     void fail(String res);
 }
 
@@ -44,9 +43,8 @@ class APICall extends AsyncTask<String, Void, String> {
         this.callback = callback;
         this.success = false;
 
+        // This means that we are doing a PUSH-type request, but without any data model. Something is wrong, so log an error!
         if (this.model == null && (this.method.equals("POST") || this.method.equals("PATCH") || this.method.equals("PUT"))) {
-            // This means that we are doing a PUSH-type request, but without any data model. Something is wrong, so log an error!
-
             Log.e("API", "Making push-type request, but without any data provided. Assuming GET request");
             this.method = "GET";
         }
@@ -58,7 +56,6 @@ class APICall extends AsyncTask<String, Void, String> {
         // Initialize GSON
         byte[] json = {};
         boolean isPushRequest = (this.model != null && (this.method.equals("POST") || this.method.equals("PATCH") || this.method.equals("PUT")));
-
         if (isPushRequest) {
             Gson gson = new Gson();
             json = gson.toJson(this.model).getBytes();
@@ -66,8 +63,10 @@ class APICall extends AsyncTask<String, Void, String> {
 
         // Perform the request
         HttpURLConnection client = null;
+        OutputStream out = null;
+
         try {
-            URL url = new URL("http://tue-dbl-app-development.herokupp.com" + this.route);
+            URL url = new URL("http://tue-dbl-app-development.herokuapp.com" + this.route);
 
             // Initialize and setup client
             client = (HttpURLConnection) url.openConnection();
@@ -85,55 +84,52 @@ class APICall extends AsyncTask<String, Void, String> {
                 client.addRequestProperty("Content-Type", "application/json");
                 client.setFixedLengthStreamingMode(json.length);
 
-                OutputStream out = new BufferedOutputStream(client.getOutputStream());
+                out = new BufferedOutputStream(client.getOutputStream());
                 out.write(json);
                 out.flush();
-                out.close();
             }
 
-            // Check response code of the client
-            int responseCode = client.getResponseCode();
-            if (responseCode == 200) {
-                // If OK continue
-                success = true;
+            // Input stream reading using buffer
+            // All responses have input - this is a rule defined by the WebAPI design
+            InputStream in = null;
+            BufferedReader reader = null;
 
-                InputStream in = null;
-                BufferedReader reader = null;
-
-                try {
-                    // Input stream reading using buffer
-                    // All responses have input - this is a rule defined by the WebAPI design
-                    in = new BufferedInputStream(client.getInputStream());
-                    reader = new BufferedReader(new InputStreamReader(in));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        stringBuilder.append(line);
-                    }
-
-                    // Parse the response to string
-                    String res = stringBuilder.toString();
-
-                    // Debug print
-                    Log.d("API", res);
-
-                    Log.d("API", "Request successful");
-
-                    // Return string, most likely JSON-encoded
-                    return res;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.d("API", "Failed to create input stream");
-                } finally {
-                    closeStream(in);
-                    closeStream(reader);
+            try {
+                in = new BufferedInputStream(client.getInputStream());
+                reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder stringBuilder = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line);
                 }
-            } else {
-                // Just to be explicit about it
-                success = false;
-                Log.d("API", "Request rejected, " + client.getResponseMessage());
-            }
 
+                // Parse the response to string
+                String res = stringBuilder.toString();
+
+                // Debug print
+                Log.d("API", res);
+
+                // Determine whether the call was successful
+                int status = client.getResponseCode();
+                if (status == 200) {
+                    Log.d("API", "Request successful");
+                    this.success = true;
+                } else { // Just to be explicit about it.
+                    Log.d("API", "Request rejected, " + client.getResponseMessage());
+                    this.success = false;
+                }
+
+                // Return string, most likely JSON-encoded
+                return res;
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d("API", "Failed to create input stream");
+            } finally {
+                // Close streams
+                closeStream(in);
+                closeStream(reader);
+                Log.d("API", "Async request finished");
+            }
         } catch (SocketTimeoutException e) {
             // Handles connection timeout to the server
             Log.d("API", "Could not connect to the web API");
@@ -149,8 +145,10 @@ class APICall extends AsyncTask<String, Void, String> {
             if (client != null) {
                 client.disconnect();
             }
-        }
 
+            // Close the stream
+            closeStream(out);
+        }
         return null;
     }
 
@@ -158,8 +156,6 @@ class APICall extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String res) {
         // Callback
-        // KURT: I've defined success as being a HTTP response code of 200. This means that success has to do with whether the API has deemed the request successful,
-        // so NOT whether Android was ABLE to MAKE the call. If this is unclear, please contact me!
         if (this.success) {
             this.callback.done(res);
         } else {
