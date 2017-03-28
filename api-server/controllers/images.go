@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -41,6 +42,8 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		if err := postgres.Connect().QueryRow("SELECT COUNT(*) FROM tuego_images WHERE Uploader=$1 LIMIT 5", uuidUser).Scan(&amount); amount >= 5 {
 			writeError(w, http.StatusConflict, "You already have 5 active pictures")
 			return
+		} else if err != nil {
+			log.Fatal("Could not check max image count:", err)
 		}
 
 		// Create a new image struct

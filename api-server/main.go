@@ -52,7 +52,11 @@ func setupRoute(r *mux.Router, uri string, functions ...negroni.HandlerFunc) *mu
 // Quick utility for registering DBMDLs and catching the possible errors
 func registerStruct(t string, s interface{}) {
 	if err := dbmdl.RegisterStruct(postgres.Connect(), "postgres", t, s); err != nil {
-		log.Panic("Failed to register struct: ", err)
+		log.Panic(err)
+	}
+
+	if err := dbmdl.GenerateTable(postgres.Connect, s); err != nil {
+		log.Panic(err)
 	}
 }
 
