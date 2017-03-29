@@ -1,5 +1,6 @@
 package nl.tue.tuego.WebAPI;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,12 +22,12 @@ public class APIPostPicture extends AsyncTask<String, Void, String> {
     // Private variables
     private String filepath;
     private String token;
-    private Map<String, String> parmas;
+    private Map<String, Bitmap> parmas;
     private APICallback callback;
     private boolean success;
 
     // Constructor
-    public APIPostPicture(String filepath, String token, Map<String, String> parmas, APICallback callback) {
+    public APIPostPicture(String filepath, String token, Map<String, Bitmap> parmas, APICallback callback) {
         // Set properties of request
         this.filepath = filepath;
         this.token = token;
@@ -96,13 +97,13 @@ public class APIPostPicture extends AsyncTask<String, Void, String> {
 
             // Upload POST Data
             for (String key : parmas.keySet()) {
-                String value = parmas.get(key);
+                Bitmap value = parmas.get(key);
 
                 outputStream.writeBytes(twoHyphens + boundary + lineEnd);
                 outputStream.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"" + lineEnd);
                 outputStream.writeBytes("Content-Type: text/plain" + lineEnd);
                 outputStream.writeBytes(lineEnd);
-                outputStream.writeBytes(value);
+                value.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                 outputStream.writeBytes(lineEnd);
             }
 

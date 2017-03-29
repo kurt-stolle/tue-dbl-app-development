@@ -140,8 +140,8 @@ public class PostPictureActivity extends AppCompatActivity {
 
         // Perform the API call
         // Setup params
-        Map<String, String> params = new HashMap<>(1);
-        params.put("image", )
+        Map<String, Bitmap> params = new HashMap<>(1);
+        params.put("file", picture);
 
         // load the token to give to the post call
         FileInputStream fis = null;
