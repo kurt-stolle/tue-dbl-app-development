@@ -23,7 +23,7 @@ func GetActiveImages(page, amount int) (int, []*models.Image, *dbmdl.Pagination)
 
 	// Where clause for making sure we select only active images
 	where := dbmdl.NewWhereClause(imageType)
-	where.AddClause("Finder=NULL")
+	where.AddClause("Finder=''")
 
 	// Pagination
 	dbp := dbmdl.NewPagination(page, amount)
