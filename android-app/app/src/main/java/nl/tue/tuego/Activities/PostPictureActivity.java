@@ -140,8 +140,10 @@ public class PostPictureActivity extends AppCompatActivity {
 
         // Perform the API call
         // Setup params
-        Map<String, Bitmap> params = new HashMap<>(1);
-        params.put("file", picture);
+        Log.d("Picture", "Picture width:" + picture.getWidth());
+        Log.d("Picture", "Picture height" + picture.getHeight());
+        Map<String, String> params = new HashMap<>(0);
+//        params.put("file", picture);
 
         // load the token to give to the post call
         FileInputStream fis = null;
@@ -158,13 +160,13 @@ public class PostPictureActivity extends AppCompatActivity {
             }
             String token = sb.toString();
 
-            new APIPostPicture(filePath, token, params, callback).execute();
+            new APIPostPicture(filePath, picture, token, params, callback).execute();
 
         } catch (FileNotFoundException e) {
             // go to the register activity
             Toast.makeText(this, "Session expired", Toast.LENGTH_SHORT).show();
             Log.wtf("PostPictureActivity", "Token not found");
-            Intent intent = new Intent(this, RegisterActivity.class);
+            Intent intent = new Intent(this, InboxActivity.class);
             startActivity(intent);
             finish();
         } catch (IOException e) {
