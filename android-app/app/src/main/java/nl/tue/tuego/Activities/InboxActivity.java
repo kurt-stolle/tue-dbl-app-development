@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -36,16 +37,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.tue.tuego.Models.APICallback;
 import nl.tue.tuego.Models.ImageModel;
 import nl.tue.tuego.Adapters.InboxAdapter;
 import nl.tue.tuego.R;
+import nl.tue.tuego.WebAPI.APICall;
 
 public class InboxActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_PERMISSIONS = 1;
     private String mCurrentPhotoPath;
-    private LinearLayout BCamera;
+    private FloatingActionButton BCamera;
     private ListView LVFeed;
     private List<ImageModel> images;
     private InboxAdapter adapter;
@@ -64,7 +67,7 @@ public class InboxActivity extends AppCompatActivity {
         images = new ArrayList<>();
 
         // look up all needed views
-        BCamera = (LinearLayout) findViewById(R.id.inboxButton);
+        BCamera = (FloatingActionButton) findViewById(R.id.inboxButton);
         LVFeed = (ListView) findViewById(R.id.inboxListViewFeed);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -221,6 +224,14 @@ public class InboxActivity extends AppCompatActivity {
 
     // method that is called when the screen is pulled down to refresh items
     public void refresh() {
+        new APICall("GET","/images",null,new APICallback() {
+            public void done(String data){
+                Log.d("InboxCallback",data);
+            }
+            public void fail(String data){
+                Log.d("InboxCallback",data);
+            }
+        });
         // TODO: refresh the items on the screen
         images.add(new ImageModel("a", "b", "c", "d"));
         images.add(new ImageModel("a", "b", "c", "d"));
