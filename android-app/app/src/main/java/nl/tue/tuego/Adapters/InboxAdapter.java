@@ -1,4 +1,4 @@
-package nl.tue.tuego;
+package nl.tue.tuego.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+
+import nl.tue.tuego.Models.ImageModel;
+import nl.tue.tuego.R;
 
 public class InboxAdapter extends ArrayAdapter<ImageModel> {
 

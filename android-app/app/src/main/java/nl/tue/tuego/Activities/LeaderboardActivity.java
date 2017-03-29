@@ -1,4 +1,4 @@
-package nl.tue.tuego;
+package nl.tue.tuego.Activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -6,6 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ListView;
+
+import nl.tue.tuego.Adapters.LeaderboardAdapter;
+import nl.tue.tuego.R;
+import nl.tue.tuego.Models.UserModel;
 
 public class LeaderboardActivity extends AppCompatActivity {
     private final int AMOUNT_BEST_USERS = 4; // set amount of users in the leaderboard

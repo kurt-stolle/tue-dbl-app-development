@@ -1,4 +1,4 @@
-package nl.tue.tuego;
+package nl.tue.tuego.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,9 +20,16 @@ import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static nl.tue.tuego.LoadActivity.TOKEN_FILE_NAME;
+import nl.tue.tuego.WebAPI.APICall;
+import nl.tue.tuego.Models.APICallback;
+import nl.tue.tuego.Models.LoginModel;
+import nl.tue.tuego.R;
+import nl.tue.tuego.Models.TokenModel;
 
 public class LoginActivity extends AppCompatActivity {
+    public static final String TOKEN_FILE_NAME = "token_file";
+    public static final int TOKEN_LENGTH = 464;
+
     private TextView TVForgotPassword;
     private EditText ETEmail, ETPassword;
     private Button BLogin;

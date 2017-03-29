@@ -1,5 +1,6 @@
-package nl.tue.tuego;
+package nl.tue.tuego.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -7,17 +8,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
-public class InboxItemActivity extends AppCompatActivity {
-    Button BGuess;
+import nl.tue.tuego.R;
+
+public class ChangePasswordActivity extends AppCompatActivity {
+    EditText ETPassword, ETConfirmPassword;
+    Button BNext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inbox_item);
+        setContentView(R.layout.activity_change_password);
 
         // look up all needed views
-        Button BGuess = (Button) findViewById(R.id.buttonGuess);
+        ETPassword = (EditText) findViewById(R.id.editTextChangePasswordPassword);
+        ETConfirmPassword = (EditText) findViewById(R.id.editTextChangePasswordVerifyPassword);
+        BNext = (Button) findViewById(R.id.buttonChangePasswordNext);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         // adds the toolbar to the activity
@@ -26,24 +34,24 @@ public class InboxItemActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         // set event listeners
-        BGuess.setOnClickListener(new View.OnClickListener() {
+        BNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guessLocation(v);
+                changePassword(v);
             }
         });
     }
 
-    // method that is called when the GUESS LOCATION button is pressed
-    // only other users than the poster can do this
-    public void guessLocation(View v) {
-        // TODO: get location, send it to the client and react appropriately
-    }
+    // method which is called when BNext is pressed
+    public void changePassword(View view) {
+        // TODO: write code to check password and change password
 
-    // method that is called when the DELETE PICTURE button is pressed
-    // only the poster of the picture can do this
-    public void deletePic(View v) {
-        // TODO: delete the picture
+        String s = getResources().getText(R.string.passwordChanged).toString();
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     // events that trigger when a certain button is pressed on the action bar
