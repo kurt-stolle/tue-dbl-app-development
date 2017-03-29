@@ -61,7 +61,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 		p := path.Join(pwd, "uploads", img.UUID+".jpg")
 
-		parseImageUpload(w, r, p, 4000, 3000, 2000, services.JPEG)
+		parseImageUpload(w, r, p, 6000, 3000, 2000, services.JPEG)
 
 		// Save the image struct
 		if err := dbmdl.Save(postgres.Connect(), img, nil); err != nil {
