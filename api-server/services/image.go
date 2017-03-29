@@ -124,7 +124,10 @@ func ParseImage(file []byte) (*image.Image, error) {
 
 // VerifyImageSize verified whether an image is of proper size (px)
 func VerifyImageSize(img *image.Image, width int, height int) bool {
+
 	b := (*img).Bounds()
+
+	log.Println("Image dim: ", b)
 	return (b.Max.X == width && b.Max.Y == height)
 }
 
