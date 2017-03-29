@@ -59,7 +59,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 			return
 		}
 
-		p := path.Join(pwd, "uploads", img.UUID+".jpg")
+		p := path.Join(pwd, img.UUID+".jpg")
 
 		if !parseImageUpload(w, r, p, 6000, 3000, 2000, services.JPEG) {
 			return
