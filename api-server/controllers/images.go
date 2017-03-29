@@ -71,6 +71,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 			return
 		}
 
+		writeJSON(w, img)
 	case http.MethodGet: // Fetch an manifest of images
 		status, images, pag := services.GetActiveImages(1, 250)
 		if status != http.StatusOK {

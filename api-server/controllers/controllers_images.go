@@ -91,10 +91,6 @@ func parseImageUpload(w http.ResponseWriter, r *http.Request, path string, maxSi
 		return false
 	}
 
-	// Reply with the correct URL
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(r.URL.String()))
-
 	return true
 }
 
