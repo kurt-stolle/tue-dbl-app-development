@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -37,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nl.tue.tuego.Models.APICallback;
+import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.Models.ImageModel;
 import nl.tue.tuego.Adapters.InboxAdapter;
 import nl.tue.tuego.R;
@@ -224,14 +223,20 @@ public class InboxActivity extends AppCompatActivity {
 
     // method that is called when the screen is pulled down to refresh items
     public void refresh() {
-        new APICall("GET","/images",null,new APICallback() {
+        APICall call = new APICall("GET","/images",null,new APICallback() {
             public void done(String data){
                 Log.d("InboxCallback",data);
+                // Works!
+                // TODO serialize data
             }
             public void fail(String data){
-                Log.d("InboxCallback",data);
+                // TODO display an error
+                Log.e("InboxCallback",data);
             }
         });
+        call.setAPIKey(APICall.ReadToken(getApplicationContext()));
+        call.execute();
+
         // TODO: refresh the items on the screen
         images.add(new ImageModel("a", "b", "c", "d"));
         images.add(new ImageModel("a", "b", "c", "d"));
@@ -276,7 +281,7 @@ public class InboxActivity extends AppCompatActivity {
                 FileOutputStream fos = null;
                 try {
                     String token = "";
-                    fos = openFileOutput(LoginActivity.TOKEN_FILE_NAME, Context.MODE_PRIVATE);
+                    fos = openFileOutput("token_file", Context.MODE_PRIVATE);
                     fos.write(token.getBytes());
                     Log.d("Log out", "Token deleted");
                 } catch (IOException e) {

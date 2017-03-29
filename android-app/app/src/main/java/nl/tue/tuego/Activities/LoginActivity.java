@@ -21,15 +21,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import nl.tue.tuego.WebAPI.APICall;
-import nl.tue.tuego.Models.APICallback;
+import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.Models.LoginModel;
 import nl.tue.tuego.R;
 import nl.tue.tuego.Models.TokenModel;
 
 public class LoginActivity extends AppCompatActivity {
-    public static final String TOKEN_FILE_NAME = "token_file";
-    public static final int TOKEN_LENGTH = 464;
-
     private TextView TVForgotPassword;
     private EditText ETEmail, ETPassword;
     private Button BLogin;
@@ -88,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                 FileOutputStream fos = null;
 
                 try {
-                    fos = openFileOutput(TOKEN_FILE_NAME, Context.MODE_PRIVATE);
+                    fos = openFileOutput("token_file", Context.MODE_PRIVATE);
                     fos.write(token.getBytes());
 
                     Log.d("LoginActivity", "Token saved");

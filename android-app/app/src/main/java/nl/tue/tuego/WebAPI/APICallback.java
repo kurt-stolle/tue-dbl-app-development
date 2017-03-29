@@ -1,4 +1,4 @@
-package nl.tue.tuego.Models;
+package nl.tue.tuego.WebAPI;
 
 // Interface for callback handling - also able to handle errors
 public interface APICallback {

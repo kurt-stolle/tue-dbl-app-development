@@ -26,7 +26,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.tue.tuego.Models.APICallback;
+import nl.tue.tuego.WebAPI.APICall;
+import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.WebAPI.APIPostPicture;
 import nl.tue.tuego.R;
 
@@ -146,41 +147,7 @@ public class PostPictureActivity extends AppCompatActivity {
 //        params.put("file", picture);
 
         // load the token to give to the post call
-        FileInputStream fis = null;
-        BufferedReader bufferedReader = null;
-        try {
-            fis = openFileInput(LoginActivity.TOKEN_FILE_NAME);
-            InputStreamReader isr = new InputStreamReader(fis);
-            bufferedReader = new BufferedReader(isr);
-
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-            String token = sb.toString();
-
-            new APIPostPicture(filePath, picture, token, params, callback).execute();
-
-        } catch (FileNotFoundException e) {
-            // go to the register activity
-            Toast.makeText(this, "Session expired", Toast.LENGTH_SHORT).show();
-            Log.wtf("PostPictureActivity", "Token not found");
-            Intent intent = new Intent(this, InboxActivity.class);
-            startActivity(intent);
-            finish();
-        } catch (IOException e) {
-            // go to the register activity
-            Toast.makeText(this, "Session expired", Toast.LENGTH_SHORT).show();
-            Log.wtf("LoadActivity", "Reading token failed");
-            Intent intent = new Intent(this, RegisterActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        } finally {
-            closeStream(fis);
-            closeStream(bufferedReader);
-        }
+        new APIPostPicture(filePath, picture, APICall.ReadToken(getApplicationContext()), params, callback).execute();
     }
 
     private void closeStream(Closeable stream) {

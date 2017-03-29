@@ -17,7 +17,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import nl.tue.tuego.WebAPI.APICall;
-import nl.tue.tuego.Models.APICallback;
+import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.R;
 import nl.tue.tuego.Models.RegistrationModel;
 

@@ -1,5 +1,7 @@
 package nl.tue.tuego.WebAPI;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -10,6 +12,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,7 +23,9 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-import nl.tue.tuego.Models.APICallback;
+
+import nl.tue.tuego.Activities.LoginActivity;
+import nl.tue.tuego.Activities.RegisterActivity;
 
 // APICall (was: WebAPI) handles calls to the Web API
 public class APICall extends AsyncTask<String, Void, String> {
@@ -30,6 +36,42 @@ public class APICall extends AsyncTask<String, Void, String> {
     private Object model;
     private APICallback callback;
     private boolean success;
+    private String apiKey;
+
+    // Reading key from local storage
+    public static String ReadToken(Context c){
+        FileInputStream fis = null;
+        BufferedReader bufferedReader = null;
+        String token = "";
+        try {
+            fis = c.openFileInput("token_file");
+            InputStreamReader isr = new InputStreamReader(fis);
+            bufferedReader = new BufferedReader(isr);
+
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            token = sb.toString();
+        } catch (FileNotFoundException e) {
+            // go to the register activity
+            Log.d("ReadToken", "Token not found");
+        } catch (IOException e) {
+            // go to the register activity
+            Log.d("ReadToken", "Reading token failed");
+        } finally {
+            try {
+                fis.close();
+                bufferedReader.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return token;
+    }
 
     // Constructor
     public APICall(String method, String route, Object model, APICallback callback) {
@@ -45,6 +87,13 @@ public class APICall extends AsyncTask<String, Void, String> {
             Log.e("API", "Making push-type request, but without any data provided. Assuming GET request");
             this.method = "GET";
         }
+
+        // Initialize with empty key
+        this.apiKey = "";
+    }
+
+    public void setAPIKey(String key){
+        this.apiKey = key;
     }
 
     // AsyncTask execution stage
@@ -76,8 +125,10 @@ public class APICall extends AsyncTask<String, Void, String> {
             client.setRequestMethod(this.method);
             client.addRequestProperty("Accept", "application/json");
 
-            // TODO: Load API token from local storage
-            // client.addRequestProperty("Authorization","Bearer " + <JWT TOKEN FROM LOGIN GOES HERE> );
+            if (this.apiKey != "") {
+                client.addRequestProperty("Authorization","Bearer " + this.apiKey );
+            }
+
 
             // Some stuff is different when doing a PUSH-type request
             if (isPushRequest) {

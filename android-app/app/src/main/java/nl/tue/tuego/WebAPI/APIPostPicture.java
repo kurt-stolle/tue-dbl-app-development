@@ -6,17 +6,12 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-
-import nl.tue.tuego.Activities.LoginActivity;
-import nl.tue.tuego.Models.APICallback;
 
 // APICall (was: WebAPI) handles calls to the Web API
 public class APIPostPicture extends AsyncTask<String, Void, String> {

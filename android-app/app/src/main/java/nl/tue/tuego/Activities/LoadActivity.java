@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import nl.tue.tuego.R;
+import nl.tue.tuego.WebAPI.APICall;
 
 public class LoadActivity extends Activity {
 
@@ -25,49 +26,19 @@ public class LoadActivity extends Activity {
 
     // method which checks several things before continuing
     private void load() {
-        // check if the user is already logged in by checking if there is a token stored
-        FileInputStream fis = null;
-        BufferedReader bufferedReader = null;
-        try {
-            fis = openFileInput(LoginActivity.TOKEN_FILE_NAME);
-            InputStreamReader isr = new InputStreamReader(fis);
-            bufferedReader = new BufferedReader(isr);
 
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-
-            // check if the length of the token is correct
-            if (sb.length() != LoginActivity.TOKEN_LENGTH) {
-                // go to the register activity
-                Log.d("LoadActivity", "Token has incorrect length");
-                Intent intent = new Intent(this, RegisterActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                // go to the inbox activity
-                Log.d("LoadActivity", "Token is of correct length");
-                Intent intent = new Intent(this, InboxActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        } catch (FileNotFoundException e) {
+        if (APICall.ReadToken(getApplicationContext()).equals("")) {
             // go to the register activity
-            Log.d("LoadActivity", "Token not found");
+            Log.d("LoadActivity", "Token has incorrect length");
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
             finish();
-        } catch (IOException e) {
-            // go to the register activity
-            Log.d("LoadActivity", "Reading token failed");
-            Intent intent = new Intent(this, RegisterActivity.class);
+        } else {
+            // go to the inbox activity
+            Log.d("LoadActivity", "Token is of correct length");
+            Intent intent = new Intent(this, InboxActivity.class);
             startActivity(intent);
             finish();
-        } finally {
-            closeStream(fis);
-            closeStream(bufferedReader);
         }
     }
 
