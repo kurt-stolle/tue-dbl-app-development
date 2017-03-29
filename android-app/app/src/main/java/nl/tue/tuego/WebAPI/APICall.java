@@ -106,7 +106,6 @@ public class APICall extends AsyncTask<String, Void, String> {
         HttpURLConnection client = null;
         OutputStream out = null;
         InputStream in = null;
-        BufferedReader reader = null;
 
         boolean isPushRequest = (this.model != null && (this.method.equals("POST") || this.method.equals("PATCH") || this.method.equals("PUT")));
         if (isPushRequest && !(this.model instanceof Bitmap)) {
@@ -141,33 +140,25 @@ public class APICall extends AsyncTask<String, Void, String> {
                 out.flush();
             }
 
-            // Input stream reading using buffer
-            // All responses have input - this is a rule defined by the WebAPI design
-
             try {
-                in = new BufferedInputStream(client.getInputStream());
-                reader = new BufferedReader(new InputStreamReader(in));
-                StringBuilder stringBuilder = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line);
-                }
-
-                // Parse the response to string
-                String res = stringBuilder.toString();
-
-                // Debug print
-                Log.d("API", res);
-
                 // Determine whether the call was successful
                 int status = client.getResponseCode();
                 if (status == HttpURLConnection.HTTP_OK) {
                     Log.d("API", "Request successful");
                     this.success = true;
+
+                    in = new BufferedInputStream(client.getInputStream());
                 } else { // Just to be explicit about it.
-                    Log.d("API", "Request rejected, " + client.getResponseMessage());
+                    Log.d("API", "Request rejected, " + status);
                     this.success = false;
+
+                    in = new BufferedInputStream(client.getErrorStream());
                 }
+
+                String res = convertStreamToString(in);
+
+                // Debug print
+                Log.d("API", res);
 
                 // Return string, most likely JSON-encoded
                 return res;
@@ -177,7 +168,6 @@ public class APICall extends AsyncTask<String, Void, String> {
             } finally {
                 // Close streams
                 closeStream(in);
-                closeStream(reader);
                 Log.d("API", "Async request finished");
             }
         } catch (SocketTimeoutException e) {
@@ -211,6 +201,23 @@ public class APICall extends AsyncTask<String, Void, String> {
         } else {
             this.callback.fail(res);
         }
+    }
+
+    private String convertStreamToString(InputStream is) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            closeStream(is);
+        }
+        return sb.toString();
     }
 
     private void closeStream(Closeable stream) {
