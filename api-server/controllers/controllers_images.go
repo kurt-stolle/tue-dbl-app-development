@@ -15,7 +15,7 @@ import (
 
 // parse upload handles a file upload
 func parseImageUpload(w http.ResponseWriter, r *http.Request, path string, maxSizeKB int64, maxWidth int, maxHeight int, filetype ...string) {
-	if filetype[0] == "" {
+	if len(filetype) == 0 || filetype[0] == "" {
 		log.Panic("No filetype provided!")
 	}
 
