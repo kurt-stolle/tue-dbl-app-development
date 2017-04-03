@@ -258,7 +258,7 @@ public class InboxActivity extends AppCompatActivity {
                 Log.e("InboxCallback",data);
             }
         });
-        call.setAPIKey(APICall.ReadToken(getApplicationContext()));
+        call.setAPIKey(APICall.ReadToken(this));
         call.execute();
     }
 
