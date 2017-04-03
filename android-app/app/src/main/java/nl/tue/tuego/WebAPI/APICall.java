@@ -38,45 +38,6 @@ public class APICall extends AsyncTask<String, Void, String> {
     private boolean success;
     private String apiKey;
 
-    // Reading key from local storage
-    private static String token = "";
-    public static String ReadToken(Context c){
-        if (!token.equals("")){
-            return token;
-        }
-
-        FileInputStream fis = null;
-        BufferedReader bufferedReader = null;
-        try {
-            fis = c.openFileInput("token_file");
-            InputStreamReader isr = new InputStreamReader(fis);
-            bufferedReader = new BufferedReader(isr);
-
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-
-            token = sb.toString();
-        } catch (FileNotFoundException e) {
-            // go to the register activity
-            Log.d("ReadToken", "Token not found");
-        } catch (IOException e) {
-            // go to the register activity
-            Log.d("ReadToken", "Reading token failed");
-        } finally {
-            try {
-                fis.close();
-                bufferedReader.close();
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return token;
-    }
-
     // Constructor
     public APICall(String method, String route, Object model, APICallback callback) {
         // Set properties of request
@@ -94,10 +55,6 @@ public class APICall extends AsyncTask<String, Void, String> {
 
         // Initialize with empty key
         this.apiKey = "";
-    }
-
-    public void setAPIKey(String key){
-        this.apiKey = key;
     }
 
     // AsyncTask execution stage
@@ -128,7 +85,7 @@ public class APICall extends AsyncTask<String, Void, String> {
             client.setRequestMethod(this.method);
             client.addRequestProperty("Accept", "application/json");
 
-            if (this.apiKey != "") {
+            if (!this.apiKey.equals("")) {
                 client.addRequestProperty("Authorization","Bearer " + this.apiKey );
             }
 
@@ -205,6 +162,51 @@ public class APICall extends AsyncTask<String, Void, String> {
         } else {
             this.callback.fail(res);
         }
+    }
+
+    // Setting APIKey to key
+    public void setAPIKey(String key){
+        this.apiKey = key;
+    }
+
+    // Reading key from local storage
+    private static String token = "";
+    public static String ReadToken(Context c){
+        if (!token.equals("")){
+            return token;
+        }
+
+        FileInputStream fis = null;
+        BufferedReader bufferedReader = null;
+        try {
+            fis = c.openFileInput("token_file");
+            InputStreamReader isr = new InputStreamReader(fis);
+            bufferedReader = new BufferedReader(isr);
+
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+
+            token = sb.toString();
+        } catch (FileNotFoundException e) {
+            // go to the register activity
+            Log.d("ReadToken", "Token not found");
+        } catch (IOException e) {
+            // go to the register activity
+            Log.d("ReadToken", "Reading token failed");
+        } finally {
+            try {
+                fis.close();
+                bufferedReader.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Log.d("ReadToken", token);
+        return token;
     }
 
     private String convertStreamToString(InputStream is) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,7 +13,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <ListView
             android:id="@+id/inboxListViewFeed"
@@ -23,18 +24,19 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true">
 
             <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/inboxButton"
-                    android:src="@drawable/ic_add_black_24dp"
-                    android:tint="@color/colorWhite"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clickable="true"
-                    android:layout_margin = "15dp" />
+                android:id="@+id/inboxButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="15dp"
+                android:clickable="true"
+                android:orientation="horizontal"
+                android:src="@drawable/ic_add_black_24dp"
+                android:tint="@color/colorWhite"
+                app:backgroundTint="@color/colorPrimaryDark" />
         </LinearLayout>
 
 
