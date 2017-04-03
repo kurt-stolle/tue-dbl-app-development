@@ -62,10 +62,6 @@ func registerStruct(t string, s interface{}) {
 
 // Main function
 func main() {
-	var port = os.Getenv("PORT")
-	if port == "" {
-		port = "9058"
-	}
 
 	// Setting this manually often helps speed up the application
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -107,8 +103,8 @@ func main() {
 	}))
 	n.UseHandler(r) // Implement routes
 
-	log.Println("Web server listening on :" + port)
-	log.Fatal(http.ListenAndServe(":"+port, n))
+	log.Println("Web server listening on :80")
+	log.Fatal(http.ListenAndServe(":80", n))
 }
 
 // The index should list the routes that we have available
