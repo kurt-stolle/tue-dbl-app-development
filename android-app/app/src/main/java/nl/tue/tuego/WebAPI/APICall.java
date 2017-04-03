@@ -39,10 +39,14 @@ public class APICall extends AsyncTask<String, Void, String> {
     private String apiKey;
 
     // Reading key from local storage
+    private static String token = "";
     public static String ReadToken(Context c){
+        if (!token.equals("")){
+            return token;
+        }
+
         FileInputStream fis = null;
         BufferedReader bufferedReader = null;
-        String token = "";
         try {
             fis = c.openFileInput("token_file");
             InputStreamReader isr = new InputStreamReader(fis);
