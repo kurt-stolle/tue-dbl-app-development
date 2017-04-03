@@ -26,7 +26,6 @@ public class LoadActivity extends Activity {
 
     // method which checks several things before continuing
     private void load() {
-
         if (APICall.ReadToken(getApplicationContext()).equals("")) {
             // go to the register activity
             Log.d("LoadActivity", "Token has incorrect length");

@@ -24,7 +24,7 @@
             android:weightSum="1">
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/itemAuthor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/view_margin"
@@ -39,20 +39,13 @@
             android:layout_weight="0.6"
             android:gravity="center">
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/itemImage"
                 android:layout_width="300dp"
                 android:layout_height="300dp"
                 android:layout_margin="@dimen/view_margin"
-                android:background="@drawable/my_popup_bg"
                 android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="This is a picture"
-                    android:textColor="@color/colorWhite" />
-            </LinearLayout>
+                android:orientation="vertical" />
         </LinearLayout>
 
         <LinearLayout
@@ -63,6 +56,7 @@
             android:weightSum="3">
 
             <TextView
+                android:id="@+id/itemPoints"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_margin="@dimen/view_margin"
@@ -73,6 +67,7 @@
                 android:textSize="20sp" />
 
             <TextView
+                android:id="@+id/itemTimeTaken"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_margin="@dimen/view_margin"
@@ -83,6 +78,7 @@
                 android:textSize="20sp" />
 
             <TextView
+                android:id="@+id/itemTimeRemaining"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_margin="@dimen/view_margin"

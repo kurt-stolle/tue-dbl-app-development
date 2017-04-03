@@ -41,6 +41,7 @@
     <!-- Inbox item activity -->
     <string name="inboxItemTitle">Challenge information</string>
     <string name="inboxItemButton">Guess location</string>
+    <string name="tenPoints">10 points</string>
 
     <!-- Post picture activity -->
     <string name="postPictureTitle">Post a picture</string>

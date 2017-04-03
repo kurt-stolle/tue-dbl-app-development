@@ -63,8 +63,12 @@ public class APICall extends AsyncTask<String, Void, String> {
             Log.d("ReadToken", "Reading token failed");
         } finally {
             try {
-                fis.close();
-                bufferedReader.close();
+                if (fis != null) {
+                    fis.close();
+                }
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
             } catch(IOException e) {
                 e.printStackTrace();
             }

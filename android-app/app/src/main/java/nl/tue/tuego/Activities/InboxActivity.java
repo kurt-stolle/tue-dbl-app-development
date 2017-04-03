@@ -1,6 +1,7 @@
 package nl.tue.tuego.Activities;
 
 import android.Manifest;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -42,7 +44,7 @@ import nl.tue.tuego.Adapters.InboxAdapter;
 import nl.tue.tuego.R;
 import nl.tue.tuego.WebAPI.APICall;
 
-public class InboxActivity extends AppCompatActivity {
+public class InboxActivity extends AppCompatActivity implements ListView.OnItemClickListener {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_PERMISSIONS = 1;
@@ -50,7 +52,6 @@ public class InboxActivity extends AppCompatActivity {
     private FloatingActionButton BCamera;
     private ListView LVFeed;
     private List<ImageModel> images;
-    private InboxAdapter adapter;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -251,7 +252,7 @@ public class InboxActivity extends AppCompatActivity {
         images.add(new ImageModel("a", "b", "c", "d"));
         images.add(new ImageModel("a", "b", "c", "d"));
 
-        adapter = new InboxAdapter(this, images);
+        InboxAdapter adapter = new InboxAdapter(this, images);
         LVFeed.setAdapter(adapter);
     }
 
@@ -302,6 +303,14 @@ public class InboxActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(this, InboxItemActivity.class);
+        intent.putExtra("UUID", images.get(position).getUUID());
+        intent.putExtra("Uploader", images.get(position).getUploader());
+        startActivity(intent);
     }
 
     private void closeStream (Closeable stream) {
