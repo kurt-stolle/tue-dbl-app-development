@@ -1,6 +1,7 @@
 package nl.tue.tuego.Activities;
 
 import android.Manifest;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -48,7 +50,7 @@ import nl.tue.tuego.Adapters.InboxAdapter;
 import nl.tue.tuego.R;
 import nl.tue.tuego.WebAPI.APICall;
 
-public class InboxActivity extends AppCompatActivity {
+public class InboxActivity extends AppCompatActivity implements ListView.OnItemClickListener {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_PERMISSIONS = 1;
@@ -56,7 +58,6 @@ public class InboxActivity extends AppCompatActivity {
     private FloatingActionButton BCamera;
     private ListView LVFeed;
     private List<ImageModel> images;
-    private InboxAdapter adapter;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -229,7 +230,6 @@ public class InboxActivity extends AppCompatActivity {
 
     // method that is called when the screen is pulled down to refresh items
     public void refresh() {
-        final InboxActivity _this = this;
 
         APICall call = new APICall("GET","/images",null,new APICallback() {
             public void done(String data){
@@ -250,7 +250,7 @@ public class InboxActivity extends AppCompatActivity {
                     Log.d("InboxCallback","Added new image to list, UUID: " + img.UUID);
                 }
 
-                adapter = new InboxAdapter(_this, images);
+                InboxAdapter adapter = new InboxAdapter(InboxActivity.this, images);
                 LVFeed.setAdapter(adapter);
             }
             public void fail(String data){
@@ -258,8 +258,10 @@ public class InboxActivity extends AppCompatActivity {
                 Log.e("InboxCallback",data);
             }
         });
-        call.setAPIKey(APICall.ReadToken(this));
+        call.setAPIKey(APICall.ReadToken(InboxActivity.this));
         call.execute();
+
+
     }
 
     // method that is called when an item is clicked, also gives an item as argument
@@ -309,6 +311,11 @@ public class InboxActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
     }
 
     private void closeStream (Closeable stream) {
