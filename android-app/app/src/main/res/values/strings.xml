@@ -39,6 +39,7 @@
     <string name="inboxTitle">Images</string>
 
     <!-- Inbox item activity -->
+    <string name="feedImageDescription">Thumbnail of the picture</string>
     <string name="inboxItemTitle">Challenge information</string>
     <string name="inboxItemButton">Guess location</string>
     <string name="tenPoints">10 points</string>

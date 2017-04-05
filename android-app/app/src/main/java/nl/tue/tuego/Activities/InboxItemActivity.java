@@ -68,7 +68,13 @@ public class InboxItemActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                TVTimeRemaining.setText(String.valueOf(i));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateTime(String.valueOf(i));
+                    }
+                });
+
                 i++;
             }
         }, 0, 1000);
@@ -82,6 +88,10 @@ public class InboxItemActivity extends AppCompatActivity {
         });
 
         refresh();
+    }
+
+    private void updateTime(String time) {
+        TVTimeRemaining.setText(String.valueOf(time));
     }
 
     // get the image of the picture

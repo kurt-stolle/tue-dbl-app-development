@@ -3,14 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:orientation="horizontal"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:id="@+id/feedItemLayout">
 
     <ImageView
         android:id="@+id/feedItemImage"
         android:layout_width="75dp"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:src="@drawable/ic_camera_alt_black_48dp" />
+        android:src="@drawable/ic_camera_alt_black_48dp"
+        android:contentDescription="@string/feedImageDescription" />
 
     <TextView
         android:id="@+id/feedItemAuthor"

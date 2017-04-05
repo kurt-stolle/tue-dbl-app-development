@@ -1,7 +1,6 @@
 package nl.tue.tuego.WebAPI;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -22,10 +21,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-
-
-import nl.tue.tuego.Activities.LoginActivity;
-import nl.tue.tuego.Activities.RegisterActivity;
 
 // APICall (was: WebAPI) handles calls to the Web API
 public class APICall extends AsyncTask<String, Void, String> {
