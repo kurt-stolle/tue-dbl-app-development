@@ -66,14 +66,13 @@ public class LoginActivity extends AppCompatActivity {
 
     // method that is called when BLogin is pressed
     public void login(View v) {
-        String emailText = ETEmail.getText().toString();
-        String passwordText = ETPassword.getText().toString();
-
         // Debug print
         Log.d("LoginActivity","Starting logging in");
 
         // Fill out the model
-        LoginModel log = new LoginModel(emailText, passwordText);
+        LoginModel log = new LoginModel();
+        log.Email = ETEmail.getText().toString();
+        log.Password = ETPassword.getText().toString();
 
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {
@@ -81,12 +80,11 @@ public class LoginActivity extends AppCompatActivity {
             public void done(String res) {
                 Gson gson = new Gson();
                 TokenModel tokenModel = gson.fromJson(res, TokenModel.class);
-                String token = tokenModel.getToken();
                 FileOutputStream fos = null;
 
                 try {
                     fos = openFileOutput("token_file", Context.MODE_PRIVATE);
-                    fos.write(token.getBytes());
+                    fos.write(tokenModel.Token.getBytes());
 
                     Log.d("LoginActivity", "Token saved");
                     Intent intent = new Intent(LoginActivity.this, InboxActivity.class);

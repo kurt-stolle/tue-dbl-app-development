@@ -87,7 +87,10 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d("RegisterActivity","Starting registration");
 
         // Fill out the model
-        RegistrationModel reg = new RegistrationModel(nameText, emailText, passwordText);
+        RegistrationModel reg = new RegistrationModel();
+        reg.Name = nameText;
+        reg.Email = emailText;
+        reg.Password = passwordText;
 
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {

@@ -40,7 +40,13 @@ public class LeaderboardActivity extends AppCompatActivity {
         // TODO: it will update the list of users
         getBestUsers();
         for (int i=0; i<4; i++) {
-            bestUsers[i] = new UserModel("a", "b", "c", 0);
+            UserModel user = new UserModel();
+            user.Email = "test@example.com";
+            user.Name = "BGWD69";
+            user.Points = 15;
+            user.UUID = "uuid-123021931-wadjowaw";
+
+            bestUsers[i] = user;
         }
             adapter = new LeaderboardAdapter(this, bestUsers);
             LVLeaderboard.setAdapter(adapter);

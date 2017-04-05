@@ -28,16 +28,22 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.tue.tuego.Models.PaginatedResponseModel;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.Models.ImageModel;
 import nl.tue.tuego.Adapters.InboxAdapter;
@@ -224,35 +230,38 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
 
     // method that is called when the screen is pulled down to refresh items
     public void refresh() {
+
         APICall call = new APICall("GET","/images",null,new APICallback() {
             public void done(String data){
-                Log.d("InboxCallback",data);
-                // Works!
-                // TODO serialize data
+                // Parse JSON
+                Gson gson = new Gson();
+                JsonParser parser = new JsonParser();
+                JsonArray resData = ((JsonObject) parser.parse(data)).getAsJsonArray("Data");
+
+                // Iterate over array
+                for (int i = 0; i < resData.size(); i++) {
+                    // Load image from JSON
+                    ImageModel img = gson.fromJson(resData.get(i), ImageModel.class);
+
+                    // Add image to list
+                    images.add(img);
+
+                    // Debug print
+                    Log.d("InboxCallback","Added new image to list, UUID: " + img.UUID);
+                }
+
+                InboxAdapter adapter = new InboxAdapter(InboxActivity.this, images);
+                LVFeed.setAdapter(adapter);
             }
             public void fail(String data){
                 // TODO display an error
                 Log.e("InboxCallback",data);
             }
         });
-        call.setAPIKey(APICall.ReadToken(getApplicationContext()));
+        call.setAPIKey(APICall.ReadToken(InboxActivity.this));
         call.execute();
 
-        // TODO: refresh the items on the screen
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        images.add(new ImageModel("a", "b", "c", "d"));
-        InboxAdapter adapter = new InboxAdapter(this, images);
-        LVFeed.setAdapter(adapter);
+
     }
 
     // method that is called when an item is clicked, also gives an item as argument

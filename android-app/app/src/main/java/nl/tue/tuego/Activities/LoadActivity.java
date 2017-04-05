@@ -26,7 +26,7 @@ public class LoadActivity extends Activity {
 
     // method which checks several things before continuing
     private void load() {
-        if (APICall.ReadToken(getApplicationContext()).equals("")) {
+        if (APICall.ReadToken(this).equals("")) {
             // go to the register activity
             Log.d("LoadActivity", "Token has incorrect length");
             Intent intent = new Intent(this, RegisterActivity.class);
