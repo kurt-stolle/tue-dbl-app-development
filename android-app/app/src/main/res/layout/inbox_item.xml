@@ -3,17 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:orientation="horizontal"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:id="@+id/feedItemLayout">
 
     <ImageView
-        android:id="@+id/itemImage"
+        android:id="@+id/feedItemImage"
         android:layout_width="75dp"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:src="@drawable/ic_camera_alt_black_48dp" />
+        android:src="@drawable/ic_camera_alt_black_48dp"
+        android:contentDescription="@string/feedImageDescription" />
 
     <TextView
-        android:id="@+id/itemAuthor"
+        android:id="@+id/feedItemAuthor"
         android:layout_width="0px"
         android:layout_height="match_parent"
         android:layout_weight="0.6"
@@ -28,7 +30,7 @@
         android:weightSum="3">
 
         <TextView
-            android:id="@+id/itemTimeRemaining"
+            android:id="@+id/feedItemTimeRemaining"
             android:layout_width="wrap_content"
             android:layout_height="0px"
             android:layout_weight="1"
@@ -36,7 +38,7 @@
             android:text="[Time remaining]" />
 
         <TextView
-            android:id="@+id/itemTimeTaken"
+            android:id="@+id/feedItemTimeTaken"
             android:layout_width="wrap_content"
             android:layout_height="0px"
             android:layout_weight="1"
@@ -44,7 +46,7 @@
             android:text="[Time taken]" />
 
         <TextView
-            android:id="@+id/itemPoints"
+            android:id="@+id/feedItemPoints"
             android:layout_width="wrap_content"
             android:layout_height="0px"
             android:layout_weight="1"

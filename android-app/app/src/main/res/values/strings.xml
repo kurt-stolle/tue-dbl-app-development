@@ -1,14 +1,14 @@
 <resources>
     <!-- General strings -->
-    <string name="appName">TU/e GO</string>
+    <string name="appName">TUe Go</string>
     <string name="next">Next</string>
     <string name="enable">Enable</string>
     <string name="cancel">Cancel</string>
 
     <!-- Account details -->
-    <string name="username">Username</string>
+    <string name="username">Name</string>
     <string name="emailAddress">Email Address</string>
-    <string name="usernameEmailAddress">Username / Email Address</string>
+    <string name="usernameEmailAddress">Email Address</string>
     <string name="password">Password</string>
     <string name="verifyPassword">Verify Password</string>
 
@@ -39,8 +39,10 @@
     <string name="inboxTitle">Images</string>
 
     <!-- Inbox item activity -->
+    <string name="feedImageDescription">Thumbnail of the picture</string>
     <string name="inboxItemTitle">Challenge information</string>
     <string name="inboxItemButton">Guess location</string>
+    <string name="tenPoints">10 points</string>
 
     <!-- Post picture activity -->
     <string name="postPictureTitle">Post a picture</string>
@@ -49,8 +51,8 @@
     <string name="leaderboardTitle">Leaderboard</string>
 
     <!-- Correct guess pop-up -->
-    <string name="guessCorrect">Congratulations, you guessed the location!</string>
-    <string name="guessCorrectPoints">You earned 10 studypoints.</string>
+    <string name="guessCorrect">Congratulations, you found the picture!</string>
+    <string name="guessCorrectPoints">You earned 10 studypoints™.</string>
 
     <!-- Incorrect guess pop-up -->
     <string name="guessIncorrect">Too bad, you did not guess the location.</string>

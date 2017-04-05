@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -11,7 +12,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
-	dbmdl "github.com/kurt-stolle/go-dbmdl"
+	"github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/services"
@@ -23,15 +24,26 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	switch r.Method {
 	case http.MethodPost: // Upload an image (JPEG)
 		// Find the user
-		var uuidUser string
-		if token, ok := context.Get(r, "token").(*jwt.Token); !ok {
+		token, ok := context.Get(r, "token").(*jwt.Token)
+		if !ok {
 			writeError(w, http.StatusUnauthorized)
-		} else {
-			uuidUser = token.Claims["sub"].(string)
+			return
+		}
 
-			if uuidUser == "" {
-				writeError(w, http.StatusForbidden)
-			}
+		var uuidUser = (token.Claims.(*jwt.StandardClaims)).Subject
+
+		if uuidUser == "" {
+			writeError(w, http.StatusForbidden)
+			return
+		}
+
+		// Scan the maount
+		var amount int
+		if err := postgres.Connect().QueryRow("SELECT COUNT(*) FROM tuego_images WHERE Uploader=$1 LIMIT 5", uuidUser).Scan(&amount); amount >= 5 {
+			writeError(w, http.StatusConflict, "You already have 5 active pictures")
+			return
+		} else if err != nil {
+			log.Fatal("Could not check max image count:", err)
 		}
 
 		// Create a new image struct
@@ -47,9 +59,11 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 			return
 		}
 
-		p := path.Join(pwd, "uploads", img.UUID+".jpg")
+		p := path.Join(pwd, img.UUID+".jpg")
 
-		parseImageUpload(w, r, p, 250, 3000, 2000)
+		if !parseImageUpload(w, r, p, 6000, 3000, 2000, services.JPEG) {
+			return
+		}
 
 		// Save the image struct
 		if err := dbmdl.Save(postgres.Connect(), img, nil); err != nil {
@@ -57,6 +71,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 			return
 		}
 
+		writeJSON(w, img)
 	case http.MethodGet: // Fetch an manifest of images
 		status, images, pag := services.GetActiveImages(1, 250)
 		if status != http.StatusOK {
@@ -89,7 +104,7 @@ func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		if token, ok := context.Get(r, "token").(*jwt.Token); !ok {
 			writeError(w, http.StatusUnauthorized)
 		} else {
-			uuidUser = token.Claims["sub"].(string)
+			uuidUser = (token.Claims.(*jwt.StandardClaims)).Subject
 
 			if uuidUser == "" {
 				writeError(w, http.StatusForbidden)

@@ -52,16 +52,16 @@ func setupRoute(r *mux.Router, uri string, functions ...negroni.HandlerFunc) *mu
 // Quick utility for registering DBMDLs and catching the possible errors
 func registerStruct(t string, s interface{}) {
 	if err := dbmdl.RegisterStruct(postgres.Connect(), "postgres", t, s); err != nil {
-		log.Panic("Failed to register struct: ", err)
+		log.Panic(err)
+	}
+
+	if err := dbmdl.GenerateTable(postgres.Connect(), s); err != nil {
+		log.Panic(err)
 	}
 }
 
 // Main function
 func main() {
-	var port = os.Getenv("PORT")
-	if port == "" {
-		port = "9058"
-	}
 
 	// Setting this manually often helps speed up the application
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -85,7 +85,7 @@ func main() {
 
 	setupRoute(r, "/images", authentication.Verify, controllers.Images).Methods(http.MethodPost, http.MethodGet)
 	setupRoute(r, "/images/{uuid}", authentication.Verify, controllers.Image).Methods(http.MethodPost, http.MethodGet).Headers("Content-Type", "application/json")
-	setupRoute(r, "/images/{uuid}/image.jpg", authentication.Verify, controllers.ImageFile).Methods(http.MethodGet)
+	setupRoute(r, "/images/{uuid}/image.jpg", controllers.ImageFile).Methods(http.MethodGet)
 
 	setupRoute(r, "/leaderboard", authentication.Verify, controllers.Leaderboard).Methods(http.MethodGet).Headers("Content-Type", "application/json")
 
@@ -103,8 +103,8 @@ func main() {
 	}))
 	n.UseHandler(r) // Implement routes
 
-	log.Println("Web server listening on :" + port)
-	log.Fatal(http.ListenAndServe(":"+port, n))
+	log.Println("Web server listening on :80")
+	log.Fatal(http.ListenAndServe(":80", n))
 }
 
 // The index should list the routes that we have available

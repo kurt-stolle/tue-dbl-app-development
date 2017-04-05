@@ -23,7 +23,7 @@ func GetActiveImages(page, amount int) (int, []*models.Image, *dbmdl.Pagination)
 
 	// Where clause for making sure we select only active images
 	where := dbmdl.NewWhereClause(imageType)
-	where.AddClause("Finder=NULL")
+	where.AddClause("Finder=''")
 
 	// Pagination
 	dbp := dbmdl.NewPagination(page, amount)
@@ -124,7 +124,10 @@ func ParseImage(file []byte) (*image.Image, error) {
 
 // VerifyImageSize verified whether an image is of proper size (px)
 func VerifyImageSize(img *image.Image, width int, height int) bool {
+
 	b := (*img).Bounds()
+
+	log.Println("Image dim: ", b)
 	return (b.Max.X == width && b.Max.Y == height)
 }
 

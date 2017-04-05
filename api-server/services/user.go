@@ -46,6 +46,11 @@ func CreateUser(u *models.User, password string) (int, error) {
 		return http.StatusBadRequest, errors.New("The provided e-mail adress is not an e-mail address")
 	}
 
+	var alreadyExists bool
+	if postgres.Connect().QueryRow("SELECT TRUE FROM tuego_users WHERE Email=$1", u.Email).Scan(&alreadyExists); alreadyExists {
+		return http.StatusBadRequest, errors.New("The provided e-mail address already exists")
+	}
+
 	// Secondly, we generate a UUID and Salt
 	u.UUID = uuid.New()
 	u.Salt = randomString(32)

@@ -14,8 +14,8 @@ import (
 )
 
 // parse upload handles a file upload
-func parseImageUpload(w http.ResponseWriter, r *http.Request, path string, maxSizeKB int64, maxWidth int, maxHeight int, filetype ...string) {
-	if filetype[0] == "" {
+func parseImageUpload(w http.ResponseWriter, r *http.Request, path string, maxSizeKB int64, maxWidth int, maxHeight int, filetype ...string) bool {
+	if len(filetype) == 0 || filetype[0] == "" {
 		log.Panic("No filetype provided!")
 	}
 
@@ -28,7 +28,7 @@ func parseImageUpload(w http.ResponseWriter, r *http.Request, path string, maxSi
 		log.Println("Upload failled: ", err)
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Failed to form file from form data encoding"))
-		return
+		return false
 	}
 	defer fTemp.Close()
 
@@ -36,29 +36,29 @@ func parseImageUpload(w http.ResponseWriter, r *http.Request, path string, maxSi
 	cur, err := fTemp.Seek(0, 1)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "File seek failed (1)")
-		return
+		return false
 	}
 	size, err := fTemp.Seek(0, 2)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "File seek failed (2)")
-		return
+		return false
 	}
 	_, err = fTemp.Seek(cur, 0)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "File seek failed (3)")
-		return
+		return false
 	}
 
 	file := make([]byte, size)
 	if _, err = fTemp.Read(file); err != nil {
 		writeError(w, http.StatusBadRequest, "Could not write file into memory")
-		return
+		return false
 	}
 
 	// Check filetype
 	if !services.VerifyFileType(file, filetype...) {
 		writeError(w, http.StatusBadRequest, "File must be "+filetype[0]+" format")
-		return
+		return false
 	}
 
 	// Parse as image
@@ -66,13 +66,13 @@ func parseImageUpload(w http.ResponseWriter, r *http.Request, path string, maxSi
 	if err != nil {
 		fmt.Println(err)
 		writeError(w, http.StatusForbidden, "Could not parse as image")
-		return
+		return false
 	}
 
 	// Check size
 	if !services.VerifyImageSize(img, maxWidth, maxHeight) {
 		writeError(w, http.StatusBadRequest, "File must be "+strconv.Itoa(maxWidth)+"x"+strconv.Itoa(maxHeight)+" pixels")
-		return
+		return false
 	}
 
 	// Open filesystem
@@ -80,7 +80,7 @@ func parseImageUpload(w http.ResponseWriter, r *http.Request, path string, maxSi
 	if err != nil {
 		log.Println("Filesystem open failled: ", err)
 		writeError(w, http.StatusInternalServerError, "Failed to allocate image on filesystem")
-		return
+		return false
 	}
 	defer fSys.Close()
 
@@ -88,12 +88,10 @@ func parseImageUpload(w http.ResponseWriter, r *http.Request, path string, maxSi
 	if _, err = io.Copy(fSys, bytes.NewReader(file)); err != nil {
 		log.Println("Filesystem copy failed: ", err)
 		writeError(w, http.StatusInternalServerError, "Failed to copy image to filesystem")
-		return
+		return false
 	}
 
-	// Reply with the correct URL
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(r.URL.String()))
+	return true
 }
 
 // Writes an image to the response writer

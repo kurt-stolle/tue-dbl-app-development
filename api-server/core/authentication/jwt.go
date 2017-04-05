@@ -44,9 +44,11 @@ func GetJWTInstance() *JWTData {
 
 // GenerateToken generates a user token
 func (backend *JWTData) GenerateToken(userUUID string) (string, error) {
-	token := jwt.New(jwt.SigningMethodRS512)
-	token.Claims["iat"] = time.Now().Unix()
-	token.Claims["sub"] = userUUID
+	claims := new(jwt.StandardClaims)
+	claims.IssuedAt = time.Now().Unix()
+	claims.Subject = userUUID
+
+	token := jwt.NewWithClaims(jwt.SigningMethodRS512, claims)
 
 	tokenString, err := token.SignedString(backend.privateKey)
 
