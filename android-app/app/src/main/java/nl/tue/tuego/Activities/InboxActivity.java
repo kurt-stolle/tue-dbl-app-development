@@ -251,7 +251,6 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         images.add(new ImageModel("a", "b", "c", "d"));
         images.add(new ImageModel("a", "b", "c", "d"));
         images.add(new ImageModel("a", "b", "c", "d"));
-
         InboxAdapter adapter = new InboxAdapter(this, images);
         LVFeed.setAdapter(adapter);
     }
@@ -307,10 +306,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(this, InboxItemActivity.class);
-        intent.putExtra("UUID", images.get(position).getUUID());
-        intent.putExtra("Uploader", images.get(position).getUploader());
-        startActivity(intent);
+
     }
 
     private void closeStream (Closeable stream) {
