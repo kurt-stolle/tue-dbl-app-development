@@ -1,4 +1,4 @@
-package nl.tue.tuego.Models;
+package nl.tue.tuego.Holders;
 
 import android.util.Log;
 import android.widget.TextView;
@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import nl.tue.tuego.Models.ImageModel;
 import nl.tue.tuego.R;
 
 import static nl.tue.tuego.Activities.InboxItemActivity.GUESS_TIME;

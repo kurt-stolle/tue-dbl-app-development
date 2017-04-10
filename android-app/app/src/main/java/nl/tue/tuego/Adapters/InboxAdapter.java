@@ -20,7 +20,7 @@ import java.util.TimerTask;
 
 import nl.tue.tuego.Activities.InboxItemActivity;
 import nl.tue.tuego.Models.ImageModel;
-import nl.tue.tuego.Models.ViewHolder;
+import nl.tue.tuego.Holders.ViewHolder;
 import nl.tue.tuego.R;
 
 public class InboxAdapter extends ArrayAdapter<ImageModel> {
