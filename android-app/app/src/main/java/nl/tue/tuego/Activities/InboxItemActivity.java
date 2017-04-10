@@ -26,7 +26,7 @@ import nl.tue.tuego.R;
 
 public class InboxItemActivity extends AppCompatActivity {
     // amount of time to guess a picture in days
-    public static final int GUESS_TIME = 30;
+    public static final int GUESS_TIME = 13;
     private String UUID;
     private String Uploader;
     private String UploadTime;

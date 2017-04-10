@@ -9,7 +9,7 @@
     <string name="dataPoints">Available points: %1$s</string>
     <string name="dataAuthor">Author: %1$s</string>
     <string name="dataTimeTaken">Picture taken at: %1$s</string>
-    <string name="dataTimeRemaining">Time left: %1$d:%2$d:%3$d:%4$d</string>
+    <string name="dataTimeRemaining">Time left: %1$d:%2$02d:%3$02d:%4$02d</string>
 
     <!-- Account details -->
     <string name="username">Name</string>
@@ -44,11 +44,17 @@
     <!-- Inbox activity -->
     <string name="inboxTitle">Images</string>
 
+    <!-- Inbox item -->
+    <string name="itemAuthor">Author:</string>
+    <string name="itemPoints">Points:</string>
+    <string name="itemTimeRemaining">Time left:</string>
+    <string name="itemTimeTaken">Time taken:</string>
+    <string name="itemPointsValue">10 points</string>
+
     <!-- Inbox item activity -->
     <string name="feedImageDescription">Thumbnail of the picture</string>
     <string name="inboxItemTitle">Challenge information</string>
     <string name="inboxItemButton">Guess location</string>
-    <string name="tenPoints">10 points</string>
 
     <!-- Post picture activity -->
     <string name="postPictureTitle">Post a picture</string>
