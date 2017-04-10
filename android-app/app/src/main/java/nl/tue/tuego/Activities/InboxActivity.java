@@ -58,11 +58,6 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
     private FloatingActionButton BCamera;
     private ListView LVFeed;
     private List<ImageModel> images;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,10 +82,6 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 onCameraButtonClick();
             }
         });
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         refresh();
     }
@@ -230,7 +221,6 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
 
     // method that is called when the screen is pulled down to refresh items
     public void refresh() {
-
         APICall call = new APICall("GET","/images",null,new APICallback() {
             public void done(String data){
                 // Parse JSON
@@ -254,8 +244,9 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 LVFeed.setAdapter(adapter);
             }
             public void fail(String data){
-                // TODO display an error
-                Log.e("InboxCallback",data);
+                Toast.makeText(InboxActivity.this, "Failed to load data", Toast.LENGTH_LONG).show();
+                // This log causes an error
+                // Log.e("InboxCallback",data);
             }
         });
         call.setAPIKey(APICall.ReadToken(InboxActivity.this));
@@ -326,41 +317,5 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         } catch (IOException e) {
             Log.d("Stream", "Stream already closed");
         }
-    }
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("Inbox Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
     }
 }

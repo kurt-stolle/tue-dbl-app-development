@@ -58,6 +58,8 @@ public class InboxAdapter extends ArrayAdapter<ImageModel> {
                 Intent intent = new Intent(getContext(), InboxItemActivity.class);
                 intent.putExtra("UUID", item.UUID);
                 intent.putExtra("Uploader", item.Uploader);
+                intent.putExtra("UploadTime", item.UploadTime);
+                intent.putExtra("Finder", item.Finder);
                 getContext().startActivity(intent);
             }
         });

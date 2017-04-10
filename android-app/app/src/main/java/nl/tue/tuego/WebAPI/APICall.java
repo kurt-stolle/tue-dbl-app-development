@@ -186,15 +186,19 @@ public class APICall extends AsyncTask<String, Void, String> {
 
             token = sb.toString();
         } catch (FileNotFoundException e) {
-            // go to the register activity
+            // TODO: go to the register activity
             Log.d("ReadToken", "Token not found");
         } catch (IOException e) {
-            // go to the register activity
+            // TODO: go to the register activity
             Log.d("ReadToken", "Reading token failed");
         } finally {
             try {
-                fis.close();
-                bufferedReader.close();
+                if (fis != null) {
+                    fis.close();
+                }
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
             } catch(IOException e) {
                 e.printStackTrace();
             }

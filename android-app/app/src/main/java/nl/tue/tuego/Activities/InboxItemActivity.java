@@ -1,24 +1,32 @@
 package nl.tue.tuego.Activities;
 
+import android.content.res.Resources;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import nl.tue.tuego.R;
 
 public class InboxItemActivity extends AppCompatActivity {
+    // amount of time to guess a picture in days
+    public static final int GUESS_TIME = 30;
     private String UUID;
     private String Uploader;
     private String UploadTime;
@@ -57,27 +65,46 @@ public class InboxItemActivity extends AppCompatActivity {
         UploadTime = getIntent().getExtras().getString("UploadTime");
         Finder = getIntent().getExtras().getString("Finder");
 
-        // setting the text of the textviews
-        TVAuthor.setText(Uploader);
-        TVPoints.setText(String.format("Points: %s", R.string.tenPoints));
-        TVTimeTaken.setText(UploadTime);
-        Timer timer = new Timer();
-        Calendar c = Calendar.getInstance();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            int i = 0;
+        // Setting the text of the textviews
+        final Resources res = getResources();
+        TVAuthor.setText(res.getString(R.string.dataAuthor, Uploader));
+        TVPoints.setText(res.getString(R.string.dataPoints, "10"));
+        TVTimeTaken.setText(res.getString(R.string.dataTimeTaken, UploadTime));
 
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateTime(String.valueOf(i));
-                    }
-                });
+        // Setting text of time remaining
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
+        Date uploadDate = null;
+        try {
+            uploadDate = format.parse(UploadTime);
+        } catch (ParseException e) {
+            Log.e("InboxItemActivity", "Date cannot be parsed");
+            e.printStackTrace();
+        }
 
-                i++;
-            }
-        }, 0, 1000);
+        if (uploadDate != null) {
+            Timer timer = new Timer();
+            final Date finalUploadDate = uploadDate;
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    Date currentDate = new Date();
+                    long diffDate = finalUploadDate.getTime() + TimeUnit.DAYS.toMillis(GUESS_TIME) - currentDate.getTime();
+                    final long diffSeconds = diffDate / 1000 % 60;
+                    final long diffMinutes = diffDate / (60 * 1000) % 60;
+                    final long diffHours = diffDate / (60 * 60 * 1000) % 24;
+                    final long diffDays = diffDate / (1000 * 60 * 60 * 24);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            TVTimeRemaining.setText(res.getString(R.string.dataTimeRemaining, diffDays, diffHours, diffMinutes, diffSeconds));
+                        }
+                    });
+                }
+            }, 0, 1000);
+        } else {
+            TVTimeRemaining.setText("Error getting date");
+        }
 
         // set event listeners
         BGuess.setOnClickListener(new View.OnClickListener() {
@@ -87,15 +114,11 @@ public class InboxItemActivity extends AppCompatActivity {
             }
         });
 
-        refresh();
-    }
-
-    private void updateTime(String time) {
-        TVTimeRemaining.setText(String.valueOf(time));
+        loadImage();
     }
 
     // get the image of the picture
-    private void refresh() {
+    private void loadImage() {
         // TODO: get the image from the client
     }
 
