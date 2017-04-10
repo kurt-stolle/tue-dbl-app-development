@@ -84,7 +84,6 @@ public class APICall extends AsyncTask<String, Void, String> {
                 client.addRequestProperty("Authorization","Bearer " + this.apiKey );
             }
 
-
             // Some stuff is different when doing a PUSH-type request
             if (isPushRequest) {
                 client.setDoOutput(true);

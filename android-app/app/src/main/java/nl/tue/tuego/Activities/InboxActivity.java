@@ -221,7 +221,8 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
 
     // method that is called when the screen is pulled down to refresh items
     public void refresh() {
-        APICall call = new APICall("GET","/images",null,new APICallback() {
+        // Determine what happens when the call is done
+        APICallback callback = new APICallback() {
             public void done(String data){
                 // Parse JSON
                 Gson gson = new Gson();
@@ -245,14 +246,15 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
             }
             public void fail(String data){
                 Toast.makeText(InboxActivity.this, "Failed to load data", Toast.LENGTH_LONG).show();
-                // This log causes an error
+                // TODO: This log causes an error
                 // Log.e("InboxCallback",data);
             }
-        });
+        };
+
+        // Perform the API call
+        APICall call = new APICall("GET","/images",null,callback);
         call.setAPIKey(APICall.ReadToken(InboxActivity.this));
         call.execute();
-
-
     }
 
     // method that is called when an item is clicked, also gives an item as argument
