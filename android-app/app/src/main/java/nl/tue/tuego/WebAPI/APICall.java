@@ -64,8 +64,10 @@ public class APICall extends AsyncTask<String, Void, String> {
         InputStream in = null;
 
         boolean isPushRequest = (this.model != null && (this.method.equals("POST") || this.method.equals("PATCH") || this.method.equals("PUT")));
-        if (isPushRequest && !(this.model instanceof Bitmap)) {
+        if (isPushRequest) {
             Gson gson = new Gson();
+            String jsonString = gson.toJson(this.model);
+            Log.d("API", "Writing: " + jsonString);
             json = gson.toJson(this.model).getBytes();
         }
 
