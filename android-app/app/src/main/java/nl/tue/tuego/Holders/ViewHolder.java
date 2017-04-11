@@ -21,7 +21,7 @@ public class ViewHolder {
     public TextView TVTimeRemaining;
     public TextView TVTimeTaken;
     public TextView TVPoints;
-    ImageModel mImageModel;
+    private ImageModel mImageModel;
     private final Context context;
 
     public ViewHolder (Context context) {

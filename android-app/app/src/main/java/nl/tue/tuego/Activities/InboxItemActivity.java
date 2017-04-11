@@ -85,6 +85,22 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         TVTimeTaken.setText(res.getString(R.string.dataTimeTaken, UploadTime));
 
         // Setting text of TVTimeRemaining
+        setTimeRemaining(res);
+
+        // set event listeners
+        BGuess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onGuessButtonClick(v);
+            }
+        });
+
+        loadImage();
+    }
+
+    private void setTimeRemaining(Resources r) {
+        final Resources res = r;
+
         // First parse the date retrieved from the ImageModel
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
         Date uploadDate = null;
@@ -102,6 +118,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
+                    // Get the time units of the time remaining
                     Date currentDate = new Date();
                     final long diffDate = finalUploadDate.getTime() + TimeUnit.DAYS.toMillis(GUESS_TIME) - currentDate.getTime();
                     final long diffSeconds = diffDate / 1000 % 60;
@@ -109,6 +126,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
                     final long diffHours = diffDate / (60 * 60 * 1000) % 24;
                     final long diffDays = diffDate / (1000 * 60 * 60 * 24);
 
+                    // Editing TextViews must be done on the UI thread
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -124,21 +142,38 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         } else {
             TVTimeRemaining.setText(res.getString(R.string.error));
         }
-
-        // set event listeners
-        BGuess.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onGuessButtonClick(v);
-            }
-        });
-
-        loadImage();
     }
 
-    // get the image of the picture
+    // Get the image of the picture
     private void loadImage() {
         // TODO: get the image from the client
+
+        // Determine what happens when the call is done
+        APICallback callback = new APICallback() {
+            @Override
+            public void done(String res) {
+                Log.d("InboxItemActivity", "Image loaded");
+                // TODO: Show a correct pop-up
+            }
+
+            @Override
+            public void fail(String res) {
+                Log.d("InboxItemActivity", "Image failed to load");
+                // TODO: Show an incorrect pop-up
+            }
+        };
+
+        // Perform the API call
+        Log.d("InboxItemActivity", UUID);
+        APICall call = new APICall("GET", "/images/" + UUID, null, callback);
+        call.setAPIKey(APICall.ReadToken(this));
+        call.execute();
+    }
+
+    // method that is called when the DELETE PICTURE button is pressed
+    // only the poster of the picture can do this
+    public void deletePic(View v) {
+        // TODO: delete the picture
     }
 
     // method that is called when the GUESS LOCATION button is pressed
@@ -205,13 +240,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         call.setAPIKey(APICall.ReadToken(this));
         call.execute();
     }
-
-    // method that is called when the DELETE PICTURE button is pressed
-    // only the poster of the picture can do this
-    public void deletePic(View v) {
-        // TODO: delete the picture
-    }
-
 
     // called when returning from permission pop-up
     @Override
