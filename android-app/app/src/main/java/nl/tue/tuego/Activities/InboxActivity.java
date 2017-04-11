@@ -221,6 +221,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
 
     // method that is called when the screen is pulled down to refresh items
     public void refresh() {
+        Log.d("InboxActivity", "Refreshing...");
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {
             public void done(String data){

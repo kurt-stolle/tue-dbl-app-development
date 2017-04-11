@@ -30,6 +30,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import nl.tue.tuego.Models.CoordinateModel;
 import nl.tue.tuego.R;
 import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
@@ -172,7 +173,9 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         Log.d("InboxItemActivity", "Guessing location: " + location.getLatitude()
                 + " and " + location.getLongitude());
 
-        // TODO: Create correct location object to post to the server
+        CoordinateModel coords = new CoordinateModel();
+        coords.Latitude = String.valueOf(location.getLatitude());
+        coords.Longitude = String.valueOf(location.getLongitude());
 
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {
@@ -192,7 +195,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         };
 
         // Perform the API call
-        APICall call = new APICall("POST", "/images/" + UUID, location, callback);
+        APICall call = new APICall("POST", "/images/" + UUID, coords, callback);
         call.setAPIKey(APICall.ReadToken(this));
         call.execute();
     }

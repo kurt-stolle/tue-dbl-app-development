@@ -2,6 +2,7 @@ package nl.tue.tuego.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -122,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // when the up button is pressed
             case android.R.id.home:
-                onBackPressed();
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
 
             // all other cases

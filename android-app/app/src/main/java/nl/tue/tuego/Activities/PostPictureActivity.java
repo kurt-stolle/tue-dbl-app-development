@@ -126,7 +126,7 @@ public class PostPictureActivity extends AppCompatActivity {
             @Override
             public void done(String res) {
                 Toast.makeText(PostPictureActivity.this, "Picture posted", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(PostPictureActivity.this, LoginActivity.class);
+                Intent intent = new Intent(PostPictureActivity.this, InboxActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();

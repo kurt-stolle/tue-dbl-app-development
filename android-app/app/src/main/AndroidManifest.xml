@@ -41,7 +41,12 @@
 
         <activity
             android:name=".Activities.LoginActivity"
-            android:label="@string/loginTitle" />
+            android:label="@string/loginTitle"
+            android:parentActivityName=".Activities.RegisterActivity" >
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".Activities.RegisterActivity" />
+        </activity>
 
         <activity
             android:name=".Activities.ForgotPasswordActivity"
