@@ -51,7 +51,7 @@ public class APIPostPicture extends AsyncTask<String, Void, String> {
         int idx = q.length - 1;
 
         try {
-            URL url = new URL("http://tue-dbl-app-development.herokuapp.com/images");
+            URL url = new URL("http://dblappdev.professorsonstage.nl/images");
             connection = (HttpURLConnection) url.openConnection();
 
             connection.setDoInput(true);
