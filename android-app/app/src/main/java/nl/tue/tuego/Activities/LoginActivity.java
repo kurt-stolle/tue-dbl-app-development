@@ -3,6 +3,7 @@ package nl.tue.tuego.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -117,13 +118,17 @@ public class LoginActivity extends AppCompatActivity {
 //        startActivity(intent);
 //    }
 
-    // events that trigger when a certain button is pressed on the action bar
+    // Events that trigger when a certain button is pressed on the action bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // when the up button is pressed
+            // When the up button is pressed
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                System.out.println("Up button pressed");
+                Intent parentIntent = NavUtils.getParentActivityIntent(this);
+                parentIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(parentIntent);
+                finish();
                 return true;
 
             // all other cases

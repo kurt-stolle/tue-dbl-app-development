@@ -10,6 +10,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -108,10 +110,10 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         }
 
         if (permissionsNeeded.size() > 0) {
-        // ask for permissions
-        ActivityCompat.requestPermissions(this,
-                permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
-                REQUEST_PERMISSIONS);
+            // ask for permissions
+            ActivityCompat.requestPermissions(this,
+                    permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
+                    REQUEST_PERMISSIONS);
 
         } else {
             // all permissions granted so go to camera
@@ -224,7 +226,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         Log.d("InboxActivity", "Refreshing...");
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {
-            public void done(String data){
+            public void done(String data) {
                 // Parse JSON
                 Gson gson = new Gson();
                 JsonParser parser = new JsonParser();
@@ -239,13 +241,14 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                     images.add(img);
 
                     // Debug print
-                    Log.d("InboxCallback","Added new image to list, UUID: " + img.UUID);
+                    Log.d("InboxCallback", "Added new image to list, UUID: " + img.UUID);
                 }
 
                 InboxAdapter adapter = new InboxAdapter(InboxActivity.this, images);
                 LVFeed.setAdapter(adapter);
             }
-            public void fail(String data){
+
+            public void fail(String data) {
                 Toast.makeText(InboxActivity.this, "Failed to load data", Toast.LENGTH_LONG).show();
                 // TODO: This log causes an error
                 // Log.e("InboxCallback",data);
@@ -253,7 +256,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         };
 
         // Perform the API call
-        APICall call = new APICall("GET","/images",null,callback);
+        APICall call = new APICall("GET", "/images", null, callback);
         call.setAPIKey(APICall.ReadToken(InboxActivity.this));
         call.execute();
     }
@@ -271,7 +274,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         return true;
     }
 
-    // events that trigger when a certain button is pressed on the action bar
+    // Events that trigger when a certain button is pressed on the action bar
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -280,6 +283,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 startActivity(intent1);
                 return true;
 
+            // When the leaderboard button is pressed
             case R.id.actionLogout:
                 FileOutputStream fos = null;
                 try {
@@ -298,10 +302,15 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 finish();
                 return true;
 
+            // When the up button is pressed
             case android.R.id.home:
-                onBackPressed();
+                Intent parentIntent = NavUtils.getParentActivityIntent(this);
+                parentIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(parentIntent);
+                finish();
                 return true;
 
+            // All other cases
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -312,7 +321,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
 
     }
 
-    private void closeStream (Closeable stream) {
+    private void closeStream(Closeable stream) {
         try {
             if (stream != null) {
                 stream.close();
