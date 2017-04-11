@@ -47,10 +47,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
     private String Uploader;
     private String UploadTime;
     private String Finder;
-    TextView TVAuthor;
-    TextView TVPoints;
-    TextView TVTimeTaken;
-    TextView TVTimeRemaining;
+    private TextView TVAuthor, TVPoints, TVTimeTaken, TVTimeRemaining;
     ImageView IVImage;
     Button BGuess;
 
@@ -61,7 +58,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
 
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        // look up all needed views
+        // Look up all needed views
         TVAuthor = (TextView) findViewById(R.id.itemAuthor);
         TVPoints = (TextView) findViewById(R.id.itemPoints);
         TVTimeTaken = (TextView) findViewById(R.id.itemTimeTaken);
@@ -70,12 +67,12 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         BGuess = (Button) findViewById(R.id.buttonGuess);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        // adds the toolbar to the activity
+        // Adds the toolbar to the activity
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        // getting all the ImageModel data
+        // Getting all the ImageModel data
         UUID = getIntent().getExtras().getString("UUID");
         Uploader = getIntent().getExtras().getString("Uploader");
         UploadTime = getIntent().getExtras().getString("UploadTime");
@@ -90,7 +87,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         // Setting text of TVTimeRemaining
         setTimeRemaining(res);
 
-        // set event listeners
+        // Set event listeners
         BGuess.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

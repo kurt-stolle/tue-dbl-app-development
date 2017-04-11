@@ -23,11 +23,11 @@
             android:gravity="center">
 
             <ImageView
-                android:id="@+id/postPostPictureImage"
+                android:id="@+id/postPictureImage"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
-                android:scaleType="centerCrop"
-                android:gravity="center" />
+                android:gravity="center"
+                android:scaleType="centerCrop" />
 
             <!--
             <TextView
@@ -46,6 +46,7 @@
             android:weightSum="2">
 
             <TextView
+                android:id="@+id/postPictureTimeTaken"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/view_margin"
@@ -56,6 +57,7 @@
                 android:textSize="20dp" />
 
             <TextView
+                android:id="@+id/postPicturePoints"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/view_margin"

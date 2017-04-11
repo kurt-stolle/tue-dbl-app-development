@@ -1,6 +1,7 @@
 package nl.tue.tuego.Activities;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -17,7 +18,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -25,7 +29,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import nl.tue.tuego.WebAPI.APICall;
@@ -34,8 +41,9 @@ import nl.tue.tuego.WebAPI.APIPostPicture;
 import nl.tue.tuego.R;
 
 public class PostPictureActivity extends AppCompatActivity {
-    Button BPost, BDiscard;
-    ImageView IVImage;
+    private TextView TVTimeTaken, TVPoints;
+    private ImageView IVImage;
+    private Button BPost, BDiscard;
     Bitmap picture;
     String filePath;
 
@@ -44,18 +52,30 @@ public class PostPictureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_picture);
 
-        // look up all needed views
+        // Look up all needed views
+        TVTimeTaken = (TextView) findViewById(R.id.postPictureTimeTaken);
+        TVPoints = (TextView) findViewById(R.id.postPicturePoints);
         BPost = (Button) findViewById(R.id.buttonPost);
         BDiscard = (Button) findViewById(R.id.buttonDiscard);
-        IVImage = (ImageView) findViewById(R.id.postPostPictureImage);
+        IVImage = (ImageView) findViewById(R.id.postPictureImage);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        // adds the toolbar to the activity
+        // Adds the toolbar to the activity
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        // getting the picture taken from the camera
+        // Set text of TVPoints
+        final Resources res = getResources();
+        TVPoints.setText(res.getString(R.string.dataPoints, "10"));
+
+        // Set text of TVTimeTaken
+        Date currentDate = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
+        String currentDateString = format.format(currentDate);
+        TVTimeTaken.setText(res.getString(R.string.dataTimeTaken, currentDateString));
+
+        // Getting the picture taken from the camera
         filePath = getIntent().getExtras().getString("Path");
         picture = null;
         try {
@@ -65,7 +85,7 @@ public class PostPictureActivity extends AppCompatActivity {
             Log.d("PostPictureActivity", "Picture not found");
         }
 
-        // set event listeners
+        // Set event listeners
         BPost.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +101,7 @@ public class PostPictureActivity extends AppCompatActivity {
         });
     }
 
-    // rotates the picture correctly
+    // Rotates the picture correctly
     private Bitmap rotateBitmapOrientation(String filePath) throws IOException {
         ExifInterface ei = new ExifInterface(filePath);
         Bitmap bitmap = (BitmapFactory.decodeFile(filePath));
@@ -106,7 +126,7 @@ public class PostPictureActivity extends AppCompatActivity {
         }
     }
 
-    // rotates image by angle
+    // Rotates image by angle
     private Bitmap rotateImage(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
@@ -114,14 +134,12 @@ public class PostPictureActivity extends AppCompatActivity {
                 matrix, true);
     }
 
-
-
-    // method that is called when DISCARD button is pressed
+    // Method that is called when DISCARD button is pressed
     public void discardPic(View v) {
         onBackPressed();
     }
 
-    // method that is called when POST button is pressed
+    // Method that is called when POST button is pressed
     public void postPic(View v) {
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {
@@ -148,7 +166,7 @@ public class PostPictureActivity extends AppCompatActivity {
         Map<String, String> params = new HashMap<>(0);
 //        params.put("file", picture);
 
-        // load the token to give to the post call
+        // Load the token to give to the post call
         new APIPostPicture(filePath, picture, APICall.ReadToken(getApplicationContext()), params, callback).execute();
     }
 
@@ -168,10 +186,7 @@ public class PostPictureActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // When the up button is pressed
             case android.R.id.home:
-                Intent parentIntent = NavUtils.getParentActivityIntent(this);
-                parentIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(parentIntent);
-                finish();
+                onBackPressed();
                 return true;
 
             // All other cases
