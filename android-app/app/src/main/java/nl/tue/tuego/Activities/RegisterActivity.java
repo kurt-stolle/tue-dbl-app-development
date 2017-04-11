@@ -1,5 +1,6 @@
 package nl.tue.tuego.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,7 +19,14 @@ import android.widget.Toast;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
 
+import java.io.Closeable;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import nl.tue.tuego.Models.LoginModel;
+import nl.tue.tuego.Models.TokenModel;
 import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.R;
@@ -100,10 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void done(String res) {
                 Toast.makeText(RegisterActivity.this, "Account created", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
+                autoLogin();
             }
 
             @Override
@@ -116,6 +121,54 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Perform the API call
         new APICall("POST", "/register", reg, callback).execute();
+    }
+
+    private void autoLogin() {
+        // Debug print
+        Log.d("RegisterActivity","Starting logging in");
+
+        // Fill out the model
+        LoginModel log = new LoginModel();
+        log.Email = ETEmail.getText().toString();
+        log.Password = ETPassword.getText().toString();
+
+        // Determine what happens when the call is done
+        APICallback callback = new APICallback() {
+            @Override
+            public void done(String res) {
+                Gson gson = new Gson();
+                TokenModel tokenModel = gson.fromJson(res, TokenModel.class);
+                FileOutputStream fos = null;
+
+                try {
+                    fos = openFileOutput("token_file", Context.MODE_PRIVATE);
+                    fos.write(tokenModel.Token.getBytes());
+
+                    Log.d("RegisterActivity", "Token saved");
+                    Intent intent = new Intent(RegisterActivity.this, InboxActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } catch (IOException e) {
+                    Log.d("RegisterActivity", "Error saving token");
+                    Toast.makeText(RegisterActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
+                } finally {
+                    closeStream(fos);
+                }
+            }
+
+            @Override
+            public void fail(String res) {
+                Log.d("RegisterActivity", "Logging in failed, check parameters");
+                Toast.makeText(RegisterActivity.this, "Something went wrong, try again", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        };
+
+        // Perform the API call
+        new APICall("POST", "/login", log, callback).execute();
     }
 
     // called when TVToLogin is clicked
@@ -140,6 +193,17 @@ public class RegisterActivity extends AppCompatActivity {
             // All other cases
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    // Closes a stream correctly
+    private void closeStream (Closeable stream) {
+        try {
+            if (stream != null) {
+                stream.close();
+            }
+        } catch (IOException e) {
+            Log.d("Stream", "Stream already closed");
         }
     }
 }

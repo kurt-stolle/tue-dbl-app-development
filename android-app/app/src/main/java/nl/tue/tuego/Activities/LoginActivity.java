@@ -137,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // Closes a stream correctly
     private void closeStream (Closeable stream) {
         try {
             if (stream != null) {
