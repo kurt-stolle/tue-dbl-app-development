@@ -31,7 +31,7 @@ func User(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	case http.MethodGet: // Get user's information
 		// Apply some censorship to the user's e-mail. We don't want this information laying on the streets!
 		if u.UUID != reqUUID {
-			u.UUID = ""
+			u.Email = ""
 		}
 
 		// Parse the user and JSON and write out

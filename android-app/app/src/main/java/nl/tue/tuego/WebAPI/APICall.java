@@ -71,7 +71,7 @@ public class APICall extends AsyncTask<String, Void, String> {
 
         // Perform the request
         try {
-            URL url = new URL("http://tue-dbl-app-development.herokuapp.com" + this.route);
+            URL url = new URL("http://dblappdev.professorsonstage.nl" + this.route);
 
             // Initialize and setup client
             client = (HttpURLConnection) url.openConnection();

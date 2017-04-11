@@ -82,6 +82,7 @@ func main() {
 	setupRoute(r, "/", indexRouteController).Methods(http.MethodGet)
 	setupRoute(r, "/register", controllers.Register).Methods(http.MethodPost).Headers("Content-Type", "application/json") // application/json is the MIME type for JSON, encoding is always UTF-8
 	setupRoute(r, "/login", controllers.Login).Methods(http.MethodPost).Headers("Content-Type", "application/json")
+	setupRoute(r, "/whoami", authentication.Verify, controllers.WhoAmI).Methods(http.MethodGet)
 
 	setupRoute(r, "/images", authentication.Verify, controllers.Images).Methods(http.MethodPost, http.MethodGet)
 	setupRoute(r, "/images/{uuid}", authentication.Verify, controllers.Image).Methods(http.MethodPost, http.MethodGet).Headers("Content-Type", "application/json")
