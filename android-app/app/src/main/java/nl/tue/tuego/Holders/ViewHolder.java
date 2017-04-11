@@ -1,5 +1,7 @@
 package nl.tue.tuego.Holders;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -20,6 +22,11 @@ public class ViewHolder {
     public TextView TVTimeTaken;
     public TextView TVPoints;
     ImageModel mImageModel;
+    private final Context context;
+
+    public ViewHolder (Context context) {
+        this.context = context;
+    }
 
     public void setData(ImageModel item) {
         mImageModel = item;
@@ -42,11 +49,16 @@ public class ViewHolder {
             e.printStackTrace();
         }
 
-        long diffDate = uploadDate.getTime() + TimeUnit.DAYS.toMillis(GUESS_TIME) - currentDate.getTime();
+        final long diffDate = uploadDate.getTime() + TimeUnit.DAYS.toMillis(GUESS_TIME) - currentDate.getTime();
         final long diffSeconds = diffDate / 1000 % 60;
         final long diffMinutes = diffDate / (60 * 1000) % 60;
         final long diffHours = diffDate / (60 * 60 * 1000) % 24;
         final long diffDays = diffDate / (1000 * 60 * 60 * 24);
-        TVTimeRemaining.setText(String.format(Locale.ENGLISH, "Time left: %1$d:%2$02d:%3$02d:%4$02d", diffDays, diffHours, diffMinutes, diffSeconds));
+        Resources res = context.getResources();
+        if (diffDate < 0) {
+            TVTimeRemaining.setText(res.getString(R.string.dataTimeRemainingExpired));
+        } else {
+            TVTimeRemaining.setText(res.getString(R.string.dataTimeRemaining, diffDays, diffHours, diffMinutes, diffSeconds));
+        }
     }
 }

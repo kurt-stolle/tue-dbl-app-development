@@ -84,7 +84,8 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         TVPoints.setText(res.getString(R.string.dataPoints, "10"));
         TVTimeTaken.setText(res.getString(R.string.dataTimeTaken, UploadTime));
 
-        // Setting text of time remaining
+        // Setting text of TVTimeRemaining
+        // First parse the date retrieved from the ImageModel
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
         Date uploadDate = null;
         try {
@@ -94,6 +95,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
             e.printStackTrace();
         }
 
+        // Create a timer to schedule updates each second
         if (uploadDate != null) {
             Timer timer = new Timer();
             final Date finalUploadDate = uploadDate;
@@ -101,7 +103,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
                 @Override
                 public void run() {
                     Date currentDate = new Date();
-                    long diffDate = finalUploadDate.getTime() + TimeUnit.DAYS.toMillis(GUESS_TIME) - currentDate.getTime();
+                    final long diffDate = finalUploadDate.getTime() + TimeUnit.DAYS.toMillis(GUESS_TIME) - currentDate.getTime();
                     final long diffSeconds = diffDate / 1000 % 60;
                     final long diffMinutes = diffDate / (60 * 1000) % 60;
                     final long diffHours = diffDate / (60 * 60 * 1000) % 24;
@@ -110,13 +112,17 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            TVTimeRemaining.setText(res.getString(R.string.dataTimeRemaining, diffDays, diffHours, diffMinutes, diffSeconds));
+                            if (diffDate < 0) {
+                                TVTimeRemaining.setText(res.getString(R.string.dataTimeRemainingExpired));
+                            } else {
+                                TVTimeRemaining.setText(res.getString(R.string.dataTimeRemaining, diffDays, diffHours, diffMinutes, diffSeconds));
+                            }
                         }
                     });
                 }
             }, 0, 1000);
         } else {
-            TVTimeRemaining.setText("Error getting date");
+            TVTimeRemaining.setText(res.getString(R.string.error));
         }
 
         // set event listeners

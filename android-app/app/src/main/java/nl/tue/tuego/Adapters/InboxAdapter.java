@@ -67,7 +67,7 @@ public class InboxAdapter extends ArrayAdapter<ImageModel> {
         ViewHolder holder = null;
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            holder = new ViewHolder();
+            holder = new ViewHolder(getContext());
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.inbox_item, parent, false);
             holder.TVAuthor = (TextView) convertView.findViewById(R.id.feedItemAuthor);
             holder.TVTimeRemaining = (TextView) convertView.findViewById(R.id.feedItemTimeRemaining);
