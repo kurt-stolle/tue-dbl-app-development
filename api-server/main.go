@@ -85,7 +85,7 @@ func main() {
 	setupRoute(r, "/whoami", authentication.Verify, controllers.WhoAmI).Methods(http.MethodGet)
 
 	setupRoute(r, "/images", authentication.Verify, controllers.Images).Methods(http.MethodPost, http.MethodGet)
-	setupRoute(r, "/images/{uuid}", authentication.Verify, controllers.Image).Methods(http.MethodPost, http.MethodGet).Headers("Content-Type", "application/json")
+	setupRoute(r, "/images/{uuid}", authentication.Verify, controllers.Image).Methods(http.MethodPost).Headers("Content-Type", "application/json")
 	setupRoute(r, "/images/{uuid}/image.jpg", controllers.ImageFile).Methods(http.MethodGet)
 
 	setupRoute(r, "/leaderboard", authentication.Verify, controllers.Leaderboard).Methods(http.MethodGet).Headers("Content-Type", "application/json")

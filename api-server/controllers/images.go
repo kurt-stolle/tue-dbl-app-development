@@ -76,6 +76,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		status, images, pag := services.GetActiveImages(1, 250)
 		if status != http.StatusOK {
 			writeError(w, status)
+			return
 		}
 		writeJSONPaginated(w, images, pag)
 	default: // Return a friendly error
@@ -88,6 +89,7 @@ func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	uuid := mux.Vars(r)["uuid"]
 	if uuid == "" {
 		writeError(w, http.StatusBadRequest)
+		return
 	}
 
 	switch r.Method {
@@ -97,23 +99,27 @@ func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		dec := json.NewDecoder(r.Body)
 		if err := dec.Decode(&coords); err != nil {
 			writeError(w, http.StatusBadRequest)
+			return
 		}
 
 		// Find the uploading user
 		var uuidUser string
 		if token, ok := context.Get(r, "token").(*jwt.Token); !ok {
 			writeError(w, http.StatusUnauthorized)
+			return
 		} else {
 			uuidUser = (token.Claims.(*jwt.StandardClaims)).Subject
 
 			if uuidUser == "" {
 				writeError(w, http.StatusForbidden)
+				return
 			}
 		}
 
 		// Determine whether it is found or not
 		if services.GuessImage(uuidUser, uuid, coords) {
 			writeSuccess(w)
+			return
 		}
 
 		writeError(w, http.StatusNotFound, "Incorrect guess")
@@ -130,7 +136,8 @@ func ImageFile(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	uuid := mux.Vars(r)["uuid"]
 	if uuid == "" {
 		writeError(w, http.StatusBadRequest)
+		return
 	}
 
-	serveFile(w, r, "/uploads/"+uuid+".jpg")
+	serveFile(w, r, "./"+uuid+".jpg")
 }
