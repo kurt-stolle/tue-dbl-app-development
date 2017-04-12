@@ -39,8 +39,8 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 	// Cast the result set
 	var wg sync.WaitGroup
 	var mu sync.Mutex
+	var images []*models.ManifestEntry
 
-	images := make([]*models.ManifestEntry, len(data))
 	for _i, ifc := range data {
 		wg.Add(1)
 		go func(i int, img *models.Image) {
@@ -58,7 +58,7 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 			entry.UploaderName = upldr.Name
 
 			mu.Lock()
-			images[i] = entry // We needn't error check because the cast type is guaranteed by dbmdl
+			images = append(images, entry)
 			mu.Unlock()
 
 			wg.Add(1)
