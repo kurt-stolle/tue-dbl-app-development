@@ -165,7 +165,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
 
         // Perform the API call
         Log.d("InboxItemActivity", UUID);
-        APICall call = new APICall("GET", "/images/" + UUID, null, callback);
+        APICall call = new APICall("GET", "/images/" + UUID + "/image.jpg", null, callback);
         call.setAPIKey(APICall.ReadToken(this));
         call.execute();
     }
