@@ -50,9 +50,15 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 			where := dbmdl.NewWhereClause("postgres")
 			where.AddValuedClause("UUID="+where.GetPlaceholder(0), entry.Image.Uploader)
 
-			if err := dbmdl.Load(postgres.Connect(), &entry.Uploader, where); err != nil {
+			upldr := new(models.User)
+			if err := dbmdl.Load(postgres.Connect(), upldr, where); err != nil {
 				log.Panic("Non-existant linkage in images->Uploader column")
 			}
+
+			entry.UploaderName = upldr.Name
+
+			log.Print("Image manifest populated: ")
+			log.Println(entry)
 
 			mu.Lock()
 			images[i] = entry // We needn't error check because the cast type is guaranteed by dbmdl

@@ -12,6 +12,6 @@ type Image struct {
 
 // ManifestEntry is one entry of the image manifest. Links a User and Image model
 type ManifestEntry struct {
-	Image    Image
-	Uploader User
+	Image        Image
+	UploaderName string
 }
