@@ -103,21 +103,21 @@ func Image(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		}
 
 		// Find the uploading user
-		var uuidUser string
-		if token, ok := context.Get(r, "token").(*jwt.Token); !ok {
+		token, ok := context.Get(r, "token").(*jwt.Token)
+		if !ok {
 			writeError(w, http.StatusUnauthorized)
 			return
-		} else {
-			uuidUser = (token.Claims.(*jwt.StandardClaims)).Subject
+		}
 
-			if uuidUser == "" {
-				writeError(w, http.StatusForbidden)
-				return
-			}
+		// claims.Subject is the uuid of the issued user
+		claims, ok := token.Claims.(*jwt.StandardClaims)
+		if !ok || claims.Subject == "" {
+			writeError(w, http.StatusForbidden)
+			return
 		}
 
 		// Determine whether it is found or not
-		if services.GuessImage(uuidUser, uuid, coords) {
+		if services.GuessImage(claims.Subject, uuid, coords) {
 			writeSuccess(w)
 			return
 		}
