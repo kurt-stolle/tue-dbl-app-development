@@ -45,7 +45,7 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 		wg.Add(1)
 		go func(i int, img *models.Image) {
 			entry := new(models.ManifestEntry)
-			entry.Image = *img
+			entry.Image = img
 
 			where := dbmdl.NewWhereClause("postgres")
 			where.AddValuedClause("UUID="+where.GetPlaceholder(0), entry.Image.Uploader)
@@ -56,9 +56,6 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 			}
 
 			entry.UploaderName = upldr.Name
-
-			log.Print("Image manifest populated: ")
-			log.Println(entry)
 
 			mu.Lock()
 			images[i] = entry // We needn't error check because the cast type is guaranteed by dbmdl

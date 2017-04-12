@@ -20,6 +20,8 @@ func writeJSON(w http.ResponseWriter, d interface{}) {
 	// Setup header
 	w.Header().Set("Content-Type", "application/json")
 
+	log.Println("Writing JSON OUT: ", j)
+
 	// Send reply
 	w.Write(j)
 }
@@ -44,6 +46,8 @@ func writeJSONPaginated(w http.ResponseWriter, d interface{}, p *dbmdl.Paginatio
 	// Setup header
 	w.Header().Set("Content-Type", "application/json")
 
+	log.Println("Writing paginated JSON OUT: ", j)
+
 	// Send reply
 	w.Write(j)
 }
@@ -52,6 +56,8 @@ func writeJSONPaginated(w http.ResponseWriter, d interface{}, p *dbmdl.Paginatio
 func writeSuccess(w http.ResponseWriter) {
 	// Setup header
 	w.Header().Set("Content-Type", "application/json")
+
+	log.Println("Writing OK OUT")
 
 	// Send reply - empty object
 	w.Write([]byte("{}"))
