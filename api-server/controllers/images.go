@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 
 	"time"
 
@@ -73,7 +74,12 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 		writeJSON(w, img)
 	case http.MethodGet: // Fetch an manifest of images
-		status, images, pag := services.GetActiveImages(1, 250)
+		page, err := strconv.Atoi(r.URL.Query().Get("page"))
+		if err != nil {
+			page = 1
+		}
+
+		status, images, pag := services.GetActiveImagesWithAssociatedUsers(page, 25)
 		if status != http.StatusOK {
 			writeError(w, status)
 			return

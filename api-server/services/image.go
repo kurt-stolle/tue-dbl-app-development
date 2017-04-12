@@ -11,13 +11,15 @@ import (
 	"reflect"
 	"strconv"
 
+	"sync"
+
 	dbmdl "github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
 )
 
-// GetActiveImages returns a manifest of images
-func GetActiveImages(page, amount int) (int, []*models.Image, *dbmdl.Pagination) {
+// GetActiveImagesWithAssociatedUsers returns a manifest of images
+func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.ManifestEntry, *dbmdl.Pagination) {
 	// Fetch the type
 	imageType := reflect.TypeOf((*models.Image)(nil)).Elem()
 
@@ -35,10 +37,32 @@ func GetActiveImages(page, amount int) (int, []*models.Image, *dbmdl.Pagination)
 	}
 
 	// Cast the result set
-	images := make([]*models.Image, len(data))
-	for i, img := range data {
-		images[i] = img.(*models.Image) // We needn't error check because the cast type is guaranteed by dbmdl
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
+	images := make([]*models.ManifestEntry, len(data))
+	for _i, ifc := range data {
+		wg.Add(1)
+		go func(i int, img *models.Image) {
+			entry := new(models.ManifestEntry)
+			entry.Image = *img
+
+			where := dbmdl.NewWhereClause("postgres")
+			where.AddValuedClause("UUID="+where.GetPlaceholder(0), entry.Image.Uploader)
+
+			if err := dbmdl.Load(postgres.Connect(), &entry.Uploader, where); err != nil {
+				log.Panic("Non-existant linkage in images->Uploader column")
+			}
+
+			mu.Lock()
+			images[i] = entry // We needn't error check because the cast type is guaranteed by dbmdl
+			mu.Unlock()
+
+			wg.Add(1)
+		}(_i, ifc.(*models.Image))
 	}
+
+	wg.Done()
 
 	// Return our findings
 	return http.StatusOK, images, pag

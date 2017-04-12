@@ -9,3 +9,9 @@ type Image struct {
 	Latitude   float64 `dbmdl:"double precision not null, default 0.0"`
 	Longitude  float64 `dbmdl:"double precision not null, default 0.0"`
 }
+
+// ManifestEntry is one entry of the image manifest. Links a User and Image model
+type ManifestEntry struct {
+	Image    Image
+	Uploader User
+}
