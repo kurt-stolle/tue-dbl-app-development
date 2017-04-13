@@ -154,7 +154,7 @@ public class PostPictureActivity extends AppCompatActivity {
 
             @Override
             public void fail(String res) {
-                Toast.makeText(PostPictureActivity.this, "Picture failed to upload", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PostPictureActivity.this, "You cannot upload more than five pictures", Toast.LENGTH_SHORT).show();
                 Log.d("PostPictureActivity", "Picture failed to upload");
             }
         };
