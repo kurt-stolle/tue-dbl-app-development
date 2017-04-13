@@ -25,6 +25,9 @@ import java.net.URL;
 // APICall (was: WebAPI) handles calls to the Web API
 public class APICall extends AsyncTask<String, Void, String> {
 
+    // Statics
+    public static String URL = "http://dblappdev.professorsonstage.nl";
+
     // Private variables
     private String method;
     private String route;
@@ -73,7 +76,7 @@ public class APICall extends AsyncTask<String, Void, String> {
 
         // Perform the request
         try {
-            URL url = new URL("http://dblappdev.professorsonstage.nl" + this.route);
+            URL url = new URL(this.URL + this.route);
 
             // Initialize and setup client
             client = (HttpURLConnection) url.openConnection();

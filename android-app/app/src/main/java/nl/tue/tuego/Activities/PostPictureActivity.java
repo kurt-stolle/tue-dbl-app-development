@@ -67,7 +67,7 @@ public class PostPictureActivity extends AppCompatActivity {
 
         // Set text of TVPoints
         final Resources res = getResources();
-        TVPoints.setText(res.getString(R.string.dataPoints, "10"));
+        TVPoints.setText(res.getString(R.string.dataPoints, "15"));
 
         // Set text of TVTimeTaken
         Date currentDate = new Date();

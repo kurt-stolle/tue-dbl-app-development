@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nl.tue.tuego.Models.ManifestEntry;
 import nl.tue.tuego.Models.PaginatedResponseModel;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.Models.ImageModel;
@@ -59,7 +60,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
     private String mCurrentPhotoPath;
     private FloatingActionButton BCamera;
     private ListView LVFeed;
-    private List<ImageModel> images;
+    private List<ManifestEntry> images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,13 +236,13 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 // Iterate over array
                 for (int i = 0; i < resData.size(); i++) {
                     // Load image from JSON
-                    ImageModel img = gson.fromJson(resData.get(i), ImageModel.class);
+                    ManifestEntry entry = gson.fromJson(resData.get(i), ManifestEntry.class);
 
                     // Add image to list
-                    images.add(img);
+                    images.add(entry);
 
                     // Debug print
-                    Log.d("InboxCallback", "Added new image to list, UUID: " + img.UUID);
+                    Log.d("InboxCallback", "Added new image to list, UUID: " + entry.Image.UUID);
                 }
 
                 InboxAdapter adapter = new InboxAdapter(InboxActivity.this, images);

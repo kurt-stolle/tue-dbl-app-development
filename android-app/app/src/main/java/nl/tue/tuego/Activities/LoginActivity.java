@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void fail(String res) {
-                Toast.makeText(LoginActivity.this, "Account not recognized", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Invalid email address or password", Toast.LENGTH_SHORT).show();
                 Log.d("LoginActivity", "Logging in failed, check parameters");
             }
         };

@@ -24,6 +24,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -62,7 +65,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         TVAuthor = (TextView) findViewById(R.id.itemAuthor);
         TVPoints = (TextView) findViewById(R.id.itemPoints);
         TVTimeTaken = (TextView) findViewById(R.id.itemTimeTaken);
-        TVTimeRemaining = (TextView) findViewById(R.id.itemTimeRemaining);
         IVImage = (ImageView) findViewById(R.id.itemImage);
         BGuess = (Button) findViewById(R.id.buttonGuess);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -74,18 +76,21 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
 
         // Getting all the ImageModel data
         UUID = getIntent().getExtras().getString("UUID");
-        Uploader = getIntent().getExtras().getString("Uploader");
+        Uploader = getIntent().getExtras().getString("UploaderName");
         UploadTime = getIntent().getExtras().getString("UploadTime");
         Finder = getIntent().getExtras().getString("Finder");
 
         // Setting the text of the TextViews
         final Resources res = getResources();
         TVAuthor.setText(res.getString(R.string.dataAuthor, Uploader));
-        TVPoints.setText(res.getString(R.string.dataPoints, "10"));
         TVTimeTaken.setText(res.getString(R.string.dataTimeTaken, UploadTime));
 
         // Setting text of TVTimeRemaining
-        setTimeRemaining(res);
+        //setTimeRemaining(res);
+
+        // Load the image using the Picasso library
+        Log.d("InboxItemActivity", "Loading image file at /images/" + UUID + "/image.jpg");
+        Picasso.with(this).load(APICall.URL + "/images/" + UUID + "/image.jpg").into(IVImage);
 
         // Set event listeners
         BGuess.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +100,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
             }
         });
 
-        loadImage();
+       // loadImage();
     }
 
     private void setTimeRemaining(Resources r) {
@@ -112,7 +117,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         }
 
         // Create a timer to schedule updates each second
-        if (uploadDate != null) {
+        /*if (uploadDate != null) {
             Timer timer = new Timer();
             final Date finalUploadDate = uploadDate;
             timer.scheduleAtFixedRate(new TimerTask() {
@@ -142,10 +147,11 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         } else {
             TVTimeRemaining.setText(res.getString(R.string.error));
         }
+        */
     }
 
     // Get the image of the picture
-    private void loadImage() {
+   /* private void loadImage() {
         // TODO: get the image from the client
 
         // Determine what happens when the call is done
@@ -168,8 +174,9 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         APICall call = new APICall("GET", "/images/" + UUID + "/image.jpg", null, callback);
         call.setAPIKey(APICall.ReadToken(this));
         call.execute();
-    }
 
+    }
+*/
     // method that is called when the DELETE PICTURE button is pressed
     // only the poster of the picture can do this
     public void deletePic(View v) {

@@ -11,78 +11,51 @@
         android:layout_width="75dp"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:src="@drawable/ic_camera_alt_black_48dp"
-        android:contentDescription="@string/feedImageDescription" />
+        android:alpha=".55"
+        android:contentDescription="@string/feedImageDescription"
+        android:cropToPadding="true"
+        android:scaleType="center"
+        android:src="@drawable/ic_camera_alt_black_48dp" />
 
     <LinearLayout
-        android:layout_width="0px"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.5"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:weightSum="2">
 
-    <TextView
-        android:id="@+id/feedItemAuthorHeader"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="0.5"
-        android:gravity="center"
-        android:text="@string/itemAuthor" />
+        <TextView
+            android:id="@+id/feedItemAuthor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[Author name]"
+            android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
 
-    <TextView
-        android:id="@+id/feedItemAuthor"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="0.5"
-        android:gravity="center"
-        android:text="[Author name]" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/feedItemPoints"
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="[Points]" />
+            <TextView
+                android:id="@+id/feedItemTimeTakenHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="@string/itemTimeTaken"
+                android:textAppearance="@android:style/TextAppearance.Material.Small" />
+
+            <TextView
+                android:id="@+id/feedItemTimeTaken"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:text="[Time taken]" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="0px"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:orientation="vertical"
-        android:weightSum="4">
-
-        <TextView
-            android:id="@+id/feedItemTimeTakenHeader"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/itemTimeTaken" />
-
-        <TextView
-            android:id="@+id/feedItemTimeTaken"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="[Time taken]" />
-
-        <TextView
-            android:id="@+id/feedItemTimeRemainingHeader"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/itemTimeRemaining" />
-
-        <TextView
-            android:id="@+id/feedItemTimeRemaining"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="[Time remaining]" />
-    </LinearLayout>
 </LinearLayout>

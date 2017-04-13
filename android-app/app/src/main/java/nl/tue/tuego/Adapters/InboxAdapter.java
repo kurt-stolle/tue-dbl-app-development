@@ -21,14 +21,15 @@ import java.util.TimerTask;
 import nl.tue.tuego.Activities.InboxItemActivity;
 import nl.tue.tuego.Models.ImageModel;
 import nl.tue.tuego.Holders.ViewHolder;
+import nl.tue.tuego.Models.ManifestEntry;
 import nl.tue.tuego.R;
 
-public class InboxAdapter extends ArrayAdapter<ImageModel> {
+public class InboxAdapter extends ArrayAdapter<ManifestEntry> {
 
     private LayoutInflater li;
     private List<ViewHolder> lstHolders;
     private Handler mHandler = new Handler();
-    private Runnable updateRemainingTimeRunnable = new Runnable() {
+    /*private Runnable updateRemainingTimeRunnable = new Runnable() {
         @Override
         public void run() {
             synchronized (lstHolders) {
@@ -38,16 +39,16 @@ public class InboxAdapter extends ArrayAdapter<ImageModel> {
                 }
             }
         }
-    };
+    };*/
 
-    public InboxAdapter(Context context, List<ImageModel> items) {
+    public InboxAdapter(Context context, List<ManifestEntry> items) {
         super(context, 0, items);
         li = LayoutInflater.from(context);
         lstHolders = new ArrayList<>();
-        startUpdateTimer();
+        //startUpdateTimer();
     }
 
-    private void startUpdateTimer() {
+  /*  private void startUpdateTimer() {
         Timer tmr = new Timer();
         tmr.schedule(new TimerTask() {
             @Override
@@ -55,14 +56,15 @@ public class InboxAdapter extends ArrayAdapter<ImageModel> {
                 mHandler.post(updateRemainingTimeRunnable);
             }
         }, 1000, 1000);
-    }
+    }*/
 
     @Override
     public
     @NonNull
     View getView(int position, View convertView, @NonNull ViewGroup parent) {
         // Get the data item for this position
-        final ImageModel item = getItem(position);
+        final ManifestEntry entry = getItem(position);
+
         LinearLayout LLInboxItem = null;
         ViewHolder holder = null;
         // Check if an existing view is being reused, otherwise inflate the view
@@ -70,9 +72,7 @@ public class InboxAdapter extends ArrayAdapter<ImageModel> {
             holder = new ViewHolder(getContext());
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.inbox_item, parent, false);
             holder.TVAuthor = (TextView) convertView.findViewById(R.id.feedItemAuthor);
-            holder.TVTimeRemaining = (TextView) convertView.findViewById(R.id.feedItemTimeRemaining);
             holder.TVTimeTaken = (TextView) convertView.findViewById(R.id.feedItemTimeTaken);
-            holder.TVPoints = (TextView) convertView.findViewById(R.id.feedItemPoints);
             convertView.setTag(holder);
             synchronized (lstHolders) {
                 lstHolders.add(holder);
@@ -85,17 +85,17 @@ public class InboxAdapter extends ArrayAdapter<ImageModel> {
                 public void onClick(View v) {
                     Log.d("Inbox item", "Clicked!");
                     Intent intent = new Intent(getContext(), InboxItemActivity.class);
-                    intent.putExtra("UUID", item.UUID);
-                    intent.putExtra("Uploader", item.Uploader);
-                    intent.putExtra("UploadTime", item.UploadTime);
-                    intent.putExtra("Finder", item.Finder);
+                    intent.putExtra("UUID", entry.Image.UUID);
+                    intent.putExtra("UploaderName", entry.UploaderName);
+                    intent.putExtra("UploadTime", entry.Image.UploadTime);
+                    intent.putExtra("Finder", entry.Image.Finder);
                     getContext().startActivity(intent);
                 }
             });
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.setData(item);
+        holder.setData(entry);
 
         // Return the completed view to render on screen
         return convertView;

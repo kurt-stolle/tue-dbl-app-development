@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import nl.tue.tuego.Models.ImageModel;
+import nl.tue.tuego.Models.ManifestEntry;
 import nl.tue.tuego.R;
 
 import static nl.tue.tuego.Activities.InboxItemActivity.GUESS_TIME;
@@ -21,29 +22,27 @@ public class ViewHolder {
     public TextView TVTimeRemaining;
     public TextView TVTimeTaken;
     public TextView TVPoints;
-    private ImageModel mImageModel;
+    private ManifestEntry entry;
     private final Context context;
 
     public ViewHolder (Context context) {
         this.context = context;
     }
 
-    public void setData(ImageModel item) {
-        mImageModel = item;
+    public void setData(ManifestEntry item) {
+        entry = item;
         // Populate the data into the template view using the data object
-        TVAuthor.setText(item.Uploader);
-        TVTimeRemaining.setText(item.UploadTime);
-        TVTimeTaken.setText(item.UploadTime);
-        TVPoints.setText(R.string.itemPointsValue);
-        updateTimeRemaining(new Date());
+        TVAuthor.setText(item.UploaderName);
+        TVTimeTaken.setText(item.Image.UploadTime);
+        //updateTimeRemaining(new Date());
     }
 
-    public void updateTimeRemaining(Date currentDate) {
+    /*public void updateTimeRemaining(Date currentDate) {
         // Setting text of time remaining
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
         Date uploadDate = null;
         try {
-            uploadDate = format.parse(mImageModel.UploadTime);
+            uploadDate = format.parse(entry.Image.UploadTime);
         } catch (ParseException e) {
             Log.e("ViewHolder", "Date cannot be parsed");
             e.printStackTrace();
@@ -60,5 +59,5 @@ public class ViewHolder {
         } else {
             TVTimeRemaining.setText(res.getString(R.string.dataTimeRemaining, diffDays, diffHours, diffMinutes, diffSeconds));
         }
-    }
+    }*/
 }
