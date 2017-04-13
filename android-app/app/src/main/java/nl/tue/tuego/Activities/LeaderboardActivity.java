@@ -7,16 +7,33 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import nl.tue.tuego.Adapters.InboxAdapter;
 import nl.tue.tuego.Adapters.LeaderboardAdapter;
+import nl.tue.tuego.Models.LeaderboardEntry;
+import nl.tue.tuego.Models.ManifestEntry;
 import nl.tue.tuego.R;
 import nl.tue.tuego.Models.UserModel;
+import nl.tue.tuego.WebAPI.APICall;
+import nl.tue.tuego.WebAPI.APICallback;
 
 public class LeaderboardActivity extends AppCompatActivity {
     private final int AMOUNT_BEST_USERS = 4; // set amount of users in the leaderboard
-    UserModel[] bestUsers = new UserModel[AMOUNT_BEST_USERS];
+    private List<LeaderboardEntry> entries;
     ListView LVLeaderboard;
     LeaderboardAdapter adapter;
 
@@ -24,6 +41,8 @@ public class LeaderboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
+
+        entries = new ArrayList<>();
 
         // look up all needed views
         LVLeaderboard = (ListView) findViewById(R.id.leaderboardList);
@@ -40,31 +59,42 @@ public class LeaderboardActivity extends AppCompatActivity {
 
     // method that will refresh the best users
     public void refresh() {
-        // TODO: it will update the list of users
-        getBestUsers();
-        for (int i=0; i<4; i++) {
-            UserModel user = new UserModel();
-            user.Email = "test@example.com";
-            user.Name = "BGWD69";
-            user.Points = 15;
-            user.UUID = "uuid-123021931-wadjowaw";
+        APICallback callback = new APICallback() {
+            public void done(String data) {
+                Log.d("LeaderboardCallback", data);
+                // Parse JSON
+                Gson gson = new Gson();
+                JsonParser parser = new JsonParser();
+                JsonArray resData = (JsonArray) parser.parse(data);
 
-            bestUsers[i] = user;
-        }
-            adapter = new LeaderboardAdapter(this, bestUsers);
-            LVLeaderboard.setAdapter(adapter);
+                // Iterate over array
+                for (int i = 0; i < resData.size(); i++) {
+                    // Load image from JSON
+                    LeaderboardEntry entry = gson.fromJson(resData.get(i), LeaderboardEntry.class);
+
+                    entry.position = i + 1;
+
+                    // Add image to list
+                    entries.add(entry);
+
+                    // Debug print
+                    Log.d("LeaderboardCallback", "Added new entry to list, Name: " + entry.Name);
+                }
+
+                LVLeaderboard.setAdapter(new LeaderboardAdapter(LeaderboardActivity.this, entries));
+            }
+
+            public void fail(String data) {
+                Toast.makeText(LeaderboardActivity.this, "Failed to load data", Toast.LENGTH_LONG).show();
+            }
+        };
+
+        (new APICall("GET","/leaderboard", null, callback)).execute();
     }
 
     // method that will display the leaderboard
     private void displayLeaderboard() {
         // TODO: delete existing leaderboard and create a new one to display
-    }
-
-    // method that will place the four users with the most Points in bestUsers
-    public void getBestUsers() {
-        // TODO: sort all users by Points
-        // TODO: Place the four users with the most points in array
-
     }
 
     // Events that trigger when a certain button is pressed on the action bar
