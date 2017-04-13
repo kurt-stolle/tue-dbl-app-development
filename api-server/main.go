@@ -80,17 +80,17 @@ func main() {
 
 	// Setup routes using the helper function setupRoute(...) function we created at the top of this file
 	setupRoute(r, "/", indexRouteController).Methods(http.MethodGet)
-	setupRoute(r, "/register", controllers.Register).Methods(http.MethodPost).Headers("Content-Type", "application/json") // application/json is the MIME type for JSON, encoding is always UTF-8
-	setupRoute(r, "/login", controllers.Login).Methods(http.MethodPost).Headers("Content-Type", "application/json")
+	setupRoute(r, "/register", controllers.Register).Methods(http.MethodPost) // application/json is the MIME type for JSON, encoding is always UTF-8
+	setupRoute(r, "/login", controllers.Login).Methods(http.MethodPost)
 	setupRoute(r, "/whoami", authentication.Verify, controllers.WhoAmI).Methods(http.MethodGet)
 
 	setupRoute(r, "/images", authentication.Verify, controllers.Images).Methods(http.MethodPost, http.MethodGet)
-	setupRoute(r, "/images/{uuid}", authentication.Verify, controllers.Image).Methods(http.MethodPost).Headers("Content-Type", "application/json")
+	setupRoute(r, "/images/{uuid}", authentication.Verify, controllers.Image).Methods(http.MethodPost)
 	setupRoute(r, "/images/{uuid}/image.jpg", controllers.ImageFile).Methods(http.MethodGet)
 
-	setupRoute(r, "/leaderboard", authentication.Verify, controllers.Leaderboard).Methods(http.MethodGet).Headers("Content-Type", "application/json")
+	setupRoute(r, "/leaderboard", authentication.Verify, controllers.Leaderboard).Methods(http.MethodGet)
 
-	setupRoute(r, "/users/{uuid}", authentication.Verify, controllers.User).Methods(http.MethodGet, http.MethodPost).Headers("Content-Type", "application/json")
+	setupRoute(r, "/users/{uuid}", authentication.Verify, controllers.User).Methods(http.MethodGet, http.MethodPost)
 
 	// Server setup - using the negroni library
 	n := negroni.New()
