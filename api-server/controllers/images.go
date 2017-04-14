@@ -84,9 +84,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 			writeError(w, status)
 			return
 		}
-
-		log.Println(images)
-
+		
 		writeJSONPaginated(w, images, pag)
 	default: // Return a friendly error
 		writeError(w, http.StatusNotImplemented, "Method not implemented: "+r.Method)

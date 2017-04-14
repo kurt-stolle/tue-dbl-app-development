@@ -26,7 +26,9 @@ public class LoadActivity extends Activity {
 
     // method which checks several things before continuing
     private void load() {
-        if (APICall.ReadToken(this).equals("")) {
+        String token = APICall.ReadToken(this);
+
+        if (token.equals("")) {
             Log.d("LoadActivity", "Token has incorrect length");
 
             // go to the register activity
@@ -34,7 +36,7 @@ public class LoadActivity extends Activity {
             startActivity(intent);
             finish();
         } else {
-            Log.d("LoadActivity", "Token is of correct length");
+            Log.d("LoadActivity", "Token found: " + token);
 
             // go to the inbox activity
             Intent intent = new Intent(this, InboxActivity.class);
