@@ -101,6 +101,10 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 != PackageManager.PERMISSION_GRANTED) {
             permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
 
         for (int i = 0; i < permissionsNeeded.size(); i++) {
             // check if permissions denied earlier
@@ -115,7 +119,6 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
             ActivityCompat.requestPermissions(this,
                     permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
                     REQUEST_PERMISSIONS);
-
         } else {
             // all permissions granted so go to camera
             toCamera();

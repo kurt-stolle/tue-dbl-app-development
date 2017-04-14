@@ -102,7 +102,8 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
         }
 
         // Getting the location
-        startGetLocation();
+        location = null;
+        getLocation();
 
         // Set event listeners
         BPost.setOnClickListener(new OnClickListener() {
@@ -160,51 +161,55 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
 
     // Method that is called when POST button is pressed
     public void postPic(View v) {
-        // Determine what happens when the call is done
-        APICallback callback = new APICallback() {
-            @Override
-            public void done(String res) {
-                Toast.makeText(PostPictureActivity.this, "Picture posted", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(PostPictureActivity.this, InboxActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            }
+        // Check if the location has been determined
+        if (location != null) {
+            // Determine what happens when the call is done
+            APICallback callback = new APICallback() {
+                @Override
+                public void done(String res) {
+                    Toast.makeText(PostPictureActivity.this, "Picture posted", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(PostPictureActivity.this, InboxActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
 
-            @Override
-            public void fail(String res) {
-                Toast.makeText(PostPictureActivity.this, "You cannot upload more than five pictures", Toast.LENGTH_SHORT).show();
-                Log.d("PostPictureActivity", "Picture failed to upload");
-            }
-        };
+                @Override
+                public void fail(String res) {
+                    Toast.makeText(PostPictureActivity.this, "You cannot upload more than five pictures", Toast.LENGTH_SHORT).show();
+                    Log.d("PostPictureActivity", "Picture failed to upload");
+                }
+            };
 
-        // Setup params
-        Log.d("Picture", "Picture width:" + picture.getWidth());
-        Log.d("Picture", "Picture height" + picture.getHeight());
-        Map<String, String> params = new HashMap<>(0);
-        params.put("Longitude", String.valueOf(location.getLongitude()));
-        params.put("Latitude", String.valueOf(location.getLatitude()));
+            // Setup params
+            Log.d("Picture", "Picture width:" + picture.getWidth());
+            Log.d("Picture", "Picture height" + picture.getHeight());
+            Map<String, String> params = new HashMap<>(0);
+            params.put("Longitude", String.valueOf(location.getLongitude()));
+            params.put("Latitude", String.valueOf(location.getLatitude()));
 
-
-        // Perform the API call
-        new APIPostPicture(filePath, picture, APICall.ReadToken(getApplicationContext()), params, callback).execute();
-    }
-
-    private void startGetLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // TODO: give explanation
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        REQUEST_GPS_PERMISSION);
-            }
+            // Perform the API call
+            new APIPostPicture(filePath, picture, APICall.ReadToken(getApplicationContext()), params, callback).execute();
         } else {
             getLocation();
         }
     }
+
+//    private void startGetLocation() {
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+//                // TODO: give explanation
+//            } else {
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                        REQUEST_GPS_PERMISSION);
+//            }
+//        } else {
+//            getLocation();
+//        }
+//    }
 
     private void getLocation() {
         Log.d("PostPictureActivity", "Getting location");
@@ -222,33 +227,33 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
     }
 
     // Called when returning from permission pop-up
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_GPS_PERMISSION:
-                // if request is canceled
-                if (grantResults.length == 0) {
-                    Log.d("Permissions", "Canceled");
-                } else {
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        getLocation();
-                        Log.d("Permissions", "GPS permission granted");
-                    } else {
-                        Toast.makeText(this, "GPS permission denied", Toast.LENGTH_SHORT).show();
-                        Log.d("Permissions", "GPS permission denied");
-                    }
-                }
-                break;
-
-            // other permission cases should go here
-
-            default: {
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                Log.d("Permissions", "DEFAULT");
-            }
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,
+//                                           String[] permissions, int[] grantResults) {
+//        switch (requestCode) {
+//            case REQUEST_GPS_PERMISSION:
+//                // if request is canceled
+//                if (grantResults.length == 0) {
+//                    Log.d("Permissions", "Canceled");
+//                } else {
+//                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                        getLocation();
+//                        Log.d("Permissions", "GPS permission granted");
+//                    } else {
+//                        Toast.makeText(this, "GPS permission denied", Toast.LENGTH_SHORT).show();
+//                        Log.d("Permissions", "GPS permission denied");
+//                    }
+//                }
+//                break;
+//
+//            // other permission cases should go here
+//
+//            default: {
+//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//                Log.d("Permissions", "DEFAULT");
+//            }
+//        }
+//    }
 
     private void closeStream(Closeable stream) {
         try {
@@ -277,7 +282,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
 
     public void onLocationChanged(Location newLocation) {
         if (newLocation != null) {
-            Log.d("Location Changed", location.getLatitude() + " and " + location.getLongitude());
+            Log.d("Location Changed", newLocation.getLatitude() + " and " + newLocation.getLongitude());
             mLocationManager.removeUpdates(this);
             this.location = newLocation;
         }
