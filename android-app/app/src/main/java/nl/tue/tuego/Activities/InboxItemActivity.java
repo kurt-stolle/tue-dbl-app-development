@@ -11,7 +11,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -45,12 +44,13 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
     // amount of time to guess a picture in days
     public static final int GUESS_TIME = 13;
     static final int REQUEST_GPS_PERMISSION = 1;
+
     LocationManager mLocationManager;
     private String UUID;
     private String Uploader;
     private String UploadTime;
     private String Finder;
-    private TextView TVAuthor, TVPoints, TVTimeTaken, TVTimeRemaining;
+    private TextView TVAuthor, TVTimeTaken, TVTimeRemaining;
     ImageView IVImage;
     Button BGuess;
 
@@ -63,8 +63,8 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
 
         // Look up all needed views
         TVAuthor = (TextView) findViewById(R.id.itemAuthor);
-        TVPoints = (TextView) findViewById(R.id.itemPoints);
         TVTimeTaken = (TextView) findViewById(R.id.itemTimeTaken);
+        TVTimeRemaining = (TextView) findViewById(R.id.itemTimeRemaining);
         IVImage = (ImageView) findViewById(R.id.itemImage);
         BGuess = (Button) findViewById(R.id.buttonGuess);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,7 +86,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         TVTimeTaken.setText(res.getString(R.string.dataTimeTaken, UploadTime));
 
         // Setting text of TVTimeRemaining
-        //setTimeRemaining(res);
+        setTimeRemaining(res);
 
         // Load the image using the Picasso library
         Log.d("InboxItemActivity", "Loading image file at /images/" + UUID + "/image.jpg");
@@ -100,7 +100,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
             }
         });
 
-       // loadImage();
+        // loadImage();
     }
 
     private void setTimeRemaining(Resources r) {
@@ -117,7 +117,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         }
 
         // Create a timer to schedule updates each second
-        /*if (uploadDate != null) {
+        if (uploadDate != null) {
             Timer timer = new Timer();
             final Date finalUploadDate = uploadDate;
             timer.scheduleAtFixedRate(new TimerTask() {
@@ -147,7 +147,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         } else {
             TVTimeRemaining.setText(res.getString(R.string.error));
         }
-        */
     }
 
     // Get the image of the picture
@@ -197,7 +196,12 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
                         REQUEST_GPS_PERMISSION);
             }
         } else {
-            getLocation();
+//            getLocation();
+            // For the purpose of the test
+            Location loc = new Location("");
+            loc.setLongitude(0.0);
+            loc.setLatitude(0.0);
+            guessLocation(loc);
         }
     }
 
@@ -208,8 +212,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
             Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2000) {
                 guessLocation(location);
-            }
-            else {
+            } else {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
             }
         } else {
@@ -231,13 +234,14 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
             public void done(String res) {
                 Log.d("InboxItemActivity", "Correct guess!");
                 // TODO: Show a correct pop-up
-
+                Toast.makeText(InboxItemActivity.this, "You guessed correctly and earned 15 studypoints!", Toast.LENGTH_LONG).show();
                 onBackPressed();
             }
 
             @Override
             public void fail(String res) {
                 Log.d("InboxItemActivity", "Incorrect guess!");
+                Toast.makeText(InboxItemActivity.this, "Incorrect guess, try again.", Toast.LENGTH_LONG).show();
                 // TODO: Show an incorrect pop-up
             }
         };

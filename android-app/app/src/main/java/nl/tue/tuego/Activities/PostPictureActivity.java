@@ -103,7 +103,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
 
         // Getting the location
         location = null;
-        getLocation();
+        // getLocation();
 
         // Set event listeners
         BPost.setOnClickListener(new OnClickListener() {
@@ -128,7 +128,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
         int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                 ExifInterface.ORIENTATION_UNDEFINED);
 
-        switch(orientation) {
+        switch (orientation) {
 
             case ExifInterface.ORIENTATION_ROTATE_90:
                 return rotateImage(bitmap, 90);
@@ -162,37 +162,40 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
     // Method that is called when POST button is pressed
     public void postPic(View v) {
         // Check if the location has been determined
-        if (location != null) {
-            // Determine what happens when the call is done
-            APICallback callback = new APICallback() {
-                @Override
-                public void done(String res) {
-                    Toast.makeText(PostPictureActivity.this, "Picture posted", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(PostPictureActivity.this, InboxActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                }
+//        if (location != null) {
+        // Determine what happens when the call is done
+        APICallback callback = new APICallback() {
+            @Override
+            public void done(String res) {
+                Toast.makeText(PostPictureActivity.this, "Picture posted", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(PostPictureActivity.this, InboxActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
 
-                @Override
-                public void fail(String res) {
-                    Toast.makeText(PostPictureActivity.this, "You cannot upload more than five pictures", Toast.LENGTH_SHORT).show();
-                    Log.d("PostPictureActivity", "Picture failed to upload");
-                }
-            };
+            @Override
+            public void fail(String res) {
+                Toast.makeText(PostPictureActivity.this, "You cannot upload more than five pictures", Toast.LENGTH_SHORT).show();
+                Log.d("PostPictureActivity", "Picture failed to upload");
+            }
+        };
 
-            // Setup params
-            Log.d("Picture", "Picture width:" + picture.getWidth());
-            Log.d("Picture", "Picture height" + picture.getHeight());
-            Map<String, String> params = new HashMap<>(0);
-            params.put("Longitude", String.valueOf(location.getLongitude()));
-            params.put("Latitude", String.valueOf(location.getLatitude()));
+        // Setup params
+        Log.d("Picture", "Picture width:" + picture.getWidth());
+        Log.d("Picture", "Picture height" + picture.getHeight());
+        Map<String, String> params = new HashMap<>(0);
+//        params.put("Longitude", String.valueOf(location.getLongitude()));
+//        params.put("Latitude", String.valueOf(location.getLatitude()));
+        // For the purpose of the test
+        params.put("Longitude", String.valueOf(0));
+        params.put("Latitude", String.valueOf(0));
 
-            // Perform the API call
-            new APIPostPicture(filePath, picture, APICall.ReadToken(getApplicationContext()), params, callback).execute();
-        } else {
-            getLocation();
-        }
+        // Perform the API call
+        new APIPostPicture(filePath, picture, APICall.ReadToken(getApplicationContext()), params, callback).execute();
+//        } else {
+//            Toast.makeText(this, "Retry posting in a moment", Toast.LENGTH_SHORT).show();
+//        }
     }
 
 //    private void startGetLocation() {
@@ -215,11 +218,14 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
         Log.d("PostPictureActivity", "Getting location");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            Log.d("PostPictureActivity", "GPS permission was granted");
             Location newLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (location != null && newLocation.getTime() > Calendar.getInstance().getTimeInMillis() - 2000) {
+            if (newLocation != null && newLocation.getTime() > Calendar.getInstance().getTimeInMillis() - 2000) {
                 this.location = newLocation;
+                Log.d("PostPictureActivity", "Set location");
             } else {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                Log.d("LocationManager", "Requesting updates");
             }
         } else {
             Log.wtf("PostPictureActivity", "Permission changed abruptly?");
@@ -281,6 +287,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
     }
 
     public void onLocationChanged(Location newLocation) {
+        Log.d("Location Changed", "Start");
         if (newLocation != null) {
             Log.d("Location Changed", newLocation.getLatitude() + " and " + newLocation.getLongitude());
             mLocationManager.removeUpdates(this);
@@ -289,7 +296,12 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
     }
 
     // Required functions of LocationListener
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
-    public void onProviderEnabled(String provider) {}
-    public void onProviderDisabled(String provider) {}
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+
+    public void onProviderEnabled(String provider) {
+    }
+
+    public void onProviderDisabled(String provider) {
+    }
 }
