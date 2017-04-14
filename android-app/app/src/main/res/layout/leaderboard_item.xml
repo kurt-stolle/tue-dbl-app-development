@@ -36,5 +36,8 @@
             android:gravity="left|center_vertical"
             android:text="[POINTS]"
             android:textAppearance="@android:style/TextAppearance.Material.Small" />
+
+
     </LinearLayout>
+
 </LinearLayout>

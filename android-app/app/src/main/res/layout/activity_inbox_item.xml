@@ -2,76 +2,93 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:orientation="vertical">
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/action_bar_layout" />
 
-    <ImageView
-        android:id="@+id/itemImage"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0px"
+        android:layout_height="300dp"
         android:layout_weight="0.6"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop" />
+        android:gravity="top|center_horizontal"
+        android:padding="0dp">
+
+        <ImageView
+            android:id="@+id/itemImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|center_horizontal"
+            android:orientation="vertical" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0px"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/activity_margin"
-        android:layout_weight="0.4"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:weightSum="1">
 
-        <TextView
-            android:id="@+id/itemAuthor"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.25"
-            android:text="[insert name here]"
-            android:textAppearance="@android:style/TextAppearance.Material.Headline" />
-
-        <TextView
-            android:id="@+id/itemPoints"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.15"
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
             android:gravity="center_vertical"
-            android:text="Awards 15 studypoints"
-            android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
+            android:orientation="vertical"
+            android:weightSum="1">
 
-        <TextView
-            android:id="@+id/itemTimeTaken"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.15"
-            android:gravity="center_vertical"
-            android:text="Picture taken at yesterday 21:48"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+            <TextView
+                android:id="@+id/itemAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/view_margin"
+                android:text="[insert name here]"
+                android:textAppearance="@android:style/TextAppearance.Material.Headline" />
 
-        <TextView
-            android:id="@+id/itemTimeRemaining"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.15"
-            android:gravity="center_vertical"
-            android:text="Remaining time: 3:48:30"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+            <TextView
+                android:id="@+id/itemPoints"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/view_margin"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Awards 15 studypoints"
+                android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
+
+            <TextView
+                android:id="@+id/itemTimeTaken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/view_margin"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Picture taken at yesterday 21:48"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_weight="0.1"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <Button
             android:id="@+id/buttonGuess"
             android:layout_width="match_parent"
-            android:layout_height="0px"
+            android:layout_height="match_parent"
             android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.3"
             android:background="@drawable/my_button_bg"
             android:text="@string/inboxItemButton"
             android:textColor="@color/colorWhite" />
     </LinearLayout>
+
 </LinearLayout>

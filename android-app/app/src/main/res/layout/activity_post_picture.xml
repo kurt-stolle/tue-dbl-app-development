@@ -63,7 +63,7 @@
                 android:layout_margin="@dimen/view_margin"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="Points worth: 15"
+                android:text="Points worth: 10"
                 android:textColor="@color/colorBlack"
                 android:textSize="20dp" />
         </LinearLayout>
