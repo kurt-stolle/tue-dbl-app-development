@@ -50,7 +50,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
     private String Uploader;
     private String UploadTime;
     private String Finder;
-    private TextView TVAuthor, TVTimeTaken, TVTimeRemaining;
+    private TextView TVAuthor, TVTimeTaken;
     ImageView IVImage;
     Button BGuess;
 
@@ -64,7 +64,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         // Look up all needed views
         TVAuthor = (TextView) findViewById(R.id.itemAuthor);
         TVTimeTaken = (TextView) findViewById(R.id.itemTimeTaken);
-        TVTimeRemaining = (TextView) findViewById(R.id.itemTimeRemaining);
         IVImage = (ImageView) findViewById(R.id.itemImage);
         BGuess = (Button) findViewById(R.id.buttonGuess);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -85,9 +84,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         TVAuthor.setText(res.getString(R.string.dataAuthor, Uploader));
         TVTimeTaken.setText(res.getString(R.string.dataTimeTaken, UploadTime));
 
-        // Setting text of TVTimeRemaining
-        setTimeRemaining(res);
-
         // Load the image using the Picasso library
         Log.d("InboxItemActivity", "Loading image file at /images/" + UUID + "/image.jpg");
         Picasso.with(this).load(APICall.URL + "/images/" + UUID + "/image.jpg").into(IVImage);
@@ -101,52 +97,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         });
 
         // loadImage();
-    }
-
-    private void setTimeRemaining(Resources r) {
-        final Resources res = r;
-
-        // First parse the date retrieved from the ImageModel
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
-        Date uploadDate = null;
-        try {
-            uploadDate = format.parse(UploadTime);
-        } catch (ParseException e) {
-            Log.e("InboxItemActivity", "Date cannot be parsed");
-            e.printStackTrace();
-        }
-
-        // Create a timer to schedule updates each second
-        if (uploadDate != null) {
-            Timer timer = new Timer();
-            final Date finalUploadDate = uploadDate;
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    // Get the time units of the time remaining
-                    Date currentDate = new Date();
-                    final long diffDate = finalUploadDate.getTime() + TimeUnit.DAYS.toMillis(GUESS_TIME) - currentDate.getTime();
-                    final long diffSeconds = diffDate / 1000 % 60;
-                    final long diffMinutes = diffDate / (60 * 1000) % 60;
-                    final long diffHours = diffDate / (60 * 60 * 1000) % 24;
-                    final long diffDays = diffDate / (1000 * 60 * 60 * 24);
-
-                    // Editing TextViews must be done on the UI thread
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (diffDate < 0) {
-                                TVTimeRemaining.setText(res.getString(R.string.dataTimeRemainingExpired));
-                            } else {
-                                TVTimeRemaining.setText(res.getString(R.string.dataTimeRemaining, diffDays, diffHours, diffMinutes, diffSeconds));
-                            }
-                        }
-                    });
-                }
-            }, 0, 1000);
-        } else {
-            TVTimeRemaining.setText(res.getString(R.string.error));
-        }
     }
 
     // Get the image of the picture
@@ -225,8 +175,8 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
                 + " and " + location.getLongitude());
 
         CoordinateModel coords = new CoordinateModel();
-        coords.Latitude = String.valueOf(location.getLatitude());
-        coords.Longitude = String.valueOf(location.getLongitude());
+        coords.Latitude = location.getLatitude();
+        coords.Longitude = location.getLongitude();
 
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {

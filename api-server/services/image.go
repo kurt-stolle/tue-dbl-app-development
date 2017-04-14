@@ -209,6 +209,11 @@ func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
 	// Delete file
 	// TODO
 
+	if _,err := postgres.Connect().Exec("DELETE FROM tuego_images WHERE UUID=$1", uuidImage); err != nil {
+		log.Println("Delete failed: ", err);
+	}
+
+	/*
 	// Write back to database
 	where = dbmdl.NewWhereClause("postgres")
 	where.AddValuedClause("UUID="+where.GetPlaceholder(0), uuidImage)
@@ -216,7 +221,7 @@ func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
 	img.Finder = uuidUser
 	if err := dbmdl.Save(postgres.Connect(), img, where); err != nil {
 		log.Panic(err)
-	}
+	} */
 
 	return true
 }
