@@ -64,7 +64,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         // Look up all needed views
         TVAuthor = (TextView) findViewById(R.id.itemAuthor);
         TVTimeTaken = (TextView) findViewById(R.id.itemTimeTaken);
-        TVTimeRemaining = (TextView) findViewById(R.id.itemTimeRemaining);
+//        TVTimeRemaining = (TextView) findViewById(R.id.itemTimeRemaining);
         IVImage = (ImageView) findViewById(R.id.itemImage);
         BGuess = (Button) findViewById(R.id.buttonGuess);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,7 +86,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         TVTimeTaken.setText(res.getString(R.string.dataTimeTaken, UploadTime));
 
         // Setting text of TVTimeRemaining
-        setTimeRemaining(res);
+//        setTimeRemaining(res);
 
         // Load the image using the Picasso library
         Log.d("InboxItemActivity", "Loading image file at /images/" + UUID + "/image.jpg");
