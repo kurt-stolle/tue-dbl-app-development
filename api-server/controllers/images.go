@@ -62,9 +62,14 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 		p := path.Join(pwd, img.UUID+".jpg")
 
-		if !parseImageUpload(w, r, p, 6000, 3000, 2000, services.JPEG) {
+
+		ok, coords := parseImageUpload(w, r, p, 6000, 3000, 2000, services.JPEG)
+		if !ok {
 			return
 		}
+
+		img.Latitude = coords.Latitude
+		img.Longitude = coords.Longitude
 
 		// Save the image struct
 		if err := dbmdl.Save(postgres.Connect(), img, nil); err != nil {
