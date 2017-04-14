@@ -89,6 +89,12 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         refresh();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refresh();
+    }
+
     // method that is called when the camera button is pressed
     public void onCameraButtonClick() {
         List<String> permissionsNeeded = new ArrayList<>();
@@ -228,6 +234,8 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
     // method that is called when the screen is pulled down to refresh items
     public void refresh() {
         Log.d("InboxActivity", "Refreshing...");
+        // First remove all the images
+        images.clear();
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {
             public void done(String data) {
