@@ -16,7 +16,7 @@ import (
 	dbmdl "github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
-	"database/sql"
+	
 )
 
 // GetActiveImagesWithAssociatedUsers returns a manifest of images
@@ -42,6 +42,8 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 	var mu sync.Mutex
 	var images []*models.ManifestEntry
 
+	log.Println("Loading images...");
+
 	for _i, ifc := range data {
 		wg.Add(1)
 		go func(i int, img *models.Image) {
@@ -53,16 +55,14 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 
 			upldr := new(models.User)
 			if err := dbmdl.Load(postgres.Connect(), upldr, where); err != nil {
-				if err == sql.ErrNoRows {
-					wg.Done();
-					return
-				}
-				log.Panic("Non-existant linkage in images->Uploader column")
+				entry.UploaderName = "Unknown uploader"
+			} else {
+				entry.UploaderName = upldr.Name
 			}
-
-			entry.UploaderName = upldr.Name
+			
 
 			mu.Lock()
+			log.Println("Image found")
 			images = append(images, entry)
 			mu.Unlock()
 
