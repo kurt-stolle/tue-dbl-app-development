@@ -1,14 +1,22 @@
 package nl.tue.tuego.Activities;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,27 +38,35 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import nl.tue.tuego.Models.CoordinateModel;
 import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.WebAPI.APIPostPicture;
 import nl.tue.tuego.R;
 
-public class PostPictureActivity extends AppCompatActivity {
+public class PostPictureActivity extends AppCompatActivity implements LocationListener {
+    static final int REQUEST_GPS_PERMISSION = 1;
+
+    LocationManager mLocationManager;
     private TextView TVTimeTaken, TVPoints;
     private ImageView IVImage;
     private Button BPost, BDiscard;
     Bitmap picture;
     String filePath;
+    Location location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_picture);
+
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         // Look up all needed views
         TVTimeTaken = (TextView) findViewById(R.id.postPictureTimeTaken);
@@ -84,6 +100,9 @@ public class PostPictureActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.d("PostPictureActivity", "Picture not found");
         }
+
+        // Getting the location
+        startGetLocation();
 
         // Set event listeners
         BPost.setOnClickListener(new OnClickListener() {
@@ -159,15 +178,76 @@ public class PostPictureActivity extends AppCompatActivity {
             }
         };
 
-        // Perform the API call
         // Setup params
         Log.d("Picture", "Picture width:" + picture.getWidth());
         Log.d("Picture", "Picture height" + picture.getHeight());
         Map<String, String> params = new HashMap<>(0);
-//        params.put("file", picture);
+        params.put("Longitude", String.valueOf(location.getLongitude()));
+        params.put("Latitude", String.valueOf(location.getLatitude()));
 
-        // Load the token to give to the post call
+
+        // Perform the API call
         new APIPostPicture(filePath, picture, APICall.ReadToken(getApplicationContext()), params, callback).execute();
+    }
+
+    private void startGetLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // TODO: give explanation
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_GPS_PERMISSION);
+            }
+        } else {
+            getLocation();
+        }
+    }
+
+    private void getLocation() {
+        Log.d("PostPictureActivity", "Getting location");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            Location newLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null && newLocation.getTime() > Calendar.getInstance().getTimeInMillis() - 2000) {
+                this.location = newLocation;
+            } else {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            }
+        } else {
+            Log.wtf("PostPictureActivity", "Permission changed abruptly?");
+        }
+    }
+
+    // Called when returning from permission pop-up
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_GPS_PERMISSION:
+                // if request is canceled
+                if (grantResults.length == 0) {
+                    Log.d("Permissions", "Canceled");
+                } else {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        getLocation();
+                        Log.d("Permissions", "GPS permission granted");
+                    } else {
+                        Toast.makeText(this, "GPS permission denied", Toast.LENGTH_SHORT).show();
+                        Log.d("Permissions", "GPS permission denied");
+                    }
+                }
+                break;
+
+            // other permission cases should go here
+
+            default: {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                Log.d("Permissions", "DEFAULT");
+            }
+        }
     }
 
     private void closeStream(Closeable stream) {
@@ -194,4 +274,17 @@ public class PostPictureActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public void onLocationChanged(Location newLocation) {
+        if (newLocation != null) {
+            Log.d("Location Changed", location.getLatitude() + " and " + location.getLongitude());
+            mLocationManager.removeUpdates(this);
+            this.location = newLocation;
+        }
+    }
+
+    // Required functions of LocationListener
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+    public void onProviderEnabled(String provider) {}
+    public void onProviderDisabled(String provider) {}
 }
