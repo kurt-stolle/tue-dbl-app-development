@@ -277,7 +277,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
 
     public void onLocationChanged(Location newLocation) {
         if (newLocation != null) {
-            Log.d("Location Changed", location.getLatitude() + " and " + location.getLongitude());
+            Log.d("Location Changed", newLocation.getLatitude() + " and " + newLocation.getLongitude());
             mLocationManager.removeUpdates(this);
             this.location = newLocation;
         }
