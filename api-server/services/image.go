@@ -16,6 +16,7 @@ import (
 	dbmdl "github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
+	"database/sql"
 )
 
 // GetActiveImagesWithAssociatedUsers returns a manifest of images
@@ -52,6 +53,10 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 
 			upldr := new(models.User)
 			if err := dbmdl.Load(postgres.Connect(), upldr, where); err != nil {
+				if err == sql.ErrNoRows {
+					wg.Done();
+					return
+				}
 				log.Panic("Non-existant linkage in images->Uploader column")
 			}
 
