@@ -231,19 +231,26 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 // Parse JSON
                 Gson gson = new Gson();
                 JsonParser parser = new JsonParser();
-                JsonArray resData = ((JsonObject) parser.parse(data)).getAsJsonArray("Data");
+                JsonObject resObject = (JsonObject) parser.parse(data);
 
-                // Iterate over array
-                for (int i = 0; i < resData.size(); i++) {
-                    // Load image from JSON
-                    ManifestEntry entry = gson.fromJson(resData.get(i), ManifestEntry.class);
+                // If the resObject is a JSON array (i.e. it has entries)
+                // then parse
+                if (resObject.get("Data").isJsonArray()){
+                    JsonArray resData = resObject.getAsJsonArray("Data");
 
-                    // Add image to list
-                    images.add(entry);
+                    // Iterate over array
+                    for (int i = 0; i < resData.size(); i++) {
+                        // Load image from JSON
+                        ManifestEntry entry = gson.fromJson(resData.get(i), ManifestEntry.class);
 
-                    // Debug print
-                    Log.d("InboxCallback", "Added new image to list, UUID: " + entry.Image.UUID);
+                        // Add image to list
+                        images.add(entry);
+
+                        // Debug print
+                        Log.d("InboxCallback", "Added new image to list, UUID: " + entry.Image.UUID);
+                    }
                 }
+
 
                 InboxAdapter adapter = new InboxAdapter(InboxActivity.this, images);
                 LVFeed.setAdapter(adapter);
