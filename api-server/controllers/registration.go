@@ -77,9 +77,6 @@ func Login(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 // WhoAmI returns the logged on user
 func WhoAmI(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	r.Header.Set("Authorization", "Bearer "+r.URL.Query().Get("token"))
-
-	authentication.Verify(w, r, func(w http.ResponseWriter, r *http.Request) {
 		uuid, err := services.GetUUID(r)
 		if err != nil {
 			writeError(w, http.StatusInternalServerError, err.Error())
@@ -87,6 +84,4 @@ func WhoAmI(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		}
 
 		writeJSON(w, services.GetUser(uuid))
-	})
-
 }
