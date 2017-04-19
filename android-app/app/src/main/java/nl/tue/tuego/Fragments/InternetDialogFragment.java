@@ -9,6 +9,16 @@ import android.os.Bundle;
 import nl.tue.tuego.R;
 
 public class InternetDialogFragment extends DialogFragment {
+
+    public static InternetDialogFragment newInstance(int title) {
+        InternetDialogFragment frag = new InternetDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt("title", title);
+        frag.setArguments(args);
+        return frag;
+    }
+
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction

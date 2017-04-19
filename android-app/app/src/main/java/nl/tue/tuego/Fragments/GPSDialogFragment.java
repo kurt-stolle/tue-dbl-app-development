@@ -9,6 +9,16 @@ import android.os.Bundle;
 import nl.tue.tuego.R;
 
 public class GPSDialogFragment extends DialogFragment {
+
+
+    public static GPSDialogFragment newInstance(int title) {
+        GPSDialogFragment frag = new GPSDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt("title", title);
+        frag.setArguments(args);
+        return frag;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction

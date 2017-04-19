@@ -22,6 +22,7 @@ import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import nl.tue.tuego.Fragments.InternetDialogFragment;
 import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.Models.LoginModel;
@@ -64,6 +65,17 @@ public class LoginActivity extends AppCompatActivity {
                 login(v);
             }
         });
+
+        if (AppStatus.getInstance(this).isOnline()) {
+
+            Log.v("Home", "#### Internet OK");
+
+        } else {
+            InternetDialogFragment newFragment = InternetDialogFragment.newInstance(
+                    R.string.internetWarning);
+            newFragment.show(getFragmentManager(), "dialog");
+        }
+
     }
 
     // method that is called when BLogin is pressed

@@ -5,11 +5,14 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
@@ -45,6 +48,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
+import nl.tue.tuego.Fragments.GPSDialogFragment;
+import nl.tue.tuego.Fragments.InternetDialogFragment;
 import nl.tue.tuego.Models.ManifestEntry;
 import nl.tue.tuego.Models.PaginatedResponseModel;
 import nl.tue.tuego.WebAPI.APICallback;
@@ -52,6 +58,10 @@ import nl.tue.tuego.Models.ImageModel;
 import nl.tue.tuego.Adapters.InboxAdapter;
 import nl.tue.tuego.R;
 import nl.tue.tuego.WebAPI.APICall;
+
+import android.location.LocationManager;
+
+import static nl.tue.tuego.Activities.AppStatus.context;
 
 public class InboxActivity extends AppCompatActivity implements ListView.OnItemClickListener {
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -86,8 +96,39 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
             }
         });
 
+        if (AppStatus.getInstance(this).isOnline()) {
+
+            Log.v("Home", "#### Internet OK");
+
+        } else {
+            InternetDialogFragment newFragment = InternetDialogFragment.newInstance(
+                    R.string.internetWarning);
+            newFragment.show(getFragmentManager(), "dialog");
+        }
+
+        if(CheckGpsStatus() == true)
+        {
+            Log.v("Home", "++++ GPS OK");
+        }else {
+
+            GPSDialogFragment newFragment = GPSDialogFragment.newInstance(
+                    R.string.gpsWarning);
+            newFragment.show(getFragmentManager(), "dialog");
+        }
+
         refresh();
     }
+
+    public Boolean CheckGpsStatus(){
+
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        boolean GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        return GpsStatus;
+    }
+
+
 
     @Override
     protected void onResume() {
@@ -130,6 +171,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
             toCamera();
         }
     }
+
 
     // go to the camera
     private void toCamera() {
