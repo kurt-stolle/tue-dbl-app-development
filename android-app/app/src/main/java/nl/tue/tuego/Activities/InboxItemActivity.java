@@ -25,15 +25,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import nl.tue.tuego.Models.CoordinateModel;
 import nl.tue.tuego.R;
@@ -103,33 +95,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         // loadImage();
     }
 
-    // Get the image of the picture
-   /* private void loadImage() {
-        // TODO: get the image from the client
-
-        // Determine what happens when the call is done
-        APICallback callback = new APICallback() {
-            @Override
-            public void done(String res) {
-                Log.d("InboxItemActivity", "Image loaded");
-                // TODO: Show a correct pop-up
-            }
-
-            @Override
-            public void fail(String res) {
-                Log.d("InboxItemActivity", "Image failed to load");
-                // TODO: Show an incorrect pop-up
-            }
-        };
-
-        // Perform the API call
-        Log.d("InboxItemActivity", UUID);
-        APICall call = new APICall("GET", "/images/" + UUID + "/image.jpg", null, callback);
-        call.setAPIKey(APICall.ReadToken(this));
-        call.execute();
-
-    }
-*/
     // method that is called when the DELETE PICTURE button is pressed
     // only the poster of the picture can do this
     public void deletePic(View v) {
@@ -150,12 +115,13 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
                         REQUEST_GPS_PERMISSION);
             }
         } else {
-//            getLocation();
+            getLocation();
+
             // For the purpose of the test
-            Location loc = new Location("");
-            loc.setLongitude(0.0);
-            loc.setLatitude(0.0);
-            guessLocation(loc);
+//            Location loc = new Location("");
+//            loc.setLongitude(0.0);
+//            loc.setLatitude(0.0);
+//            guessLocation(loc);
         }
     }
 
@@ -177,7 +143,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
     private void guessLocation(Location location) {
         Log.d("InboxItemActivity", "Guessing location: " + location.getLatitude()
                 + " and " + location.getLongitude());
-
         CoordinateModel coords = new CoordinateModel();
         coords.Latitude = location.getLatitude();
         coords.Longitude = location.getLongitude();

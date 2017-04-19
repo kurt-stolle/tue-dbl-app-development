@@ -37,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -103,7 +104,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
 
         // Getting the location
         location = null;
-        // getLocation();
+        getLocation();
 
         // Set event listeners
         BPost.setOnClickListener(new OnClickListener() {
@@ -162,7 +163,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
     // Method that is called when POST button is pressed
     public void postPic(View v) {
         // Check if the location has been determined
-//        if (location != null) {
+        if (location != null) {
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {
             @Override
@@ -185,35 +186,21 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
         Log.d("Picture", "Picture width:" + picture.getWidth());
         Log.d("Picture", "Picture height" + picture.getHeight());
         Map<String, String> params = new HashMap<>(0);
-//        params.put("Longitude", String.valueOf(location.getLongitude()));
-//        params.put("Latitude", String.valueOf(location.getLatitude()));
+        params.put("Longitude", String.valueOf(location.getLongitude()));
+        params.put("Latitude", String.valueOf(location.getLatitude()));
+
         // For the purpose of the test
-        params.put("Longitude", String.valueOf(0));
-        params.put("Latitude", String.valueOf(0));
+//        params.put("Longitude", String.valueOf(0));
+//        params.put("Latitude", String.valueOf(0));
 
         // Perform the API call
         new APIPostPicture(filePath, picture, APICall.ReadToken(getApplicationContext()), params, callback).execute();
-//        } else {
-//            Toast.makeText(this, "Retry posting in a moment", Toast.LENGTH_SHORT).show();
-//        }
+        } else {
+            Toast.makeText(this, "Retry posting in a moment", Toast.LENGTH_SHORT).show();
+        }
     }
 
-//    private void startGetLocation() {
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-//                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-//                // TODO: give explanation
-//            } else {
-//                ActivityCompat.requestPermissions(this,
-//                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                        REQUEST_GPS_PERMISSION);
-//            }
-//        } else {
-//            getLocation();
-//        }
-//    }
-
+    // Retrieves the location by using the location manager
     private void getLocation() {
         Log.d("PostPictureActivity", "Getting location");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -225,49 +212,10 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
                 Log.d("PostPictureActivity", "Set location");
             } else {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                Log.d("LocationManager", "Requesting updates");
+                Log.d("PostPictureActivity", "Requesting location updates");
             }
         } else {
             Log.wtf("PostPictureActivity", "Permission changed abruptly?");
-        }
-    }
-
-    // Called when returning from permission pop-up
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode,
-//                                           String[] permissions, int[] grantResults) {
-//        switch (requestCode) {
-//            case REQUEST_GPS_PERMISSION:
-//                // if request is canceled
-//                if (grantResults.length == 0) {
-//                    Log.d("Permissions", "Canceled");
-//                } else {
-//                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                        getLocation();
-//                        Log.d("Permissions", "GPS permission granted");
-//                    } else {
-//                        Toast.makeText(this, "GPS permission denied", Toast.LENGTH_SHORT).show();
-//                        Log.d("Permissions", "GPS permission denied");
-//                    }
-//                }
-//                break;
-//
-//            // other permission cases should go here
-//
-//            default: {
-//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//                Log.d("Permissions", "DEFAULT");
-//            }
-//        }
-//    }
-
-    private void closeStream(Closeable stream) {
-        try {
-            if (stream != null) {
-                stream.close();
-            }
-        } catch (IOException e) {
-            Log.d("Stream", "Stream already closed");
         }
     }
 
@@ -286,12 +234,15 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
         }
     }
 
+    // Method that is called by the location manager whenever the location has changed
     public void onLocationChanged(Location newLocation) {
-        Log.d("Location Changed", "Start");
+        Log.d("PostPictureActivity", "New location received");
         if (newLocation != null) {
-            Log.d("Location Changed", newLocation.getLatitude() + " and " + newLocation.getLongitude());
+            Log.d("PostPictureActivity", "New location: latitude " + newLocation.getLatitude() + ", longitude:" + newLocation.getLongitude());
             mLocationManager.removeUpdates(this);
             this.location = newLocation;
+        } else {
+            Log.d("PostPictureActivity", "New location is null");
         }
     }
 

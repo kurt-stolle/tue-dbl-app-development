@@ -87,6 +87,7 @@ public class APICall extends AsyncTask<String, Void, String> {
 
             if (!this.apiKey.equals("")) {
                 client.addRequestProperty("Authorization","Bearer " + this.apiKey );
+                Log.d("API", "Added authorization key");
             }
 
             // Some stuff is different when doing a PUSH-type request
@@ -118,7 +119,7 @@ public class APICall extends AsyncTask<String, Void, String> {
                 String res = convertStreamToString(in);
 
                 // Debug print
-                Log.d("API", res);
+                Log.d("API", "Response: " + res);
 
                 // Return string, most likely JSON-encoded
                 return res;

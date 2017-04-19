@@ -1,20 +1,15 @@
 package nl.tue.tuego.Activities;
 
 import android.Manifest;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -29,10 +24,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -42,7 +33,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,7 +42,6 @@ import java.util.List;
 import nl.tue.tuego.Fragments.GPSDialogFragment;
 import nl.tue.tuego.Fragments.InternetDialogFragment;
 import nl.tue.tuego.Models.ManifestEntry;
-import nl.tue.tuego.Models.PaginatedResponseModel;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.Models.ImageModel;
 import nl.tue.tuego.Adapters.InboxAdapter;
@@ -96,47 +85,70 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
             }
         });
 
-        if (AppStatus.getInstance(this).isOnline()) {
+        // Show the dialogs
+        showDialogs();
 
-            Log.v("Home", "#### Internet OK");
-
-        } else {
-            InternetDialogFragment newFragment = InternetDialogFragment.newInstance(
-                    R.string.internetWarning);
-            newFragment.show(getFragmentManager(), "dialog");
-        }
-
-        if(CheckGpsStatus() == true)
-        {
-            Log.v("Home", "++++ GPS OK");
-        }else {
-
-            GPSDialogFragment newFragment = GPSDialogFragment.newInstance(
-                    R.string.gpsWarning);
-            newFragment.show(getFragmentManager(), "dialog");
-        }
-
-        refresh();
+        // Welcome message to show the username (primarily for test)
+        showWelcomeMessage();
     }
 
-    public Boolean CheckGpsStatus(){
-
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-        boolean GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        return GpsStatus;
-    }
-
-
-
+    // Refresh the feed when coming back to the inbox
     @Override
     protected void onResume() {
         super.onResume();
         refresh();
     }
 
-    // method that is called when the camera button is pressed
+    // Displays the Internet and GPS dialogs
+    private void showDialogs() {
+        if (AppStatus.getInstance(this).isOnline()) {
+            Log.v("Show dialog", "Internet ON");
+        } else {
+            Log.v("Show dialog", "Internet OFF");
+            InternetDialogFragment newFragment = InternetDialogFragment.newInstance(
+                    R.string.internetWarning);
+            newFragment.show(getFragmentManager(), "dialog");
+        }
+
+        if (hasGPSEnabled() == true) {
+            Log.v("Show dialog", "GPS ON");
+        } else {
+            Log.v("Show dialog", "GPS OFF");
+            GPSDialogFragment newFragment = GPSDialogFragment.newInstance(
+                    R.string.gpsWarning);
+            newFragment.show(getFragmentManager(), "dialog");
+        }
+    }
+
+    // Method to check the status of the GPS
+    public boolean hasGPSEnabled() {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        boolean GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return GpsStatus;
+    }
+
+    // Shows a "Welcome back [username]!" message
+    private void showWelcomeMessage() {
+        APICallback callback = new APICallback() {
+            @Override
+            public void done(String res) {
+                Toast.makeText(InboxActivity.this, "Welcome back " + res + "!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void fail(String res) {
+                Log.d("InboxActivity", "Failed to get username");
+            }
+        };
+
+        // Perform API Call
+        String token = APICall.ReadToken(this);
+        Log.d("InboxActivity", "Token = " + token);
+        APICall call = new APICall("GET", "/whoami?token=" + token, null, callback);
+        call.execute();
+    }
+
+    // Method that is called when the camera button is pressed
     public void onCameraButtonClick() {
         List<String> permissionsNeeded = new ArrayList<>();
 
@@ -154,7 +166,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         }
 
         for (int i = 0; i < permissionsNeeded.size(); i++) {
-            // check if permissions denied earlier
+            // Check if permissions denied earlier
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     permissionsNeeded.get(i))) {
                 // TODO: add an explanation on different thread
@@ -162,34 +174,34 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         }
 
         if (permissionsNeeded.size() > 0) {
-            // ask for permissions
+            // Ask for permissions
             ActivityCompat.requestPermissions(this,
                     permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
                     REQUEST_PERMISSIONS);
         } else {
-            // all permissions granted so go to camera
+            // All permissions granted so go to camera
             toCamera();
         }
     }
 
 
-    // go to the camera
+    // Go to the camera
     private void toCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // ensure that there's a camera activity to handle the intent
+        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // create the file where the photo should go
+            // Create the file where the photo should go
             File photoFile = null;
             try {
                 photoFile = createImageFile();
                 Log.d("File", "Path created (" + mCurrentPhotoPath + ")");
             } catch (IOException e) {
-                // error occurred while creating the file
+                // Error occurred while creating the file
                 // TODO: handle error
                 Log.d("File", "Failed to create path. Error: " + e);
             }
 
-            // continue only if the file was successfully created
+            // Continue only if the file was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(getApplicationContext(),
                         "nl.tue.tuego.fileprovider",
@@ -201,7 +213,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         }
     }
 
-    // returns a unique file name for a new picture
+    // Returns a unique file name for a new picture
     private File createImageFile() throws IOException {
         // Create an image file name
         Log.d("File", "Creating unique file path");
@@ -219,13 +231,13 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         return image;
     }
 
-    // called when returning from permission pop-up
+    // Called when returning from permission pop-up
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSIONS:
-                // if request is canceled
+                // If request is canceled
                 if (grantResults.length == 0) {
                     Log.d("Permissions", "Canceled");
                 } else {
@@ -250,7 +262,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 }
                 break;
 
-            // other permission cases should go here
+            // Other permission cases should go here
 
             default: {
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -259,7 +271,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         }
     }
 
-    // called when returning from the camera API
+    // Called when returning from the camera API
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("Camera", "Finished");
@@ -273,7 +285,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         }
     }
 
-    // method that is called when the screen is pulled down to refresh items
+    // Method that is called when the screen is pulled down to refresh items
     public void refresh() {
         Log.d("InboxActivity", "Refreshing...");
         // First remove all the images
@@ -288,7 +300,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
 
                 // If the resObject is a JSON array (i.e. it has entries)
                 // then parse
-                if (resObject.get("Data").isJsonArray()){
+                if (resObject.get("Data").isJsonArray()) {
                     JsonArray resData = resObject.getAsJsonArray("Data");
 
                     // Iterate over array
