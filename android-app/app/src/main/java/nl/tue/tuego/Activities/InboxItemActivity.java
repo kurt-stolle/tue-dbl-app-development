@@ -130,10 +130,13 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
             if (location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2000) {
                 guessLocation(location);
             } else {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+                Log.d("InboxItemActivity", "Requesting location updates");
             }
         } else {
             Log.wtf("InboxItemActivity", "Permission changed abruptly?");
@@ -141,8 +144,8 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
     }
 
     private void guessLocation(Location location) {
-        Log.d("InboxItemActivity", "Guessing location: " + location.getLatitude()
-                + " and " + location.getLongitude());
+        Log.d("InboxItemActivity", "Guessing location: latitude: " + location.getLatitude()
+                + ", and longitude: " + location.getLongitude());
         CoordinateModel coords = new CoordinateModel();
         coords.Latitude = location.getLatitude();
         coords.Longitude = location.getLongitude();
@@ -166,8 +169,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         };
 
         // Perform the API call
-        APICall call = new APICall("POST", "/images/" + UUID, coords, callback);
-        call.setAPIKey(APICall.ReadToken(this));
+        APICall call = new APICall("POST", "/images/" + UUID, coords, callback, this);
         call.execute();
     }
 

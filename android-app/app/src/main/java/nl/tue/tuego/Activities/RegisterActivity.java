@@ -27,6 +27,8 @@ import java.io.IOException;
 
 import nl.tue.tuego.Models.LoginModel;
 import nl.tue.tuego.Models.TokenModel;
+import nl.tue.tuego.Models.UsernameModel;
+import nl.tue.tuego.Storage.Storage;
 import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.R;
@@ -116,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
         };
 
         // Perform the API call
-        new APICall("POST", "/register", reg, callback).execute();
+        new APICall("POST", "/register", reg, callback, this).execute();
     }
 
     private void autoLogin() {
@@ -147,10 +149,16 @@ public class RegisterActivity extends AppCompatActivity {
                     finish();
                 } catch (IOException e) {
                     Log.d("RegisterActivity", "Error saving token");
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
                     Toast.makeText(RegisterActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
                 } finally {
                     closeStream(fos);
                 }
+
+                // Also get the username of the current user
+                getUsername();
             }
 
             @Override
@@ -164,7 +172,51 @@ public class RegisterActivity extends AppCompatActivity {
         };
 
         // Perform the API call
-        new APICall("POST", "/login", log, callback).execute();
+        new APICall("POST", "/login", log, callback, this).execute();
+    }
+
+    // Gets the username of the current user and saves it
+    private void getUsername() {
+        // Determine what happens when the call is done
+        APICallback callback = new APICallback() {
+            @Override
+            public void done(String res) {
+                Gson gson = new Gson();
+                UsernameModel usernameModel = gson.fromJson(res, UsernameModel.class);
+                Storage.setUsername(usernameModel.Username);
+
+                // Write the username into local storage
+                FileOutputStream fos = null;
+                try {
+                    fos = openFileOutput("Username", Context.MODE_PRIVATE);
+                    fos.write(usernameModel.Username.getBytes());
+                    Log.d("RegisterActivity", "Username saved");
+
+                    Intent intent = new Intent(RegisterActivity.this, InboxActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } catch (IOException e) {
+                    Toast.makeText(RegisterActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                    Log.d("RegisterActivity", "Error saving username");
+                } finally {
+                    closeStream(fos);
+                }
+            }
+
+            @Override
+            public void fail(String res) {
+                Log.d("RegisterActivity", "Failed to get username from API");
+            }
+        };
+
+        // Perform the API Call to get the username
+        String token = Storage.getToken(RegisterActivity.this);
+        Log.d("LoginActivity", "Token = " + token);
+        new APICall("GET", "/whoami?token=" + token, null, callback, RegisterActivity.this).execute();
     }
 
     // called when TVToLogin is clicked

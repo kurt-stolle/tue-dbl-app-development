@@ -42,6 +42,7 @@ import java.util.List;
 import nl.tue.tuego.Fragments.GPSDialogFragment;
 import nl.tue.tuego.Fragments.InternetDialogFragment;
 import nl.tue.tuego.Models.ManifestEntry;
+import nl.tue.tuego.Storage.Storage;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.Models.ImageModel;
 import nl.tue.tuego.Adapters.InboxAdapter;
@@ -53,6 +54,7 @@ import android.location.LocationManager;
 import static nl.tue.tuego.Activities.AppStatus.context;
 
 public class InboxActivity extends AppCompatActivity implements ListView.OnItemClickListener {
+    static String username = null;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_PERMISSIONS = 1;
@@ -129,23 +131,13 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
 
     // Shows a "Welcome back [username]!" message
     private void showWelcomeMessage() {
-        APICallback callback = new APICallback() {
-            @Override
-            public void done(String res) {
-                Toast.makeText(InboxActivity.this, "Welcome back " + res + "!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void fail(String res) {
-                Log.d("InboxActivity", "Failed to get username");
-            }
-        };
-
-        // Perform API Call
-        String token = APICall.ReadToken(this);
-        Log.d("InboxActivity", "Token = " + token);
-        APICall call = new APICall("GET", "/whoami?token=" + token, null, callback);
-        call.execute();
+        String username = Storage.getUsername(this);
+        if (username.equals("")) {
+            Log.e("InboxActivity", "Failed to get username");
+        } else {
+            Log.d("InboxActivity", "Show welcome back message");
+            Toast.makeText(InboxActivity.this, "Welcome back " + username + "!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Method that is called when the camera button is pressed
@@ -329,8 +321,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         };
 
         // Perform the API call
-        APICall call = new APICall("GET", "/images", null, callback);
-        call.setAPIKey(APICall.ReadToken(InboxActivity.this));
+        APICall call = new APICall("GET", "/images", null, callback, this);
         call.execute();
     }
 
@@ -363,6 +354,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                     String token = "";
                     fos = openFileOutput("token_file", Context.MODE_PRIVATE);
                     fos.write(token.getBytes());
+                    Storage.logout();
                     Log.d("Log out", "Token deleted");
                 } catch (IOException e) {
                     Log.d("Log out", "No token found");
@@ -390,9 +382,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-    }
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id){}
 
     private void closeStream(Closeable stream) {
         try {

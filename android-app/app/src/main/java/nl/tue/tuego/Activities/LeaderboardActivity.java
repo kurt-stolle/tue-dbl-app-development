@@ -32,7 +32,6 @@ import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
 
 public class LeaderboardActivity extends AppCompatActivity {
-    private final int AMOUNT_BEST_USERS = 4; // set amount of users in the leaderboard
     private List<LeaderboardEntry> entries;
     ListView LVLeaderboard;
     LeaderboardAdapter adapter;
@@ -89,7 +88,7 @@ public class LeaderboardActivity extends AppCompatActivity {
             }
         };
 
-        (new APICall("GET","/leaderboard", null, callback)).execute();
+        new APICall("GET","/leaderboard", null, callback, this).execute();
     }
 
     // method that will display the leaderboard

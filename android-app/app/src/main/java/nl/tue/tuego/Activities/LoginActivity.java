@@ -23,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import nl.tue.tuego.Fragments.InternetDialogFragment;
+import nl.tue.tuego.Models.UsernameModel;
+import nl.tue.tuego.Storage.Storage;
 import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.Models.LoginModel;
@@ -30,7 +32,6 @@ import nl.tue.tuego.R;
 import nl.tue.tuego.Models.TokenModel;
 
 public class LoginActivity extends AppCompatActivity {
-    private TextView TVForgotPassword;
     private EditText ETEmail, ETPassword;
     private Button BLogin;
 
@@ -39,8 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // look up all needed views
-        // TVForgotPassword = (TextView) findViewById(R.id.textViewLoginToForgotPassword);
+        // Look up all needed views
         ETEmail = (EditText) findViewById(R.id.editTextLoginUsername);
         ETPassword = (EditText) findViewById(R.id.editTextLoginPassword);
         BLogin = (Button) findViewById(R.id.buttonLogin);
@@ -51,14 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        // set event listeners
-//        TVForgotPassword.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                forgotPassword(v);
-//            }
-//        });
-
+        // set event listener
         BLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
                     R.string.internetWarning);
             newFragment.show(getFragmentManager(), "dialog");
         }
-
     }
 
     // method that is called when BLogin is pressed
@@ -94,23 +86,30 @@ public class LoginActivity extends AppCompatActivity {
             public void done(String res) {
                 Gson gson = new Gson();
                 TokenModel tokenModel = gson.fromJson(res, TokenModel.class);
+                Storage.setToken(tokenModel.Token);
+
+                // Write the token into local storage
                 FileOutputStream fos = null;
-
                 try {
-                    fos = openFileOutput("token_file", Context.MODE_PRIVATE);
+                    fos = openFileOutput("Token", Context.MODE_PRIVATE);
                     fos.write(tokenModel.Token.getBytes());
-
                     Log.d("LoginActivity", "Token saved");
+
+                    // TODO: Remove this once the username can be retrieved
                     Intent intent = new Intent(LoginActivity.this, InboxActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
+                    // TODO: Remove until here
                 } catch (IOException e) {
                     Toast.makeText(LoginActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
                     Log.d("LoginActivity", "Error saving token");
                 } finally {
                     closeStream(fos);
                 }
+
+                // Also get the username of the current user
+                getUsername();
             }
 
             @Override
@@ -120,15 +119,50 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-        // Perform the API call
-        new APICall("POST", "/login", log, callback).execute();
+        // Perform the API call to login
+        new APICall("POST", "/login", log, callback, this).execute();
     }
 
-//    // method that is called when TVForgotPassword is clicked
-//    public void forgotPassword(View v) {
-//        Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-//        startActivity(intent);
-//    }
+    // Gets the username of the current user and saves it
+    private void getUsername() {
+        // Determine what happens when the call is done
+        APICallback callback = new APICallback() {
+            @Override
+            public void done(String res) {
+                Gson gson = new Gson();
+                UsernameModel usernameModel = gson.fromJson(res, UsernameModel.class);
+                Storage.setUsername(usernameModel.Username);
+
+                // Write the username into local storage
+                FileOutputStream fos = null;
+                try {
+                    fos = openFileOutput("Username", Context.MODE_PRIVATE);
+                    fos.write(usernameModel.Username.getBytes());
+                    Log.d("LoginActivity", "Username saved");
+
+                    Intent intent = new Intent(LoginActivity.this, InboxActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } catch (IOException e) {
+                    Toast.makeText(LoginActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
+                    Log.d("LoginActivity", "Error saving username");
+                } finally {
+                    closeStream(fos);
+                }
+            }
+
+            @Override
+            public void fail(String res) {
+                Log.d("LoginActivity", "Failed to get username");
+            }
+        };
+
+        // Perform the API Call to get the username
+        String token = Storage.getToken(LoginActivity.this);
+        Log.d("LoginActivity", "Token = " + token);
+        new APICall("GET", "/whoami?token=" + token, null, callback, LoginActivity.this).execute();
+    }
 
     // Events that trigger when a certain button is pressed on the action bar
     @Override
@@ -136,7 +170,6 @@ public class LoginActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // When the up button is pressed
             case android.R.id.home:
-                System.out.println("Up button pressed");
                 Intent parentIntent = NavUtils.getParentActivityIntent(this);
                 parentIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(parentIntent);

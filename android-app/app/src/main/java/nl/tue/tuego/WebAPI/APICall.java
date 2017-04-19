@@ -22,6 +22,8 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
+import nl.tue.tuego.Storage.Storage;
+
 // APICall (was: WebAPI) handles calls to the Web API
 public class APICall extends AsyncTask<String, Void, String> {
 
@@ -34,25 +36,23 @@ public class APICall extends AsyncTask<String, Void, String> {
     private Object model;
     private APICallback callback;
     private boolean success;
-    private String apiKey;
+    private Context context;
 
     // Constructor
-    public APICall(String method, String route, Object model, APICallback callback) {
+    public APICall(String method, String route, Object model, APICallback callback, Context context) {
         // Set properties of request
         this.method = method;
         this.route = route;
         this.model = model;
         this.callback = callback;
         this.success = false;
+        this.context = context;
 
         // This means that we are doing a PUSH-type request, but without any data model. Something is wrong, so log an error!
         if (this.model == null && (this.method.equals("POST") || this.method.equals("PATCH") || this.method.equals("PUT"))) {
             Log.e("API", "Making push-type request, but without any data provided. Assuming GET request");
             this.method = "GET";
         }
-
-        // Initialize with empty key
-        this.apiKey = "";
     }
 
     // AsyncTask execution stage
@@ -85,8 +85,11 @@ public class APICall extends AsyncTask<String, Void, String> {
             client.setRequestMethod(this.method);
             client.addRequestProperty("Accept", "application/json");
 
-            if (!this.apiKey.equals("")) {
-                client.addRequestProperty("Authorization","Bearer " + this.apiKey );
+            String token = Storage.getToken(context);
+            if (token.equals("")) {
+                Log.d("API", "No token found");
+            } else {
+                client.addRequestProperty("Authorization","Bearer " + token);
                 Log.d("API", "Added authorization key");
             }
 
@@ -162,55 +165,6 @@ public class APICall extends AsyncTask<String, Void, String> {
         } else {
             this.callback.fail(res);
         }
-    }
-
-    // Setting APIKey to key
-    public void setAPIKey(String key){
-        this.apiKey = key;
-    }
-
-    // Reading key from local storage
-    private static String token = "";
-    public static String ReadToken(Context c){
-        if (!token.equals("")){
-            return token;
-        }
-
-        FileInputStream fis = null;
-        BufferedReader bufferedReader = null;
-        try {
-            fis = c.openFileInput("token_file");
-            InputStreamReader isr = new InputStreamReader(fis);
-            bufferedReader = new BufferedReader(isr);
-
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-
-            token = sb.toString();
-        } catch (FileNotFoundException e) {
-            // TODO: go to the register activity
-            Log.d("ReadToken", "Token not found");
-        } catch (IOException e) {
-            // TODO: go to the register activity
-            Log.d("ReadToken", "Reading token failed");
-        } finally {
-            try {
-                if (fis != null) {
-                    fis.close();
-                }
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        Log.d("ReadToken", token);
-        return token;
     }
 
     private String convertStreamToString(InputStream is) {

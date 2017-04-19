@@ -46,6 +46,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import nl.tue.tuego.Models.CoordinateModel;
+import nl.tue.tuego.Storage.Storage;
 import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.WebAPI.APIPostPicture;
@@ -186,15 +187,11 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
         Log.d("Picture", "Picture width:" + picture.getWidth());
         Log.d("Picture", "Picture height" + picture.getHeight());
         Map<String, String> params = new HashMap<>(0);
-        params.put("Longitude", String.valueOf(location.getLongitude()));
         params.put("Latitude", String.valueOf(location.getLatitude()));
-
-        // For the purpose of the test
-//        params.put("Longitude", String.valueOf(0));
-//        params.put("Latitude", String.valueOf(0));
+        params.put("Longitude", String.valueOf(location.getLongitude()));
 
         // Perform the API call
-        new APIPostPicture(filePath, picture, APICall.ReadToken(getApplicationContext()), params, callback).execute();
+        new APIPostPicture(filePath, picture, Storage.getToken(this), params, callback).execute();
         } else {
             Toast.makeText(this, "Retry posting in a moment", Toast.LENGTH_SHORT).show();
         }
@@ -212,6 +209,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
                 Log.d("PostPictureActivity", "Set location");
             } else {
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
                 Log.d("PostPictureActivity", "Requesting location updates");
             }
         } else {

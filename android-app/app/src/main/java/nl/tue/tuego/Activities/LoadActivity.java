@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import nl.tue.tuego.R;
+import nl.tue.tuego.Storage.Storage;
 import nl.tue.tuego.WebAPI.APICall;
 
 public class LoadActivity extends Activity {
@@ -24,39 +25,39 @@ public class LoadActivity extends Activity {
         load();
     }
 
-    // method which checks several things before continuing
+    // Method which checks several things before continuing
     private void load() {
-        String token = APICall.ReadToken(this);
+        boolean readingIsOk = true;
 
+        String token = Storage.getToken(this);
         if (token.equals("")) {
-            Log.d("LoadActivity", "Token has incorrect length");
-
-            // go to the register activity
-            Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(intent);
-            finish();
+            Log.d("LoadActivity", "Token does not exist");
+            readingIsOk = false;
         } else {
-            Log.d("LoadActivity", "Token found: " + token);
+            Log.d("LoadActivity", "Token found:" + token);
+        }
 
-            // go to the inbox activity
+        String username = Storage.getUsername(this);
+        if (username.equals("")) {
+            Log.d("LoadActivity", "Username does not exist");
+            readingIsOk = false;
+        } else {
+            Log.d("LoadActivity", "Username found:" + username);
+        }
+
+        // All data has been found
+        if (readingIsOk) {
+            Log.d("LoadActivity", "All data loaded");
+            // Go to the inbox activity
             Intent intent = new Intent(this, InboxActivity.class);
             startActivity(intent);
             finish();
+        } else { // Some data could not be found
+            Log.d("LoadActivity", "Some data not found");
+            // Go to the register activity
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
-
-    private void closeStream(Closeable stream) {
-        try {
-            if (stream != null) {
-                stream.close();
-            }
-        } catch (IOException e) {
-            Log.d("Stream", "Stream already closed");
-        }
-    }
-
-//    // method that displays a warning if needed
-//    private void showWarning() {
-//        new GPSDialogFragment().show(getFragmentManager(), "dialog");
-//    }
 }
