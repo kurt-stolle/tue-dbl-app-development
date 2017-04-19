@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <include
         android:id="@+id/toolbar"
@@ -10,38 +11,39 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0px"
+        android:layout_margin="@dimen/view_margin"
+        android:layout_weight="0.7"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/postPictureImage"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:gravity="center"
+            android:scaleType="centerInside" />
+
+        <!--
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This is a picture"
+            android:textColor="@color/colorWhite" />
+        -->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
         android:layout_margin="@dimen/activity_margin"
+        android:layout_weight="0.3"
         android:orientation="vertical"
         android:weightSum="1">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.75"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/postPictureImage"
-                android:layout_width="match_parent"
-                android:layout_height="350dp"
-                android:gravity="center"
-                android:scaleType="centerCrop" />
-
-            <!--
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="This is a picture"
-                android:textColor="@color/colorWhite" />
-            -->
-        </LinearLayout>
-
-        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="0px"
-            android:layout_weight="0.15"
+            android:layout_weight="0.6"
             android:orientation="vertical"
             android:weightSum="2">
 
@@ -71,7 +73,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="0.1"
+            android:layout_weight="0.4"
             android:orientation="horizontal"
             android:weightSum="1">
 

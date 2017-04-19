@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -28,6 +29,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.squareup.picasso.Picasso;
 
 import java.io.Closeable;
 import java.io.File;
@@ -53,7 +55,7 @@ import android.location.LocationManager;
 
 import static nl.tue.tuego.Activities.AppStatus.context;
 
-public class InboxActivity extends AppCompatActivity implements ListView.OnItemClickListener {
+public class InboxActivity extends AppCompatActivity{
     static String username = null;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -61,7 +63,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
     private String mCurrentPhotoPath;
     private FloatingActionButton BCamera;
     private ListView LVFeed;
-    private List<ManifestEntry> images;
+    private List<ManifestEntry> entries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         setContentView(R.layout.activity_inbox);
 
         // initialize images
-        images = new ArrayList<>();
+        entries = new ArrayList<>();
 
         // look up all needed views
         BCamera = (FloatingActionButton) findViewById(R.id.inboxButton);
@@ -277,14 +279,16 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
         }
     }
 
-    // Method that is called when the screen is pulled down to refresh items
+    // Method that is called to reload all the data
     public void refresh() {
         Log.d("InboxActivity", "Refreshing...");
-        // First remove all the images
-        images.clear();
+        // First remove all the entries
+        entries.clear();
         // Determine what happens when the call is done
         APICallback callback = new APICallback() {
             public void done(String data) {
+                List<Thread> threads = new ArrayList<>();
+
                 // Parse JSON
                 Gson gson = new Gson();
                 JsonParser parser = new JsonParser();
@@ -297,20 +301,45 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
 
                     // Iterate over array
                     for (int i = 0; i < resData.size(); i++) {
-                        // Load image from JSON
-                        ManifestEntry entry = gson.fromJson(resData.get(i), ManifestEntry.class);
+                        // Load entry from JSON
+                        final ManifestEntry entry = gson.fromJson(resData.get(i), ManifestEntry.class);
 
-                        // Add image to list
-                        images.add(entry);
+                        // Add entry to list
+                        entries.add(entry);
+
+                        // Add image of the entry
+                        Thread thread = new Thread() {
+                            public void run() {
+                                try {
+                                    entry.Image.Image = Picasso.with(InboxActivity.this)
+                                            .load(APICall.URL + "/images/" + entry.Image.UUID + "/image.jpg")
+                                            .resize(300, 200)
+                                            .get();
+                                    final InboxAdapter adapter = new InboxAdapter(InboxActivity.this, entries);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            LVFeed.setAdapter(adapter);
+                                        }
+                                    });
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+                        threads.add(thread);
 
                         // Debug print
                         Log.d("InboxCallback", "Added new image to list, UUID: " + entry.Image.UUID);
                     }
                 }
-
-
-                InboxAdapter adapter = new InboxAdapter(InboxActivity.this, images);
+                InboxAdapter adapter = new InboxAdapter(InboxActivity.this, entries);
                 LVFeed.setAdapter(adapter);
+
+                // Fetch all the thumbnails
+                for (Thread t : threads) {
+                    t.start();
+                }
             }
 
             public void fail(String data) {
@@ -352,7 +381,7 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 FileOutputStream fos = null;
                 try {
                     String token = "";
-                    fos = openFileOutput("token_file", Context.MODE_PRIVATE);
+                    fos = openFileOutput("Token", Context.MODE_PRIVATE);
                     fos.write(token.getBytes());
                     Storage.logout();
                     Log.d("Log out", "Token deleted");
@@ -380,9 +409,6 @@ public class InboxActivity extends AppCompatActivity implements ListView.OnItemC
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id){}
 
     private void closeStream(Closeable stream) {
         try {

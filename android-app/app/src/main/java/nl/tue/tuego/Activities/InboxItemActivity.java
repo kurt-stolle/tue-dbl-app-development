@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import java.util.Calendar;
 
 import nl.tue.tuego.Models.CoordinateModel;
 import nl.tue.tuego.R;
+import nl.tue.tuego.Storage.Storage;
 import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
 
@@ -79,6 +81,14 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
 
         // Setting text of TVTimeRemaining
 //        setTimeRemaining(res);
+
+        // Remove button if the user is the poster
+        Log.d("InboxItemActivity", "Comparing " + Storage.getUsername(this) + " to " + Uploader);
+        if (Storage.getUsername(this).equals(Uploader)) {
+            ViewGroup viewGroup = (ViewGroup) BGuess.getParent();
+            if (viewGroup != null) // For safety only as you are doing onClick
+                viewGroup.removeView(BGuess);
+        }
 
         // Load the image using the Picasso library
         Log.d("InboxItemActivity", "Loading image file at /images/" + UUID + "/image.jpg");

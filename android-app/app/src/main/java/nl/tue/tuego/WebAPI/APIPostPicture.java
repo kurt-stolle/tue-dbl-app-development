@@ -71,7 +71,13 @@ public class APIPostPicture extends AsyncTask<String, Void, String> {
             outputStream.writeBytes("Content-Transfer-Encoding: binary" + lineEnd);
 
             outputStream.writeBytes(lineEnd);
-            file = Bitmap.createScaledBitmap(file, 3000, 2000, false);
+//            if (file.getHeight() > file.getWidth()) {
+//                // Image is a portrait
+//                file = Bitmap.createScaledBitmap(file, 2000, 3000, false);
+//            } else {
+                // Image is a landscape
+                file = Bitmap.createScaledBitmap(file, 3000, 2000, false);
+//            }
             file.compress(Bitmap.CompressFormat.JPEG, 30, outputStream);
             outputStream.writeBytes(lineEnd);
 

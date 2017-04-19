@@ -240,7 +240,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
             mLocationManager.removeUpdates(this);
             this.location = newLocation;
         } else {
-            Log.d("PostPictureActivity", "New location is null");
+            Log.e("PostPictureActivity", "New location is null");
         }
     }
 

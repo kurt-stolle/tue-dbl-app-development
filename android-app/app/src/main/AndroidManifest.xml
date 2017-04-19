@@ -13,8 +13,10 @@
         android:required="true" />
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/tuego"
         android:label="@string/appName"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
@@ -60,7 +62,7 @@
         <activity
             android:name="nl.tue.tuego.Activities.ChangePasswordActivity"
             android:label="@string/changePasswordTitle"
-            android:parentActivityName="nl.tue.tuego.Activities.ForgotPasswordActivity" >
+            android:parentActivityName="nl.tue.tuego.Activities.ForgotPasswordActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nl.tue.tuego.Activities.ForgotPasswordActivity" />
@@ -69,7 +71,7 @@
         <activity
             android:name="nl.tue.tuego.Activities.InboxActivity"
             android:label="@string/inboxTitle"
-            android:parentActivityName="nl.tue.tuego.Activities.LoginActivity" >
+            android:parentActivityName="nl.tue.tuego.Activities.LoginActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nl.tue.tuego.Activities.LoginActivity" />
@@ -78,7 +80,7 @@
         <activity
             android:name="nl.tue.tuego.Activities.InboxItemActivity"
             android:label="@string/inboxItemTitle"
-            android:parentActivityName="nl.tue.tuego.Activities.InboxActivity" >
+            android:parentActivityName="nl.tue.tuego.Activities.InboxActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nl.tue.tuego.Activities.InboxActivity" />
@@ -87,7 +89,7 @@
         <activity
             android:name="nl.tue.tuego.Activities.LeaderboardActivity"
             android:label="@string/leaderboardTitle"
-            android:parentActivityName="nl.tue.tuego.Activities.InboxActivity" >
+            android:parentActivityName="nl.tue.tuego.Activities.InboxActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nl.tue.tuego.Activities.InboxActivity" />
@@ -96,7 +98,7 @@
         <activity
             android:name="nl.tue.tuego.Activities.PostPictureActivity"
             android:label="@string/postPictureTitle"
-            android:parentActivityName="nl.tue.tuego.Activities.InboxActivity" >
+            android:parentActivityName="nl.tue.tuego.Activities.InboxActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nl.tue.tuego.Activities.InboxActivity" />

@@ -37,13 +37,13 @@ public class LoadActivity extends Activity {
             Log.d("LoadActivity", "Token found:" + token);
         }
 
-        String username = Storage.getUsername(this);
-        if (username.equals("")) {
-            Log.d("LoadActivity", "Username does not exist");
-            readingIsOk = false;
-        } else {
-            Log.d("LoadActivity", "Username found:" + username);
-        }
+//        String username = Storage.getUsername(this);
+//        if (username.equals("")) {
+//            Log.d("LoadActivity", "Username does not exist");
+//            readingIsOk = false;
+//        } else {
+//            Log.d("LoadActivity", "Username found:" + username);
+//        }
 
         // All data has been found
         if (readingIsOk) {

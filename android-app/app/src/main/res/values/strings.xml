@@ -47,10 +47,11 @@
     <string name="inboxTitle">Images</string>
 
     <!-- Inbox item -->
+    <string name="feedImageDescription">Thumbnail of the picture</string>
     <string name="itemTimeTaken">Taken at </string>
 
     <!-- Inbox item activity -->
-    <string name="feedImageDescription">Thumbnail of the picture</string>
+    <string name="inboxItemImageDescription">Full size of the picture</string>
     <string name="inboxItemTitle">Challenge</string>
     <string name="inboxItemButton">I\'m at the location</string>
 

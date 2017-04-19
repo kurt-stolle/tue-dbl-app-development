@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -28,7 +29,7 @@ public class InboxAdapter extends ArrayAdapter<ManifestEntry> {
 
     private LayoutInflater li;
     private List<ViewHolder> lstHolders;
-    private Handler mHandler = new Handler();
+//    private Handler mHandler = new Handler();
     /*private Runnable updateRemainingTimeRunnable = new Runnable() {
         @Override
         public void run() {
@@ -73,6 +74,7 @@ public class InboxAdapter extends ArrayAdapter<ManifestEntry> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.inbox_item, parent, false);
             holder.TVAuthor = (TextView) convertView.findViewById(R.id.feedItemAuthor);
             holder.TVTimeTaken = (TextView) convertView.findViewById(R.id.feedItemTimeTaken);
+            holder.IVImage = (ImageView) convertView.findViewById(R.id.feedItemImage);
             convertView.setTag(holder);
             synchronized (lstHolders) {
                 lstHolders.add(holder);

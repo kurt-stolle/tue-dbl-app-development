@@ -3,6 +3,7 @@ package nl.tue.tuego.Holders;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -22,6 +23,7 @@ public class ViewHolder {
     public TextView TVTimeRemaining;
     public TextView TVTimeTaken;
     public TextView TVPoints;
+    public ImageView IVImage;
     private ManifestEntry entry;
     private final Context context;
 
@@ -30,10 +32,12 @@ public class ViewHolder {
     }
 
     public void setData(ManifestEntry item) {
+        Log.d("ViewHolder", "Setting data");
         entry = item;
         // Populate the data into the template view using the data object
         TVAuthor.setText(item.UploaderName);
         TVTimeTaken.setText(item.Image.UploadTime);
+        IVImage.setImageBitmap(item.Image.Image);
         //updateTimeRemaining(new Date());
     }
 

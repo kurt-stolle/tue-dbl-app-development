@@ -13,15 +13,16 @@
         android:id="@+id/itemImage"
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:layout_weight="0.6"
+        android:layout_weight="0.7"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerInside"
+        android:contentDescription="@string/feedImageDescription" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_margin="@dimen/activity_margin"
-        android:layout_weight="0.4"
+        android:layout_weight="0.3"
         android:orientation="vertical"
         android:weightSum="1">
 
@@ -30,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.3"
+            android:layout_weight="0.25"
             android:text="[insert name here]"
             android:textAppearance="@android:style/TextAppearance.Material.Headline" />
 
@@ -39,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.2"
+            android:layout_weight="0.175"
             android:gravity="center_vertical"
             android:text="Awards 15 studypoints"
             android:textAppearance="@android:style/TextAppearance.Material.Subhead" />
@@ -49,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.2"
+            android:layout_weight="0.175"
             android:gravity="center_vertical"
             android:text="Picture taken at yesterday 21:48"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
@@ -69,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_margin="@dimen/view_margin"
-            android:layout_weight="0.3"
+            android:layout_weight="0.4"
             android:background="@drawable/my_button_bg"
             android:text="@string/inboxItemButton"
             android:textColor="@color/colorWhite" />
