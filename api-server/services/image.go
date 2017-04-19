@@ -16,7 +16,6 @@ import (
 	dbmdl "github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
-	
 )
 
 // GetActiveImagesWithAssociatedUsers returns a manifest of images
@@ -42,7 +41,7 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 	var mu sync.Mutex
 	var images []*models.ManifestEntry
 
-	log.Println("Loading images...");
+	log.Println("Loading images...")
 
 	for _i, ifc := range data {
 		wg.Add(1)
@@ -59,7 +58,6 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 			} else {
 				entry.UploaderName = upldr.Name
 			}
-			
 
 			mu.Lock()
 			log.Println("Image found")
@@ -177,10 +175,15 @@ func VerifyFileType(f []byte, types ...string) bool {
 }
 
 // How much may the guess location differ from the actual location?
-const maxRangeDiffernece float64 = 1.0
+const maxRangeDifference float64 = 1.0
 
 // GuessImage checks whether the image was guessed correctrly
 func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
+	if uuidUser == "" || uuidImage == "" {
+		log.Println("No identity data provided for image guess")
+		return false
+	}
+
 	// First, load the image Coordinates
 	img := new(models.Image)
 	where := dbmdl.NewWhereClause("postgres")
@@ -196,8 +199,8 @@ func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
 	}
 
 	// Check Coordinates
-	if !((img.Latitude+maxRangeDiffernece) > coords.Latitude && (img.Latitude-maxRangeDiffernece) < coords.Latitude &&
-		(img.Longitude+maxRangeDiffernece) > coords.Longitude && (img.Longitude-maxRangeDiffernece) < coords.Longitude) {
+	if !((img.Latitude+maxRangeDifference) > coords.Latitude && (img.Latitude-maxRangeDifference) < coords.Latitude &&
+		(img.Longitude+maxRangeDifference) > coords.Longitude && (img.Longitude-maxRangeDifference) < coords.Longitude) {
 		return false
 	}
 
@@ -209,11 +212,10 @@ func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
 	// Delete file
 	// TODO
 
-	if _,err := postgres.Connect().Exec("DELETE FROM tuego_images WHERE UUID=$1", uuidImage); err != nil {
-		log.Println("Delete failed: ", err);
+	if _, err := postgres.Connect().Exec("DELETE FROM tuego_images WHERE UUID=$1", uuidImage); err != nil {
+		log.Println("Delete failed: ", err)
 	}
 
-	/*
 	// Write back to database
 	where = dbmdl.NewWhereClause("postgres")
 	where.AddValuedClause("UUID="+where.GetPlaceholder(0), uuidImage)
@@ -221,7 +223,7 @@ func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
 	img.Finder = uuidUser
 	if err := dbmdl.Save(postgres.Connect(), img, where); err != nil {
 		log.Panic(err)
-	} */
+	}
 
 	return true
 }

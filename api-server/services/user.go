@@ -89,7 +89,7 @@ func GetUser(uuid string) *models.User {
 
 // AwardPoints gives points to a user
 func AwardPoints(uuid string, points int) error {
-	if _, err := postgres.Connect().Exec("UPDATE tuego_users SET Points=Points+$1 WHERE uuid=$2", points, uuid); err != nil {
+	if _, err := postgres.Connect().Exec("UPDATE tuego_users SET Points=Points+$1 WHERE UUID=$2", points, uuid); err != nil {
 		return err
 	}
 	return nil
