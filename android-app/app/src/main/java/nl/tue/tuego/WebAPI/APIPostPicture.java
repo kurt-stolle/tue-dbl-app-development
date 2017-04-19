@@ -101,7 +101,7 @@ public class APIPostPicture extends AsyncTask<String, Void, String> {
                 inputStream = connection.getErrorStream();
                 String errorMessage = convertStreamToString(inputStream);
 
-                Log.d("APIPicture", errorMessage);
+                Log.d("APIPicture", "Error message: " + errorMessage);
                 success = false;
             }
 
