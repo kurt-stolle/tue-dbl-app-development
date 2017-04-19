@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import nl.tue.tuego.R;
@@ -26,7 +27,9 @@ public class GPSDialogFragment extends DialogFragment {
         builder.setMessage(R.string.gpsWarning)
                 .setPositiveButton(R.string.enable, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // TODO: Enable the GPS
+                        Intent gpsOptionsIntent = new Intent(
+                                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(gpsOptionsIntent);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
