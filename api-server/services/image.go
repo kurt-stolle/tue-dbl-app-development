@@ -31,6 +31,7 @@ func GetActiveImagesWithAssociatedUsers(page, amount int) (int, []*models.Manife
 
 	// Pagination
 	dbp := dbmdl.NewPagination(page, amount)
+	dbp.OrderDescending("UploadTime")
 
 	// DBMDL fetch
 	data, pag, err := dbmdl.Fetch(postgres.Connect(), imageType, where, dbp)
