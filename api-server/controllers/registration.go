@@ -67,21 +67,11 @@ func Login(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 		writeJSON(w, &struct {
 			Token string
-		}{token})
+			UUID  string
+		}{token, uuid})
 		return
 	}
 
 	// No login. Send an error
 	writeError(w, http.StatusUnauthorized, "Invalid email address or password")
-}
-
-// WhoAmI returns the logged on user
-func WhoAmI(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-		uuid, err := services.GetUUID(r)
-		if err != nil {
-			writeError(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		writeJSON(w, services.GetUser(uuid))
 }
