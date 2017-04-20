@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.List;
 
 
+import nl.tue.tuego.Core.CircleTransform;
 import nl.tue.tuego.Fragments.GPSDialogFragment;
 import nl.tue.tuego.Fragments.InternetDialogFragment;
 import nl.tue.tuego.Models.ManifestEntry;
@@ -311,10 +312,7 @@ public class InboxActivity extends AppCompatActivity{
                         Thread thread = new Thread() {
                             public void run() {
                                 try {
-                                    entry.Image.Image = Picasso.with(InboxActivity.this)
-                                            .load(APICall.URL + "/images/" + entry.Image.UUID + "/image.jpg")
-                                            .resize(300, 200)
-                                            .get();
+                                    entry.Image.Image = Picasso.with(InboxActivity.this).load(APICall.URL + "/images/" + entry.Image.UUID + "/image.jpg").resize(300, 200).transform(new CircleTransform()).get();
                                     final InboxAdapter adapter = new InboxAdapter(InboxActivity.this, entries);
                                     runOnUiThread(new Runnable() {
                                         @Override

@@ -13,6 +13,8 @@ import (
 
 	"sync"
 
+	"math"
+
 	dbmdl "github.com/kurt-stolle/go-dbmdl"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/core/postgres"
 	"github.com/kurt-stolle/tue-dbl-app-development/api-server/models"
@@ -174,8 +176,8 @@ func VerifyFileType(f []byte, types ...string) bool {
 	return false
 }
 
-// How much may the guess location differ from the actual location?
-const maxRangeDifference float64 = 1.0
+// Maximum radius
+const maxRadius = 20 // metres
 
 // GuessImage checks whether the image was guessed correctrly
 func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
@@ -199,8 +201,11 @@ func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
 	}
 
 	// Check Coordinates
-	if !((img.Latitude+maxRangeDifference) > coords.Latitude && (img.Latitude-maxRangeDifference) < coords.Latitude &&
-		(img.Longitude+maxRangeDifference) > coords.Longitude && (img.Longitude-maxRangeDifference) < coords.Longitude) {
+	log.Println("Comparing coords: ", coords)
+	log.Println("Comparing image: ", img)
+	var dLatitude float64 = img.Longitude - coords.Longitude
+	var dLongitude float64 = img.Latitude - coords.Latitude
+	if !(math.Pow(dLatitude/111000, 2)+math.Pow(dLongitude/111000, 2) <= maxRadius*maxRadius) {
 		return false
 	}
 
