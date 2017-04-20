@@ -189,8 +189,9 @@ func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
 	// First, load the image Coordinates
 	img := new(models.Image)
 	where := dbmdl.NewWhereClause("postgres")
-	where.AddValuedClause("UUID="+where.GetPlaceholder(0), uuidImage) // UUID of img model
-	where.AddClause("Finder=''")                                      // Not yet found
+	where.AddValuedClause("UUID="+where.GetPlaceholder(0), uuidImage)     // UUID of img model
+	where.AddValuedClause("Uploader!="+where.GetPlaceholder(0), uuidUser) // uuidUser
+	where.AddClause("Finder=''")                                          // Not yet found
 
 	if err := dbmdl.Load(postgres.Connect(), img, where); err != nil {
 		if err == dbmdl.ErrNotFound {
