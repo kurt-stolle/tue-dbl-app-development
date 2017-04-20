@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"log"
-	"regexp"
 )
 
 // GenerateTable creates a table for the struct in the database
@@ -21,6 +20,7 @@ func GenerateTable(db *sql.DB, reference interface{}) error {
 	var notNull []string
 	var defaults = make(map[string]string)
 
+	// Iterate over fields
 	for i := 0; i < ref.NumField(); i++ {
 		field := ref.Field(i)          // Get the field at index i
 		tag := getTagParameters(field) // Find the datatype from the dbmdl tag
@@ -29,8 +29,12 @@ func GenerateTable(db *sql.DB, reference interface{}) error {
 			continue
 		}
 
+		// Is this an extern?
+		if regExtern.MatchString(tag[0]) {
+			continue
+		}
+
 		// First find the special tags
-		var regDefault = regexp.MustCompile("default .+")
 		for _, v := range tag {
 			if i := regDefault.FindStringIndex(v); i != nil {
 				defaults[field.Name] = v[(i[0] + 8):] // Move 8 spaces to the right from 'default ' to capture the type
@@ -56,25 +60,25 @@ func GenerateTable(db *sql.DB, reference interface{}) error {
 
 	q = t.dialect.CreateTable(t.name)
 	if _, err := db.Exec(q); err != nil {
-		log.Fatal("dbmdl: Failed to create table", t.name, "\nQuery:", q, "\nError:", err)
+		log.Fatal("dbmdl: Failed to create table ", t.name, "\nQuery:", q, "\nError:", err)
 	}
 
 	for _, field := range fields {
 		q = t.dialect.AddField(t.name, field)
 		if _, err := db.Exec(q); err != nil {
-			log.Fatal("dbmdl: Failed to add column", field, "\nQuery:", q, "\nError:", err)
+			log.Fatal("dbmdl: Failed to add column ", field, "\nQuery:", q, "\nError:", err)
 		}
 	}
 
 	q = t.dialect.SetPrimaryKeys(t.name, primaryKeys)
 	if _, err := db.Exec(q); err != nil {
-		log.Fatal("dbmdl: Failed to set primary keys for", t.name, "\nQuery:", q, "\nError:", err)
+		log.Fatal("dbmdl: Failed to set primary keys for ", t.name, "\nQuery:", q, "\nError:", err)
 	}
 
 	for field, def := range defaults {
 		q = t.dialect.SetDefaultValue(t.name, field, def)
 		if _, err := db.Exec(q); err != nil {
-			log.Fatal("dbmdl: Failed to set default value for", field, "to", def, "\nQuery:", q, "\nError:", err)
+			log.Fatal("dbmdl: Failed to set default value for column ", field, " to ", def, "\nQuery:", q, "\nError:", err)
 		}
 	}
 

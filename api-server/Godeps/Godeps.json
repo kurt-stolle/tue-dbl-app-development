@@ -25,11 +25,13 @@
 		},
 		{
 			"ImportPath": "github.com/kurt-stolle/go-dbmdl",
-			"Rev": "ac3125d5d366d22bf01361756840c86c78775068"
+			"Comment": "v1.0.0-1-g8278efd",
+			"Rev": "8278efd025c3f842c3a571f4af302931f60ed611"
 		},
 		{
 			"ImportPath": "github.com/kurt-stolle/go-dbmdl/postgres",
-			"Rev": "ac3125d5d366d22bf01361756840c86c78775068"
+			"Comment": "v1.0.0-1-g8278efd",
+			"Rev": "8278efd025c3f842c3a571f4af302931f60ed611"
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
