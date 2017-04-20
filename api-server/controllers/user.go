@@ -18,22 +18,11 @@ func User(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		return
 	}
 
-	reqUUID, err := services.GetUUID(r)
-	if err != nil {
-		writeError(w, http.StatusInternalServerError)
-		return
-	}
-
 	switch r.Method {
 	case http.MethodPost: // Update user's information
 		// TODO
 		writeError(w, http.StatusNotImplemented, "Method not implemented: "+r.Method)
 	case http.MethodGet: // Get user's information
-		// Apply some censorship to the user's e-mail. We don't want this information laying on the streets!
-		if u.UUID != reqUUID {
-			u.Email = ""
-		}
-
 		// Parse the user and JSON and write out
 		writeJSON(w, u)
 	default: // The method isn't implemented, error!

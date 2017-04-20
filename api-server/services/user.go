@@ -79,10 +79,13 @@ func GetUser(uuid string) *models.User {
 
 	if err := dbmdl.Load(postgres.Connect(), u, where); err != nil {
 		if err == dbmdl.ErrNotFound {
+			log.Println("Attempted to fetch user, but user wasn't found")
 			return nil
 		}
 		log.Panic(err) // If the error is not a NotFound error, then something went terribly wrong!
 	}
+
+	log.Println("Successfully fetched user with UUID " + uuid)
 
 	return u
 }
