@@ -74,8 +74,8 @@ func CreateUser(u *models.User, password string) (int, error) {
 func GetUser(uuid string) *models.User {
 	u := new(models.User) // Setup a new user struct
 
-	where := dbmdl.NewWhereClause("postgres") // Initialize a where clause
-	where.AddValuedClause("UUID", uuid)       // Add the UUID to said where clause
+	where := dbmdl.NewWhereClause("postgres")                    // Initialize a where clause
+	where.AddValuedClause("UUID="+where.GetPlaceholder(0), uuid) // Add the UUID to said where clause
 
 	if err := dbmdl.Load(postgres.Connect(), u, where); err != nil {
 		if err == dbmdl.ErrNotFound {
