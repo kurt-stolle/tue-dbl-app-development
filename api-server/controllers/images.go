@@ -40,7 +40,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 		// Scan the maount
 		var amount int
-		if err := postgres.Connect().QueryRow("SELECT COUNT(*) FROM tuego_images WHERE Uploader=$1 LIMIT 5", uuidUser).Scan(&amount); amount >= 5 {
+		if err := postgres.Connect().QueryRow("SELECT COUNT(*) FROM tuego_images WHERE Uploader=$1 AND Finder=''", uuidUser).Scan(&amount); amount >= 5 {
 			writeError(w, http.StatusConflict, "You already have 5 active pictures")
 			return
 		} else if err != nil {
@@ -61,7 +61,6 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		}
 
 		p := path.Join(pwd, img.UUID+".jpg")
-
 
 		ok, coords := parseImageUpload(w, r, p, 6000, 3000, 2000, services.JPEG)
 		if !ok {
@@ -89,7 +88,7 @@ func Images(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 			writeError(w, status)
 			return
 		}
-		
+
 		writeJSONPaginated(w, images, pag)
 	default: // Return a friendly error
 		writeError(w, http.StatusNotImplemented, "Method not implemented: "+r.Method)

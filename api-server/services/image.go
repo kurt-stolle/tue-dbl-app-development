@@ -207,7 +207,7 @@ func GuessImage(uuidUser, uuidImage string, coords *models.Coordinates) bool {
 	log.Println("Comparing image: ", img)
 	var dLatitude float64 = img.Longitude - coords.Longitude
 	var dLongitude float64 = img.Latitude - coords.Latitude
-	if !(math.Pow(dLatitude*111000, 2)+math.Pow(dLongitude*111000, 2) <= maxRadius*maxRadius) {
+	if math.Pow(dLatitude*111000, 2)+math.Pow(dLongitude*111000, 2) > maxRadius*maxRadius {
 		return false
 	}
 
