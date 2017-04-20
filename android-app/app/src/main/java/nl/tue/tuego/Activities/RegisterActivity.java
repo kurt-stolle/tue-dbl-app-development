@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import nl.tue.tuego.Models.LoginModel;
 import nl.tue.tuego.Models.TokenModel;
+import nl.tue.tuego.Models.UserModel;
 import nl.tue.tuego.Models.UsernameModel;
 import nl.tue.tuego.Storage.Storage;
 import nl.tue.tuego.WebAPI.APICall;
@@ -87,7 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (!passwordText.equals(passwordVerifyText)) {
             Toast.makeText(this, "Passwords are not the same", Toast.LENGTH_SHORT).show();
-            Log.d("RegisterActivity", "Passwords not the same!");
+            Log.d("RegisterActivity", "Passwords are not the same!");
 
             return;
         }
@@ -136,23 +137,25 @@ public class RegisterActivity extends AppCompatActivity {
             public void done(String res) {
                 Gson gson = new Gson();
                 TokenModel tokenModel = gson.fromJson(res, TokenModel.class);
+                Storage.setToken(tokenModel.Token);
+                Storage.setUuid(tokenModel.UUID);
+
+                // Write the token into local storage
                 FileOutputStream fos = null;
-
                 try {
-                    fos = openFileOutput("token_file", Context.MODE_PRIVATE);
+                    fos = openFileOutput("Token", Context.MODE_PRIVATE);
                     fos.write(tokenModel.Token.getBytes());
-
                     Log.d("RegisterActivity", "Token saved");
-                    Intent intent = new Intent(RegisterActivity.this, InboxActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
+                    fos = openFileOutput("UUID", Context.MODE_PRIVATE);
+                    fos.write(tokenModel.UUID.getBytes());
+                    Log.d("RegisterActivity", "UUID saved");
                 } catch (IOException e) {
+                    Toast.makeText(RegisterActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
                     Log.d("RegisterActivity", "Error saving token");
+
                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
-                    Toast.makeText(RegisterActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
                 } finally {
                     closeStream(fos);
                 }
@@ -163,15 +166,12 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void fail(String res) {
-                Log.d("RegisterActivity", "Logging in failed, check parameters");
-                Toast.makeText(RegisterActivity.this, "Something went wrong, try again", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                Toast.makeText(RegisterActivity.this, "An unknown error occurred", Toast.LENGTH_SHORT).show();
+                Log.e("RegisterActivity", "Logging in failed using the same register parameters");
             }
         };
 
-        // Perform the API call
+        // Perform the API call to login
         new APICall("POST", "/login", log, callback, this).execute();
     }
 
@@ -182,14 +182,14 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void done(String res) {
                 Gson gson = new Gson();
-                UsernameModel usernameModel = gson.fromJson(res, UsernameModel.class);
-                Storage.setUsername(usernameModel.Username);
+                UserModel userModel = gson.fromJson(res, UserModel.class);
+                Storage.setUsername(userModel.Name);
 
                 // Write the username into local storage
                 FileOutputStream fos = null;
                 try {
                     fos = openFileOutput("Username", Context.MODE_PRIVATE);
-                    fos.write(usernameModel.Username.getBytes());
+                    fos.write(userModel.Name.getBytes());
                     Log.d("RegisterActivity", "Username saved");
 
                     Intent intent = new Intent(RegisterActivity.this, InboxActivity.class);
@@ -198,10 +198,11 @@ public class RegisterActivity extends AppCompatActivity {
                     finish();
                 } catch (IOException e) {
                     Toast.makeText(RegisterActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
+                    Log.d("RegisterActivity", "Error saving username");
+
                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                     startActivity(intent);
                     finish();
-                    Log.d("RegisterActivity", "Error saving username");
                 } finally {
                     closeStream(fos);
                 }
@@ -209,14 +210,14 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void fail(String res) {
-                Log.d("RegisterActivity", "Failed to get username from API");
+                Log.d("RegisterActivity", "Failed to get username");
             }
         };
 
         // Perform the API Call to get the username
-        String token = Storage.getToken(RegisterActivity.this);
-        Log.d("LoginActivity", "Token = " + token);
-        new APICall("GET", "/whoami?token=" + token, null, callback, RegisterActivity.this).execute();
+        String token = Storage.getToken(this);
+        Log.d("RegisterActivity", "Token = " + token);
+        new APICall("GET", "/users/" + Storage.getUuid(this), null, callback, this).execute();
     }
 
     // called when TVToLogin is clicked
