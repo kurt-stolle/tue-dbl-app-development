@@ -40,10 +40,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
     static final int REQUEST_GPS_PERMISSION = 1;
 
     LocationManager mLocationManager;
-    private String UUID;
-    private String Uploader;
-    private String UploadTime;
-    private String Finder;
+    private String UUID, UploaderUUID, UploaderName, UploadTime;
     private TextView TVAuthor, TVTimeTaken;
     ImageView IVImage;
     Button BGuess;
@@ -70,21 +67,21 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
 
         // Getting all the ImageModel data
         UUID = getIntent().getExtras().getString("UUID");
-        Uploader = getIntent().getExtras().getString("UploaderName");
+        UploaderName = getIntent().getExtras().getString("UploaderName");
+        UploaderUUID = getIntent().getExtras().getString("UploaderUUID");
         UploadTime = getIntent().getExtras().getString("UploadTime");
-        Finder = getIntent().getExtras().getString("Finder");
 
         // Setting the text of the TextViews
         final Resources res = getResources();
-        TVAuthor.setText(res.getString(R.string.dataAuthor, Uploader));
+        TVAuthor.setText(res.getString(R.string.dataAuthor, UploaderName));
         TVTimeTaken.setText(res.getString(R.string.dataTimeTaken, UploadTime));
 
         // Setting text of TVTimeRemaining
 //        setTimeRemaining(res);
 
         // Remove button if the user is the poster
-        Log.d("InboxItemActivity", "Comparing " + Storage.getUsername(this) + " to " + Uploader);
-        if (Storage.getUsername(this).equals(Uploader)) {
+        Log.d("InboxItemActivity", "Comparing " + Storage.getUuid(this) + " to " + UploaderUUID);
+        if (Storage.getUuid(this).equals(UploaderUUID)) {
             ViewGroup viewGroup = (ViewGroup) BGuess.getParent();
             if (viewGroup != null) // For safety only as you are doing onClick
                 viewGroup.removeView(BGuess);
@@ -101,8 +98,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
                 onGuessButtonClick(v);
             }
         });
-
-        // loadImage();
     }
 
     // method that is called when the DELETE PICTURE button is pressed
@@ -126,12 +121,6 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
             }
         } else {
             getLocation();
-
-            // For the purpose of the test
-//            Location loc = new Location("");
-//            loc.setLongitude(0.0);
-//            loc.setLatitude(0.0);
-//            guessLocation(loc);
         }
     }
 

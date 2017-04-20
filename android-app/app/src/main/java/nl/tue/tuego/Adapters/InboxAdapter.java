@@ -89,6 +89,7 @@ public class InboxAdapter extends ArrayAdapter<ManifestEntry> {
                     Intent intent = new Intent(getContext(), InboxItemActivity.class);
                     intent.putExtra("UUID", entry.Image.UUID);
                     intent.putExtra("UploaderName", entry.UploaderName);
+                    intent.putExtra("UploaderUUID", entry.Image.Uploader);
                     intent.putExtra("UploadTime", entry.Image.UploadTime);
                     intent.putExtra("Finder", entry.Image.Finder);
                     getContext().startActivity(intent);

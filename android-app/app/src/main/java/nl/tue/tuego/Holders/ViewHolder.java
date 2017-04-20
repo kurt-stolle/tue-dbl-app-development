@@ -32,7 +32,6 @@ public class ViewHolder {
     }
 
     public void setData(ManifestEntry item) {
-        Log.d("ViewHolder", "Setting data");
         entry = item;
         // Populate the data into the template view using the data object
         TVAuthor.setText(item.UploaderName);

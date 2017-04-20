@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import nl.tue.tuego.Fragments.InternetDialogFragment;
+import nl.tue.tuego.Models.UserModel;
 import nl.tue.tuego.Models.UsernameModel;
 import nl.tue.tuego.Storage.Storage;
 import nl.tue.tuego.WebAPI.APICall;
@@ -87,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                 Gson gson = new Gson();
                 TokenModel tokenModel = gson.fromJson(res, TokenModel.class);
                 Storage.setToken(tokenModel.Token);
+                Storage.setUuid(tokenModel.UUID);
 
                 // Write the token into local storage
                 FileOutputStream fos = null;
@@ -94,13 +96,10 @@ public class LoginActivity extends AppCompatActivity {
                     fos = openFileOutput("Token", Context.MODE_PRIVATE);
                     fos.write(tokenModel.Token.getBytes());
                     Log.d("LoginActivity", "Token saved");
+                    fos = openFileOutput("UUID", Context.MODE_PRIVATE);
+                    fos.write(tokenModel.UUID.getBytes());
+                    Log.d("LoginActivity", "UUID saved");
 
-                    // TODO: Remove this once the username can be retrieved
-                    Intent intent = new Intent(LoginActivity.this, InboxActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                    // TODO: Remove until here
                 } catch (IOException e) {
                     Toast.makeText(LoginActivity.this, "Error saving ID", Toast.LENGTH_SHORT).show();
                     Log.d("LoginActivity", "Error saving token");
@@ -130,14 +129,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void done(String res) {
                 Gson gson = new Gson();
-                UsernameModel usernameModel = gson.fromJson(res, UsernameModel.class);
-                Storage.setUsername(usernameModel.Username);
+                UserModel userModel = gson.fromJson(res, UserModel.class);
+                Storage.setUsername(userModel.Name);
 
                 // Write the username into local storage
                 FileOutputStream fos = null;
                 try {
                     fos = openFileOutput("Username", Context.MODE_PRIVATE);
-                    fos.write(usernameModel.Username.getBytes());
+                    fos.write(userModel.Name.getBytes());
                     Log.d("LoginActivity", "Username saved");
 
                     Intent intent = new Intent(LoginActivity.this, InboxActivity.class);
@@ -161,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
         // Perform the API Call to get the username
         String token = Storage.getToken(LoginActivity.this);
         Log.d("LoginActivity", "Token = " + token);
-        new APICall("GET", "/whoami?token=" + token, null, callback, LoginActivity.this).execute();
+        new APICall("GET", "/users/" + Storage.getUuid(this), null, callback, LoginActivity.this).execute();
     }
 
     // Events that trigger when a certain button is pressed on the action bar
