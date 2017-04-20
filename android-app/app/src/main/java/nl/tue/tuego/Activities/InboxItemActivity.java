@@ -44,6 +44,7 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
     private TextView TVAuthor, TVTimeTaken;
     ImageView IVImage;
     Button BGuess;
+    boolean isGuessing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,22 +110,26 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
     // method that is called when the GUESS LOCATION button is pressed
     // only other users than the poster can do this
     public void onGuessButtonClick(View v) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // TODO: give explanation
+        if (!isGuessing) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // TODO: give explanation
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            REQUEST_GPS_PERMISSION);
+                }
             } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        REQUEST_GPS_PERMISSION);
+                getLocation();
             }
-        } else {
-            getLocation();
         }
     }
 
     private void getLocation() {
+        isGuessing = true;
+        // TODO: make guessing noticable
         Log.d("InboxItemActivity", "Getting location");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -153,17 +158,19 @@ public class InboxItemActivity extends AppCompatActivity implements LocationList
         APICallback callback = new APICallback() {
             @Override
             public void done(String res) {
-                Log.d("InboxItemActivity", "Correct guess!");
                 // TODO: Show a correct pop-up
+                Log.d("InboxItemActivity", "Correct guess!");
                 Toast.makeText(InboxItemActivity.this, "You guessed correctly and earned 15 studypoints!", Toast.LENGTH_LONG).show();
                 onBackPressed();
+                isGuessing = false;
             }
 
             @Override
             public void fail(String res) {
+                // TODO: Show an incorrect pop-up
                 Log.d("InboxItemActivity", "Incorrect guess!");
                 Toast.makeText(InboxItemActivity.this, "Incorrect guess, try again.", Toast.LENGTH_LONG).show();
-                // TODO: Show an incorrect pop-up
+                isGuessing = false;
             }
         };
 

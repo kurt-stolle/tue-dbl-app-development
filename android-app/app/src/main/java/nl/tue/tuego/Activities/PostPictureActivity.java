@@ -14,9 +14,6 @@ import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,15 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.io.BufferedReader;
-import java.io.Closeable;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,9 +34,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import nl.tue.tuego.Models.CoordinateModel;
 import nl.tue.tuego.Storage.Storage;
-import nl.tue.tuego.WebAPI.APICall;
 import nl.tue.tuego.WebAPI.APICallback;
 import nl.tue.tuego.WebAPI.APIPostPicture;
 import nl.tue.tuego.R;
@@ -62,6 +49,7 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
     Bitmap picture;
     String filePath;
     Location location;
+    private boolean isPosting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +90,8 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
         } catch (IOException e) {
             Log.d("PostPictureActivity", "Picture not found");
         }
+
+        isPosting = false;
 
         // Getting the location
         location = null;
@@ -164,36 +154,42 @@ public class PostPictureActivity extends AppCompatActivity implements LocationLi
     // Method that is called when POST button is pressed
     public void postPic(View v) {
         // Check if the location has been determined
-        if (location != null) {
-        // Determine what happens when the call is done
-        APICallback callback = new APICallback() {
-            @Override
-            public void done(String res) {
-                Toast.makeText(PostPictureActivity.this, "Picture posted", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(PostPictureActivity.this, InboxActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
+        if (!isPosting) {
+            if (location != null) {
+                isPosting = true;
+
+                // Determine what happens when the call is done
+                APICallback callback = new APICallback() {
+                    @Override
+                    public void done(String res) {
+                        Toast.makeText(PostPictureActivity.this, "Picture posted", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(PostPictureActivity.this, InboxActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                        isPosting = false;
+                    }
+
+                    @Override
+                    public void fail(String res) {
+                        Toast.makeText(PostPictureActivity.this, "You cannot upload more than five pictures", Toast.LENGTH_SHORT).show();
+                        Log.d("PostPictureActivity", "Picture failed to upload");
+                        isPosting = false;
+                    }
+                };
+
+                // Setup params
+                Log.d("Picture", "Picture width:" + picture.getWidth());
+                Log.d("Picture", "Picture height" + picture.getHeight());
+                Map<String, String> params = new HashMap<>(0);
+                params.put("Latitude", String.valueOf(location.getLatitude()));
+                params.put("Longitude", String.valueOf(location.getLongitude()));
+
+                // Perform the API call
+                new APIPostPicture(filePath, picture, Storage.getToken(this), params, callback).execute();
+            } else {
+                Toast.makeText(this, "Retry posting in a moment", Toast.LENGTH_SHORT).show();
             }
-
-            @Override
-            public void fail(String res) {
-                Toast.makeText(PostPictureActivity.this, "You cannot upload more than five pictures", Toast.LENGTH_SHORT).show();
-                Log.d("PostPictureActivity", "Picture failed to upload");
-            }
-        };
-
-        // Setup params
-        Log.d("Picture", "Picture width:" + picture.getWidth());
-        Log.d("Picture", "Picture height" + picture.getHeight());
-        Map<String, String> params = new HashMap<>(0);
-        params.put("Latitude", String.valueOf(location.getLatitude()));
-        params.put("Longitude", String.valueOf(location.getLongitude()));
-
-        // Perform the API call
-        new APIPostPicture(filePath, picture, Storage.getToken(this), params, callback).execute();
-        } else {
-            Toast.makeText(this, "Retry posting in a moment", Toast.LENGTH_SHORT).show();
         }
     }
 
