@@ -30,8 +30,8 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderboardEntry> {
         }
 
         // Lookup view for data population
-        TextView TVRank = (TextView) convertView.findViewById(R.id.itemRank);
-        TextView TVName = (TextView) convertView.findViewById(R.id.itemName);
+        TextView TVRank = (TextView) convertView.findViewById(R.id.LBitemRank);
+        TextView TVName = (TextView) convertView.findViewById(R.id.LBitemAuthor);
         TextView TVPoints = (TextView) convertView.findViewById(R.id.LBitemPoints);
 
         // Populate the data into the template view using the data object
